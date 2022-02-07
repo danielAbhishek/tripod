@@ -12,12 +12,11 @@ from core.forms import (
 from company.models import Event, Product, Package, PackageLinkProduct
 from company.forms import (
     EventForm,
-    ProductUpdateForm,
-    ProductAddForm,
+    ProductForm,
     PackageForm,
     PackageLinkProductAddForm
 )
-from company.utils import staff_check, superuser_check
+from company.utils import superuser_check
 
 
 def staffLoginPage(request):
@@ -271,11 +270,12 @@ def productUpdatePage(request, pk):
     to edit the content
     """
     product = Product.objects.get(pk=pk)
-    form = ProductUpdateForm(instance=product, userObj=None)
+    form = ProductForm(instance=product, userObj=None, operation=None)
 
     if request.method == "POST":
-        form = ProductUpdateForm(
-            request.POST, instance=product, userObj=request.user)
+        form = ProductForm(
+            request.POST, instance=product,
+            userObj=request.user, operation='updating')
         if form.is_valid():
             form.save()
         return redirect('company:productManagement')
@@ -289,9 +289,10 @@ def productAddPage(request):
     """
     Adding a new product
     """
-    form = ProductAddForm(userObj=None)
+    form = ProductForm(userObj=None, operation=None)
     if request.method == "POST":
-        form = ProductAddForm(request.POST, userObj=request.user)
+        form = ProductForm(
+            request.POST, userObj=request.user, operation='creating')
         if form.is_valid():
             product = form.save()
             messages.success(request, f'Event {product} successfully created')
@@ -344,7 +345,9 @@ def packageUpdatePage(request, pk):
         if all([packageForm.is_valid(), formset.is_valid()]):
             package = packageForm.save(commit=False)
             for form in formset:
-                obj, package = form.save(package=package)
+                obj, package = form.save(
+                    package=package,
+                    userObj=request.user, operation='updating')
             package.save()
         return redirect('company:packageManagement')
 
@@ -373,7 +376,9 @@ def packageAddPage(request):
         if all([packageForm.is_valid(), formset.is_valid()]):
             package = packageForm.save()
             for form in formset:
-                obj, package = form.save(package=package)
+                obj, package = form.save(
+                    package=package,
+                    userObj=request.user, operation='creating')
             package.save()
         return redirect('company:packageManagement')
 

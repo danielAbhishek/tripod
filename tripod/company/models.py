@@ -9,6 +9,11 @@ from company.managers import (
 
 
 class Event(models.Model):
+    """
+    Event database object
+        holds the information of event or programe to which business use
+        cases will be handled saperatly
+    """
     event_name = models.CharField(max_length=200)
     description = models.TextField()
     created_by = models.ForeignKey(
@@ -25,6 +30,11 @@ class Event(models.Model):
 
 
 class Product(models.Model):
+    """
+    Propduct database object
+        This class only holds the information of the products that is relevent
+        for the business packages that sellable to clients or customers
+    """
     # measure types
     UNIT = 'u'
     MINUTE = 'm'
@@ -86,6 +96,12 @@ class Product(models.Model):
 
 
 class Package(models.Model):
+    """
+    Package database object
+        This has the information of the packages, the customized for each event
+        and added with custome products, that eventually will be used to
+        attract customers or clients
+    """
     package_name = models.CharField(max_length=150)
     description = models.TextField()
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
@@ -109,6 +125,10 @@ class Package(models.Model):
 
 
 class PackageLinkProduct(models.Model):
+    """
+        An associate table for many-to-many relation
+        between package and products
+    """
     package = models.ForeignKey(Package, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     units = models.FloatField()
