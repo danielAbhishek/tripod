@@ -1,0 +1,22 @@
+{% extends 'admin_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <h3>Event - {{ event.event_name }} {{ staff.last_name }}</h3>
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
+    <form method="POST" action="">
+      {% csrf_token %}
+      <br>
+      <div class="row">
+        <div class="col">
+          {{ form.event_name | as_crispy_field }}
+          {{ form.description | as_crispy_field }}
+        </div>
+      </div>
+      <br>
+      <input class="btn btn-primary" type="submit" value="Update Account">
+    </form>
+{% endblock %}

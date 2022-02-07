@@ -1,0 +1,27 @@
+{% extends 'admin_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <h3>Product - {{ product.product_name }}</h3>
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
+    <form method="POST" action="">
+      {% csrf_token %}
+      <br>
+      <div class="row">
+        <div class="col">
+          {{ form.product_name | as_crispy_field }}
+          {{ form.unit_price | as_crispy_field }}
+          {{ form.unit_measure_type | as_crispy_field }}
+          {{ form.product_type | as_crispy_field }}
+          {{ form.description | as_crispy_field }}
+          {{ form.display | as_crispy_field }}
+          {{ form.is_active | as_crispy_field }}
+        </div>
+      </div>
+      <br>
+      <input class="btn btn-primary" type="submit" value="Update Product">
+    </form>
+{% endblock %}

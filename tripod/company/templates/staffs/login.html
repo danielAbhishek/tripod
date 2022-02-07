@@ -1,4 +1,4 @@
-{% extends 'customer_base.html' %}
+{% extends 'admin_base.html' %}
 
 {% block content %}
     <h3>Login</h3>
@@ -12,7 +12,5 @@
       <input type="password" name="password" placeholder="Password..." class="form-control" >
       <br>
       <input class="btn btn-primary" type="submit" value="Login">
-      <a class="link-primary" href="{% url 'core:register' %}">Create account here</a>
-
     </form>
 {% endblock content %}

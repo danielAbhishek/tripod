@@ -1,0 +1,39 @@
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">TRIPOD</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        {% comment %} <li class="nav-item"> {% endcomment %}
+          {% comment %} <a class="nav-link active" aria-current="page" href="{% url 'company:home' %}">Home</a> {% endcomment %}
+        {% comment %} </li> {% endcomment %}
+        <li class="nav-item">
+          <a class="nav-link" href="#">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Jobs</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'company:staffCompany' %}">Company</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Settings</a>
+        </li>
+      </ul>
+    </div>
+
+    <ul class="navbar-nav mx-right">
+      <li class="nav-item">
+        {% if user.is_authenticated %}
+        <a class="nav-link" href="{% url 'company:staffLogout' %}">Logout</a>
+        {% else %}
+        <a class="nav-link" href="{% url 'company:staffLogin' %}">Login</a>
+        {% endif %}
+      </li>
+    </ul>
+
+  </div>
+</nav>

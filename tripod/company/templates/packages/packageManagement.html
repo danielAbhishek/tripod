@@ -1,0 +1,59 @@
+{% extends 'admin_base.html' %}
+
+{% block sidebar %}
+{% include 'sidebars/company_sidebar.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+{% if messages %}
+  <div class="row">
+    {% for message in messages %}
+    <p id="messages">{{message}}</p>
+  </div>
+{% endfor %}
+{% endif %}
+
+<div class="col">
+  <h1>Products</h1>
+  <a href="{% url 'company:packageAdd' %}">Add new product</a>
+  <br>
+
+  <div class="card-deck">
+    {% for package in packages.packages %}
+    <div class="card">
+      <img class="card-img-top" src="" alt="Card image cap">
+      <div class="card-body">
+        <div class="container">
+
+          <div class="row">
+            <div class="col">
+              <h5 class="card-title">{{ package.package_obj.package_name }}</h5>
+              <p class="card-text">{{ package.package_obj.description | truncatechars:20 }}</p>
+            </div>
+            <div class="col">
+              {% for p in package.product_list %}
+              <p class="card-text">{{ p.product_name }}</p>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="row">
+          <p class="card-text"><small class="text-muted">Package price: {{ package.package_obj.price }}</small></p>
+          </div>
+
+        </div>
+
+      </div>
+      <div class="card-body">
+        <a href="{% url 'company:packageUpdate' package.package_obj.id %}" class="card-link">Edit</a>
+        <a href="#" class="card-link">Delete</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+<div class="col-3">
+  Filters
+</div>
+{% endblock content %}

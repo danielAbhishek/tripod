@@ -1,0 +1,82 @@
+{% extends 'admin_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+  <style >
+    .products-packages-form {
+      border-bottom: 1px solid black;
+    }
+
+    .hidden {
+      display: none
+    }
+  </style>
+
+    <h3></h3>
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
+    <form method="POST" action="">
+      {% csrf_token %}
+      <br>
+      <div class="row">
+        <div class="col">
+          {% if packageForm %}
+          {{ packageForm.package_name | as_crispy_field }}
+          {{ packageForm.description | as_crispy_field }}
+          {{ packageForm.event | as_crispy_field }}
+          {% endif %}
+          <br>
+          {% if formset %}
+            <h4>products</h4>
+            {{ formset.management_form }}
+
+            <div id="products-packages-form-list">
+              {% for form in formset %}
+              {{ form.id }}
+              <div class="products-packages-form">
+                {{ form.product | as_crispy_field }}
+                {{ form.units | as_crispy_field }}
+              </div>
+              {% endfor %}
+            </div>
+
+            <div id="empty-form" class="hidden">
+              {{ formset.empty_form | crispy }}
+            </div>
+            <br>
+            <button id="add-more" class="btn btn-primary" type="button" name="button">Add more</button>
+          {% endif %}
+        </div>
+      </div>
+      <br>
+      <input class="btn btn-primary" type="submit" value="Add package">
+    </form>
+
+  <script type="text/javascript">
+    // selecting elements
+    const addMoreBtn = document.getElementById('add-more')
+    const totalNewForms = document.getElementById('id_form-TOTAL_FORMS')
+
+    // adding event listener
+    addMoreBtn.addEventListener('click', add_new_form)
+    function add_new_form(event) {
+      if (event) {
+        event.preventDefault()
+      }
+      const currentProductsForms = document.getElementsByClassName('products-packages-form')
+      const currentFormCount = currentProductsForms.length
+      const formCopyTarget = document.getElementById('products-packages-form-list')
+      const copyEmptyFormEl = document.getElementById('empty-form').cloneNode(true)
+      copyEmptyFormEl.setAttribute('class', 'products-packages-form')
+      copyEmptyFormEl.setAttribute('id', `form-${currentFormCount}`)
+      const regex = new RegExp('__prefix__', 'g')
+      copyEmptyFormEl.innerHTML = copyEmptyFormEl.innerHTML.replace(regex, currentFormCount)
+      totalNewForms.setAttribute('value', currentFormCount + 1)
+      // now add new empty form element to our html form
+      formCopyTarget.append(copyEmptyFormEl)
+    }
+  </script>
+
+{% endblock content %}

@@ -1,22 +1,19 @@
-<html>
-  <head></head>
-  <body>
+{% extends 'customer_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
     <h3>REGISTER ACCOUNT</h3>
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
     <form method="POST" action="">
       {% csrf_token %}
-      <label for="email">Email:</label><br> 
-      {{ form.email }}
-      <br>
-      <label for="username">User Name:</label><br>
-      {{ form.username }}
-      <br>
-      <label for="password1">Password:</label><br>
-      {{ form.password1 }}
-      <br>
-      <label for="password2">Confirm Password:</label><br>
-      {{ form.password2 }}
-      <br>
-      <input class="btn login_btn" type="submit" value="Register Account">
+      {{ form.email | as_crispy_field}}
+      {{ form.username | as_crispy_field}}
+      {{ form.password1 | as_crispy_field}}
+      {{ form.password2 | as_crispy_field}}
+      <input class="btn btn-primary" type="submit" value="Register Account">
+      Have logins? <a class="link-primary" href="{% url 'core:login' %}">Login here</a>
     </form>
-  </body>
-</html>
+{% endblock %}

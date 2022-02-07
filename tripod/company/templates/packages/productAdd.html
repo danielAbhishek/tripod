@@ -1,0 +1,20 @@
+{% extends 'admin_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <h3>Create New Product</h3>
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
+    <form method="POST" action="">
+      {% csrf_token %}
+      {{ form.product_name | as_crispy_field}}
+      {{ form.unit_price | as_crispy_field}}
+      {{ form.unit_measure_type | as_crispy_field}}
+      {{ form.product_type | as_crispy_field}}
+      {{ form.description | as_crispy_field}}
+      <br>
+      <input class="btn btn-primary" type="submit" value="Create Product">
+    </form>
+{% endblock %}

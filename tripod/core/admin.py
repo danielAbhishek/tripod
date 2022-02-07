@@ -24,7 +24,7 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('email', 'password')
         }),
         ('Permissions', {
-            'fields': ('is_staff', 'is_active')
+            'fields': ('is_staff', 'is_active', 'is_client')
         }),
         ('Advanced options', {
             'classes': ('collapse', ),
@@ -47,7 +47,7 @@ class CustomUserAdmin(UserAdmin):
         'classes': ('wide', ),
         'fields': (
             'email',
-            'password',
+            'password1',
             'password2',
             'is_staff',
             'is_client',
