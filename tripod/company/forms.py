@@ -1,5 +1,6 @@
 from company.models import Event, Product, Package, PackageLinkProduct
 from django import forms
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def add_basic_html_tags(main_component, fields, description=False):
@@ -39,7 +40,7 @@ class EventForm(forms.ModelForm):
     --> while saving
         * instance id will be populated for update operation
         * data will be automatically populated for below columns
-            (created_by, created_at, change_by)
+            (created_by, created_at, changed_by)
     """
     class Meta:
         model = Event
@@ -93,14 +94,12 @@ class ProductForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.operation == 'updating':
             self.obj = Product.objects.get(pk=self.instance.pk)
-        add_basic_html_tags("Event", self.fields, True)
+        add_basic_html_tags("Product", self.fields, True)
 
     def save(self, *args, **kwargs):
         if self.operation == 'creating':
             self.instance.created_by = self.user
-            self.instance.display = True
-            self.instance.is_active = True
-        else:
+        elif self.operation == 'updating':
             self.instance.created_by = self.obj.created_by
             self.instance.created_at = self.obj.created_at
             self.instance.id = self.obj.id
@@ -130,7 +129,7 @@ class PackageForm(forms.ModelForm):
     """
     class Meta:
         model = Package
-        fields = ['package_name', 'description', 'event']
+        fields = ['package_name', 'description', 'event', 'is_active']
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('userObj')
@@ -143,12 +142,10 @@ class PackageForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         if self.operation == 'creating':
             self.instance.created_by = self.user
-            self.instance.is_active = True
         else:
             self.instance.created_by = self.obj.created_by
             self.instance.created_at = self.obj.created_at
             self.instance.id = self.obj.id
-            self.instance.price = self.obj.price
             self.instance.changed_by = self.user
 
         self.instance = update_package_after_adding_products(self.instance)
@@ -191,9 +188,12 @@ class PackageLinkProductAddForm(forms.ModelForm):
         if self.operation == 'creating':
             self.instance.created_by = self.user
         else:
-            self.obj = PackageLinkProduct.objects.get(pk=self.instance.pk)
-            self.instance.created_by = self.obj.created_by
-            self.instance.created_at = self.obj.created_at
+            try:
+                self.obj = PackageLinkProduct.objects.get(pk=self.instance.pk)
+                self.instance.created_by = self.obj.created_by
+                self.instance.created_at = self.obj.created_at
+            except ObjectDoesNotExist:
+                self.instance.created_by = self.user
             self.instance.changed_by = self.user
         obj = super(PackageLinkProductAddForm, self).save(*args, **kwargs)
         self.package = update_package_after_adding_products(self.package)

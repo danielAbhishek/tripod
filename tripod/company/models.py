@@ -17,11 +17,11 @@ class Event(models.Model):
     event_name = models.CharField(max_length=200)
     description = models.TextField()
     created_by = models.ForeignKey(
-        get_user_model(), on_delete=models.CASCADE,
+        get_user_model(), on_delete=models.SET_NULL,
         related_name='eventCreated', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     changed_by = models.ForeignKey(
-        get_user_model(), on_delete=models.CASCADE,
+        get_user_model(), on_delete=models.SET_NULL,
         related_name='eventChanged', null=True, blank=True)
     changed_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
@@ -66,18 +66,18 @@ class Product(models.Model):
     unit_measure_type = models.CharField(max_length=2, choices=MEASURE_TYPES)
     product_type = models.CharField(max_length=2, choices=PRODUCT_TYPES)
     description = models.TextField()
-    display = models.BooleanField(default=True)
+    display = models.BooleanField()
     is_active = models.BooleanField(default=True)
     created_by = models.ForeignKey(
-        get_user_model(), on_delete=models.CASCADE,
+        get_user_model(), on_delete=models.SET_NULL,
         related_name='productCreated', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     changed_by = models.ForeignKey(
-        get_user_model(), on_delete=models.CASCADE,
+        get_user_model(), on_delete=models.SET_NULL,
         related_name='productChanged', null=True, blank=True)
     changed_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
-    objects = ProductManager()
+    # objects = ProductManager()
 
     def __str__(self):
         return self.product_name
@@ -104,17 +104,18 @@ class Package(models.Model):
     """
     package_name = models.CharField(max_length=150)
     description = models.TextField()
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    event = models.ForeignKey(
+        Event, on_delete=models.SET_NULL, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     price = models.FloatField(null=True, blank=True)
     products = models.ManyToManyField(
         Product, through='PackageLinkProduct')
     created_by = models.ForeignKey(
-        get_user_model(), on_delete=models.CASCADE,
+        get_user_model(), on_delete=models.SET_NULL,
         related_name='packageCreated', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     changed_by = models.ForeignKey(
-        get_user_model(), on_delete=models.CASCADE,
+        get_user_model(), on_delete=models.SET_NULL,
         related_name='packageChanged', null=True, blank=True)
     changed_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
@@ -134,11 +135,11 @@ class PackageLinkProduct(models.Model):
     units = models.FloatField()
     price = models.FloatField()
     created_by = models.ForeignKey(
-        get_user_model(), on_delete=models.CASCADE,
+        get_user_model(), on_delete=models.SET_NULL,
         related_name='plpCreated', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     changed_by = models.ForeignKey(
-        get_user_model(), on_delete=models.CASCADE,
+        get_user_model(), on_delete=models.SET_NULL,
         related_name='plpChanged', null=True, blank=True)
     changed_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     objects = PackageProductManager()
