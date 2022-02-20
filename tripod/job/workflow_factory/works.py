@@ -5,8 +5,9 @@ criteria that passed, and they does their job to create db objects.
 """
 from abc import ABC, abstractmethod
 
-from job.forms import WorkForm
-from job.workflow.tasks import ToDoTask, EmailTask
+from job.workflow_factory.tasks import ToDoTask, EmailTask
+
+from job.workflow_factory.work_form import WorkForm
 
 
 class WorkBase(ABC):

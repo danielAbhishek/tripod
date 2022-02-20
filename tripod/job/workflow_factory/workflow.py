@@ -4,8 +4,12 @@ based on the workflow that defined for the job.
 """
 from datetime import timedelta
 
-from job.models import WorkTemplate
-from job.workflow.works import SimpleToDo, EmailToDo
+from settings.models import WorkTemplate
+
+from job.workflow_factory.works import (
+    SimpleToDo,
+    EmailToDo
+)
 
 
 class WorkFlowBase:

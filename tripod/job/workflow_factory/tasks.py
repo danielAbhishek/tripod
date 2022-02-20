@@ -5,7 +5,7 @@ objects in database.
 """
 from abc import ABC, abstractmethod
 
-from job.forms import TaskForm
+from job.workflow_factory.task_form import TaskForm
 
 
 class TaskBase(ABC):
