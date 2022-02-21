@@ -21,4 +21,5 @@ urlpatterns = [
     path('', include('core.urls')),
     path('tripod-admin/company/', include('company.urls')),
     path('tripod-admin/job/', include('job.urls')),
+    path('tripod-admin/settings/', include('settings.urls')),
 ]

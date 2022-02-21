@@ -1,0 +1,23 @@
+{% extends 'admin_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <h3>Create New questionnaire Template</h3>
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
+    <form method="POST" action="">
+      {% csrf_token %}
+      {{ form.template_name | as_crispy_field }}
+      {{ form.subject | as_crispy_field }}
+      {{ form.body | as_crispy_field }}
+      {{ form.question_one | as_crispy_field }}
+      {{ form.question_two | as_crispy_field }}
+      {{ form.question_three | as_crispy_field }}
+      {{ form.question_four | as_crispy_field }}
+      {{ form.question_five | as_crispy_field }}
+      <br>
+      <input class="btn btn-primary" type="submit" value="Create Questionnaire Template">
+    </form>
+{% endblock %}

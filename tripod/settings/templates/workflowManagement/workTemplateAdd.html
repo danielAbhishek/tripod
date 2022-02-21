@@ -1,0 +1,22 @@
+{% extends 'admin_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <h3>Create New Work Template</h3>
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
+    <form method="POST" action="">
+      {% csrf_token %}
+      {{ form.workflow | as_crispy_field }}
+      {{ form.step_number | as_crispy_field }}
+      {{ form.name | as_crispy_field }}
+      {{ form.class_object | as_crispy_field }}
+      {{ form.description | as_crispy_field }}
+      {{ form.day_delta | as_crispy_field }}
+      {{ form.auto_complete | as_crispy_field }}
+      <br>
+      <input class="btn btn-primary" type="submit" value="Create Work Template">
+    </form>
+{% endblock %}

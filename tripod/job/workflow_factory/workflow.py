@@ -55,7 +55,7 @@ class WorkFlowBase:
                 description=obj.description,
                 due_date=self.job_date + timedelta(days=obj.day_delta),
                 work_order=obj.step_number,
-                completed=True if obj.completed else False
+                completed=True if obj.auto_complete else False
             )
             work_instance.create_db_object()
 

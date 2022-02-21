@@ -1,0 +1,25 @@
+{% extends 'admin_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <h3>Email Template - {{ emailTemplate.name }}</h3>
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
+    <form method="POST" action="">
+      {% csrf_token %}
+      <br>
+      <div class="row">
+        <div class="col">
+          {{ form.workflow | as_crispy_field }}
+          {{ form.template_name | as_crispy_field }}
+          {{ form.subject | as_crispy_field }}
+          {{ form.body | as_crispy_field }}
+          {{ form.thank_you | as_crispy_field }}
+        </div>
+      </div>
+      <br>
+      <input class="btn btn-primary" type="submit" value="Update email template">
+    </form>
+{% endblock %}

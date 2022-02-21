@@ -112,8 +112,8 @@ class WorkTemplate(models.Model):
     name = models.CharField(max_length=200)
     workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE)
     description = models.TextField()
+    auto_complete = models.BooleanField()
     day_delta = models.IntegerField()
-    completed = models.BooleanField()
     email_template = models.ForeignKey(
         'EmailTemplate', on_delete=models.SET_NULL, null=True, blank=True
     )

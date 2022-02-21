@@ -1,0 +1,47 @@
+{% extends 'admin_base.html' %}
+
+{% block sidebar %}
+{% include 'sidebars/settings_sidebar.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+
+{% if messages %}
+  <div class="row">
+    {% for message in messages %}
+    <p id="messages">{{message}}</p>
+  </div>
+{% endfor %}
+{% endif %}
+
+<div class="col">
+  <h1>Work Templates</h1>
+  <a href="{% url 'settings:workTemplateAdd' %}">Add new work Template</a>
+  <br>
+  <table class="table table-striped table-sm">
+    <thead>
+      <tr>
+        <th>Workflow</th>
+        <th>Step Number</th>
+        <th>Name</th>
+        <th>Work</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for workTemplate in workTemplates %}
+        <tr>
+          <th>{{ workTemplate.workflow }}</th>
+          <th>{{ workTemplate.step_number }}</th>
+          <th><a href="{% url 'settings:workTemplateUpdatePage' workTemplate.id %}">{{ workTemplate.name }}</a></th>
+          <th>{{ workTemplate.class_object }}</th>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+<div class="col-3">
+  Filters
+</div>
+
+{% endblock content %}

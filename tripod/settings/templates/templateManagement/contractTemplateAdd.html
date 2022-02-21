@@ -1,0 +1,20 @@
+{% extends 'admin_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <h3>Create New contract Template</h3>
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
+    <form method="POST" action="">
+      {% csrf_token %}
+      {{ form.template_name | as_crispy_field }}
+      {{ form.subject | as_crispy_field }}
+      {{ form.body | as_crispy_field }}
+      {{ form.thank_you | as_crispy_field }}
+      {{ form.signature | as_crispy_field }}
+      <br>
+      <input class="btn btn-primary" type="submit" value="Create Contract Template">
+    </form>
+{% endblock %}

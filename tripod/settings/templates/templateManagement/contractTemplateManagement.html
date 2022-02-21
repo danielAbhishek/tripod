@@ -1,0 +1,41 @@
+{% extends 'admin_base.html' %}
+
+{% block sidebar %}
+{% include 'sidebars/settings_sidebar.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+
+{% if messages %}
+  <div class="row">
+    {% for message in messages %}
+    <p id="messages">{{message}}</p>
+  </div>
+{% endfor %}
+{% endif %}
+
+<div class="col">
+  <h1>Contract Templates</h1>
+  <a href="{% url 'settings:contractTemplateAdd' %}">Add new contract Template</a>
+  <br>
+  <table class="table table-striped table-sm">
+    <thead>
+      <tr>
+        <th>Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for contractTemplate in contractTemplates %}
+        <tr>
+          <th><a href="{% url 'settings:contractTemplateUpdatePage' contractTemplate.id %}">{{ contractTemplate.template_name }}</a></th>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+<div class="col-3">
+  Filters
+</div>
+
+{% endblock content %}
