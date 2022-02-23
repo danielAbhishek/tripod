@@ -7,7 +7,9 @@ from settings.models import (
     Workflow, EmailTemplate, ContractTemplate, QuestionnaireTemplate,
     Source
 )
-from job.managers import EmailManager
+# from job.managers import EmailManager
+
+from tripod.tasks_lib.email import EmailClient
 
 
 class Job(models.Model):
@@ -66,24 +68,10 @@ class Work(models.Model):
     Work database object
         which holds the information of the each step that is
     """
-    # task_type
-    EMAIL = 'email-todo'
-    APPOINTMENT = 'app-todo'
-    TODO = 'simple-todo'
-
-    TASK_TYPES = [
-        (EMAIL, 'E-mail'),
-        (APPOINTMENT, 'Appointment'),
-        (TODO, 'To-do')
-    ]
-
     work_name = models.CharField(max_length=200)
     work_order = models.IntegerField()
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
-    description = models.TextField()
-    completed = models.BooleanField(default=False)
-    task_type = models.CharField(max_length=15, choices=TASK_TYPES)
-    due_date = models.DateTimeField(null=True, blank=True)
+    completed = models.BooleanField(default=False, null=True, blank=True)
     created_by = models.ForeignKey(
         get_user_model(), on_delete=models.SET_NULL,
         related_name='workCreated', null=True, blank=True)
@@ -139,10 +127,19 @@ class Task(models.Model):
     changed_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     objects = models.Manager()
-    email = EmailManager()
+    # email = EmailManager()
 
     def __str__(self):
         return self.task_name
+
+    def send_email(self, user):
+        ec = EmailClient(self.email_template, user)
+        ec.send_email()
+
+    def send_contract_and_invoice(self, user, content):
+        ec = EmailClient(self.contract_templete, user)
+        ec.add_content(content)
+        ec.send_email()
 
 
 class JobEmail(models.Model):

@@ -4,12 +4,9 @@ based on the workflow that defined for the job.
 """
 from datetime import timedelta
 
-from settings.models import WorkTemplate
+from settings.models import WorkTemplate, WorkType
 
-from job.workflow_factory.works import (
-    SimpleToDo,
-    EmailToDo
-)
+from job.workflow_factory.works import SimpleWork
 
 
 class WorkFlowBase:
@@ -31,8 +28,10 @@ class WorkFlowBase:
     def __init__(self, user, job):
         self.user = user
         self.job = job
+        self.job_status = True if self.job.status == 'job' else False
         self.workflow = job.workflow
         self.job_date = job.created_at
+        self.work_types = WorkType.objects.all()
         self.data_objs = WorkTemplate.objects.filter(workflow=self.workflow)
 
     def create_work_and_tasks(self):
@@ -41,30 +40,21 @@ class WorkFlowBase:
         and passing the information to the work creation classes, so works and
         tasks will be automatically created
         """
-        for obj in self.data_objs:
-            # creating instance using string value from db
-            work_class = eval(obj.class_object)
+        for work_type in self.work_types:
 
-            # initiating and setting to create db objects of work, task
-            work_instance = work_class(
-                name=obj.name,
+            # creating work database objects
+            work_instance = SimpleWork(
                 user=self.user,
-                job=self.job
-            )
-            work_instance.set_data(
-                description=obj.description,
-                due_date=self.job_date + timedelta(days=obj.day_delta),
-                work_order=obj.step_number,
-                completed=True if obj.auto_complete else False
+                job=self.job,
+                work_type=work_type
             )
             work_instance.create_db_object()
 
-            # to-do handle this part properly
-            if obj.class_object == 'SimpleToDo':
-                work_instance.add_tasks()
-            else:
-                work_instance.add_tasks(obj.email_template)
-
-            # delete the instance
-            del work_instance
-        return self
+            # adding tasks under the work
+            for task_work in self.data_objs.filter(work_type=work_type):
+                if task_work.class_object == 'SimpleToDo':
+                    work_instance.add_simpleTask(task_work)
+                elif task_work.class_object == 'EmailToDo':
+                    work_instance.add_emailTask(task_work, task_work.email_template)
+                elif task_work.class_object == 'ContractToDo':
+                    work_instance.add_contractTask(task_work, task_work.contract_templete)

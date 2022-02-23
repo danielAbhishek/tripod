@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'job',
     'blog',
     'settings',
+    'finance',
 
     # third party apps
     'crispy_forms',

@@ -1,0 +1,39 @@
+{% extends 'admin_base.html' %}
+
+
+{% block content %}
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
+
+    <div class="col">
+      <h1> Job - {{ job.job_name }}
+        <a href="{% url 'job:jobUpdateJob' job.id %}">
+          edit job
+        </a>
+      </h1>
+      <br>
+
+      {% for work in works %}
+      <div class="card" style="width: auto;">
+        <div class="card-body">
+          <h5 class="card-title">{{ work.work_name }}</h5>
+          <p class="card-text">{{ work.description }}</p>
+          {% if work.completed %}
+          <button type="button" class="btn btn-secondary btn-lg" disabled>
+            Completed
+          </button>
+          {% else %}
+          <a href="{% url 'job:processWork' work.id %}" class="btn btn-primary">
+            Complete Work
+          {% endif %}
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+    <div class="col-3">
+      Filters
+    </div>
+{% endblock %}

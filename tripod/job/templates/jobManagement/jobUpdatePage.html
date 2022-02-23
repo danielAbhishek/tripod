@@ -1,0 +1,35 @@
+{% extends 'admin_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <h3>Job - {{ job.job_name }} {{ job.primary_client }}</h3>
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
+    <form method="POST" action="">
+      {% csrf_token %}
+      <br>
+      <div class="row">
+        <div class="col">
+          {{ form.job_name | as_crispy_field }}
+          {{ form.description | as_crispy_field }}
+          {{ form.primary_client | as_crispy_field }}
+          {{ form.event | as_crispy_field }}
+          {{ form.venue | as_crispy_field }}
+          {{ form.venue_notes | as_crispy_field }}
+          {{ form.start_date | as_crispy_field }}
+          {{ form.end_date | as_crispy_field }}
+          {{ form.all_day | as_crispy_field }}
+          {{ form.start_time | as_crispy_field }}
+          {{ form.end_time | as_crispy_field }}
+          {{ form.package | as_crispy_field }}
+          {{ form.note | as_crispy_field }}
+          {{ form.secondary_client | as_crispy_field }}
+          {{ form.source | as_crispy_field }}
+        </div>
+      </div>
+      <br>
+      <input class="btn btn-primary" type="submit" value="Update Job">
+    </form>
+{% endblock %}

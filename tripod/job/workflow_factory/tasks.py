@@ -5,7 +5,7 @@ objects in database.
 """
 from abc import ABC, abstractmethod
 
-from job.workflow_factory.task_form import TaskForm
+from job.workflow_factory.forms import TaskForm
 
 
 class TaskBase(ABC):
@@ -87,4 +87,21 @@ class EmailTask(ToDoTask):
         self.__data = super(EmailTask, self).set_data(description)
         self.__data['task_type'] = 'em'
         self.__data['email_template'] = email_template
+        return self.__data
+
+
+class ContractTask(ToDoTask):
+    """
+    Contract task which is inherited from ToDoTask class, so it has the basic
+    functionality (refer ToDoTask for more information) of the ToDo
+    and sending contract
+    * task_type is overidden as cn (which is Contract Task)
+    * contract template has to be passed additionally
+    """
+
+    def set_data(self, description, contract_templete):
+        """setting the data dictionary with task details"""
+        self.__data = super(ContractTask, self).set_data(description)
+        self.__data['task_type'] = 'cn'
+        self.__data['contract_templete'] = contract_templete
         return self.__data

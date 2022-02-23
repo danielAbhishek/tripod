@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from settings.models import (
     Workflow, EmailTemplate, ContractTemplate, QuestionnaireTemplate, Source,
-    TemplateField, WorkTemplate
+    TemplateField, WorkTemplate, WorkType
 )
 
 
@@ -19,4 +19,5 @@ admin.site.register(ContractTemplate)
 admin.site.register(QuestionnaireTemplate)
 admin.site.register(Source)
 admin.site.register(TemplateField)
+admin.site.register(WorkType)
 admin.site.register(WorkTemplate, WorkTemplateAdmin)

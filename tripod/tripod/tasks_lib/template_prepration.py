@@ -1,7 +1,14 @@
+"""
+TemplateDatabaseObjects is a class that init relavent database objects, such
+like user and company, so the template fields and access the database values
+using the class function.
+"""
+
+
 import re
 
 
-class DatabaseObject:
+class TemplateDatabaseObjects:
     def __init__(self, user, company, template_objects):
         """
         This class represents the initiation/ copy of the database objects
@@ -38,11 +45,11 @@ class DatabaseObject:
         return None
 
 
-class EmailContent:
+class TemplateContent:
     """
     This class represents the creation of the content using the copy
     of the already existing template, by taking template_fields in the content
-    and replacing with appropriate db values (using DatabaseObject)
+    and replacing with appropriate db values (using TemplateDatabaseObjects)
     * template -> template object (email or contract)
     * subject/ thank_you/ signature -> True of False
     * pattern -> regex pattern to find '{text}'
@@ -77,7 +84,7 @@ class EmailContent:
     def prepare_content(self, database_objects):
         """
         Looping thru the template_fields which taken using above function
-        and with created replace_dict from DatabaseObject, replacing
+        and with created replace_dict from TemplateDatabaseObjects, replacing
         content of the body subject, thank you and signature
         """
         database_objects.set_db_template_fields()

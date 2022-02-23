@@ -102,18 +102,31 @@ class TemplateField(models.Model):
         return self.field
 
 
+class WorkType(models.Model):
+    work_type = models.CharField(max_length=20)
+    work_order = models.IntegerField()
+    description = models.TextField()
+
+    def __str__(self):
+        return self.work_type
+
+
 class WorkTemplate(models.Model):
     WORK_CLASSES = [
         ('SimpleToDo', 'Simple To-Do'),
-        ('EmailToDo', 'Email To-Do')
+        ('EmailToDo', 'Email To-Do'),
+        ('ContractToDo', 'Contract To-Do')
     ]
+    work_type = models.ForeignKey(
+        WorkType, on_delete=models.SET_NULL, null=True, blank=True)
     class_object = models.CharField(max_length=30, choices=WORK_CLASSES)
+    job_confirmation = models.BooleanField()
     step_number = models.IntegerField()
     name = models.CharField(max_length=200)
     workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE)
     description = models.TextField()
     auto_complete = models.BooleanField()
-    day_delta = models.IntegerField()
+    day_delta = models.IntegerField(null=True, blank=True)
     email_template = models.ForeignKey(
         'EmailTemplate', on_delete=models.SET_NULL, null=True, blank=True
     )
