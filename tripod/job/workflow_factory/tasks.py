@@ -12,7 +12,7 @@ class TaskBase(ABC):
     """Basic representation of creating task"""
 
     @abstractmethod
-    def set_data(self, description, template):
+    def set_data(self, description, obj):
         """creating the data dictionary to pass into form"""
         pass
 
@@ -36,6 +36,7 @@ class ToDoTask(TaskBase):
     * user -> user object for update created_by
     * work -> work db class that responsible for the tasks
     """
+
     def __init__(self, name, user, work):
         self.__data = {}
         self.task = None
@@ -43,7 +44,7 @@ class ToDoTask(TaskBase):
         self.user = user
         self.work = work
 
-    def set_data(self, description, template=None):
+    def set_data(self, description, obj):
         """
         setting the data dictionary with task details which was defined at the
         object init and also adding description too, and completed is set to
@@ -51,9 +52,11 @@ class ToDoTask(TaskBase):
         """
         self.__data = {
             'task_name': self.name,
+            'task_order': obj.step_number,
             'work': self.work,
             'description': description,
-            'completed': False,
+            'completed': obj.auto_complete,
+            'check_invoice': obj.check_invoice,
             'task_type': 'td',
         }
         return self.__data
@@ -63,9 +66,9 @@ class ToDoTask(TaskBase):
         creating task db objects with data
         that passed using set_data function
         """
-        form = TaskForm(
-            data=self.__data, userObj=self.user, operation='creating'
-        )
+        form = TaskForm(data=self.__data,
+                        userObj=self.user,
+                        operation='creating')
         if form.is_valid():
             self.task = form.save()
             return self.task
@@ -82,11 +85,11 @@ class EmailTask(ToDoTask):
     * email template has to be passed additionally
     """
 
-    def set_data(self, description, email_template):
+    def set_data(self, description, obj):
         """setting the data dictionary with task details"""
-        self.__data = super(EmailTask, self).set_data(description)
+        self.__data = super(EmailTask, self).set_data(description, obj)
         self.__data['task_type'] = 'em'
-        self.__data['email_template'] = email_template
+        self.__data['email_template'] = obj.email_template
         return self.__data
 
 
@@ -99,9 +102,55 @@ class ContractTask(ToDoTask):
     * contract template has to be passed additionally
     """
 
-    def set_data(self, description, contract_templete):
+    def set_data(self, description, obj):
         """setting the data dictionary with task details"""
-        self.__data = super(ContractTask, self).set_data(description)
+        self.__data = super(ContractTask, self).set_data(description, obj)
         self.__data['task_type'] = 'cn'
-        self.__data['contract_templete'] = contract_templete
+        self.__data['contract_template'] = obj.contract_template
+        self.__data['user_task'] = True
+        self.__data['user_completed'] = 'no'
         return self.__data
+
+
+class QuestTask(ToDoTask):
+    """
+    Quest task which is inherited from ToDoTask class, so it has the basic
+    functionality (refer ToDoTask for more information) of the ToDo
+    and sending Questionnaire
+    * task_type is overidden as cn (which is Quest Task)
+    * Questionnaire template has to be passed additionally
+    """
+
+    def set_data(self, description, obj):
+        """setting the data dictionary with task details"""
+        self.__data = super(QuestTask, self).set_data(description, obj)
+        self.__data['task_type'] = 'qn'
+        self.__data['quest_template'] = obj.quest_template
+        self.__data['user_task'] = True
+        self.__data['user_completed'] = 'no'
+        return self.__data
+
+
+class AppointmentTask(ToDoTask):
+    """
+    Appointment task which is inherited from ToDoTask class, it has the basic
+    functionality (refer ToDoTask for more information) of the ToDo
+    and sending contract
+    * task_type is overidden as cn (which is appointment Task)
+    * create_db_object method overidden and called the original function
+        and following to that appointment registeration is done
+    """
+
+    def set_data(self, description, obj):
+        """setting the data dictionary with task details"""
+        self.__data = super(AppointmentTask, self).set_data(description, obj)
+        self.__data['task_type'] = 'ap'
+        self.__data['email_template'] = obj.email_template
+        self.__data['user_task'] = True
+        self.__data['user_completed'] = 'no'
+        return self.__data
+
+    def create_db_object(self):
+        super(AppointmentTask, self).create_db_object()
+        task = self.task
+        task.register_appointment(method='creating')

@@ -11,13 +11,17 @@ class Workflow(models.Model):
     workflow_name = models.CharField(max_length=200)
     status = models.BooleanField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    created_by = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL,
-        related_name='workFlowCreated', null=True, blank=True)
+    created_by = models.ForeignKey(get_user_model(),
+                                   on_delete=models.SET_NULL,
+                                   related_name='workFlowCreated',
+                                   null=True,
+                                   blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    changed_by = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL,
-        related_name='workFlowChanged', null=True, blank=True)
+    changed_by = models.ForeignKey(get_user_model(),
+                                   on_delete=models.SET_NULL,
+                                   related_name='workFlowChanged',
+                                   null=True,
+                                   blank=True)
     changed_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
@@ -25,19 +29,25 @@ class Workflow(models.Model):
 
 
 class EmailTemplate(models.Model):
-    workflow = models.ForeignKey(
-        Workflow, on_delete=models.SET_NULL, null=True, blank=True)
+    workflow = models.ForeignKey(Workflow,
+                                 on_delete=models.SET_NULL,
+                                 null=True,
+                                 blank=True)
     template_name = models.CharField(max_length=200)
     subject = models.CharField(max_length=255)
     body = models.TextField()
     thank_you = models.TextField()
-    created_by = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL,
-        related_name='emailCreated', null=True, blank=True)
+    created_by = models.ForeignKey(get_user_model(),
+                                   on_delete=models.SET_NULL,
+                                   related_name='emailCreated',
+                                   null=True,
+                                   blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    changed_by = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL,
-        related_name='emailChanged', null=True, blank=True)
+    changed_by = models.ForeignKey(get_user_model(),
+                                   on_delete=models.SET_NULL,
+                                   related_name='emailChanged',
+                                   null=True,
+                                   blank=True)
     changed_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
@@ -50,13 +60,17 @@ class ContractTemplate(models.Model):
     body = models.TextField()
     thank_you = models.TextField()
     signature = models.TextField(null=True, blank=True)
-    created_by = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL,
-        related_name='contractCreated', null=True, blank=True)
+    created_by = models.ForeignKey(get_user_model(),
+                                   on_delete=models.SET_NULL,
+                                   related_name='contractCreated',
+                                   null=True,
+                                   blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    changed_by = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL,
-        related_name='contractChanged', null=True, blank=True)
+    changed_by = models.ForeignKey(get_user_model(),
+                                   on_delete=models.SET_NULL,
+                                   related_name='contractChanged',
+                                   null=True,
+                                   blank=True)
     changed_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
@@ -67,18 +81,24 @@ class QuestionnaireTemplate(models.Model):
     template_name = models.CharField(max_length=200)
     subject = models.CharField(max_length=200)
     body = models.TextField()
+    thank_you = models.TextField(null=True, blank=True)
+    signature = models.TextField(null=True, blank=True)
     question_one = models.TextField()
     question_two = models.TextField()
     question_three = models.TextField()
     question_four = models.TextField()
     question_five = models.TextField()
-    created_by = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL,
-        related_name='questCreated', null=True, blank=True)
+    created_by = models.ForeignKey(get_user_model(),
+                                   on_delete=models.SET_NULL,
+                                   related_name='questCreated',
+                                   null=True,
+                                   blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    changed_by = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL,
-        related_name='questChanged', null=True, blank=True)
+    changed_by = models.ForeignKey(get_user_model(),
+                                   on_delete=models.SET_NULL,
+                                   related_name='questChanged',
+                                   null=True,
+                                   blank=True)
     changed_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
@@ -113,12 +133,16 @@ class WorkType(models.Model):
 
 class WorkTemplate(models.Model):
     WORK_CLASSES = [
-        ('SimpleToDo', 'Simple To-Do'),
-        ('EmailToDo', 'Email To-Do'),
-        ('ContractToDo', 'Contract To-Do')
+        ('ToDoTask', 'Simple To-Do'),
+        ('EmailTask', 'Email To-Do'),
+        ('ContractTask', 'Contract To-Do'),
+        ('QuestTask', 'Question To-Do'),
+        ('AppointmentTask', 'Appointment To-Do'),
     ]
-    work_type = models.ForeignKey(
-        WorkType, on_delete=models.SET_NULL, null=True, blank=True)
+    work_type = models.ForeignKey(WorkType,
+                                  on_delete=models.SET_NULL,
+                                  null=True,
+                                  blank=True)
     class_object = models.CharField(max_length=30, choices=WORK_CLASSES)
     job_confirmation = models.BooleanField()
     step_number = models.IntegerField()
@@ -127,16 +151,22 @@ class WorkTemplate(models.Model):
     description = models.TextField()
     auto_complete = models.BooleanField()
     day_delta = models.IntegerField(null=True, blank=True)
-    email_template = models.ForeignKey(
-        'EmailTemplate', on_delete=models.SET_NULL, null=True, blank=True
-    )
-    contract_templete = models.ForeignKey(
-        'ContractTemplate', on_delete=models.SET_NULL, null=True, blank=True
-    )
-    quest_template = models.ForeignKey(
-        'QuestionnaireTemplate', on_delete=models.SET_NULL,
-        null=True, blank=True
-    )
+    check_invoice = models.BooleanField(null=True, blank=True)
+    email_template = models.ForeignKey('EmailTemplate',
+                                       on_delete=models.SET_NULL,
+                                       null=True,
+                                       blank=True)
+    contract_template = models.ForeignKey('ContractTemplate',
+                                          on_delete=models.SET_NULL,
+                                          null=True,
+                                          blank=True)
+    quest_template = models.ForeignKey('QuestionnaireTemplate',
+                                       on_delete=models.SET_NULL,
+                                       null=True,
+                                       blank=True)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ('step_number', )

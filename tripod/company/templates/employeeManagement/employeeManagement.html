@@ -15,9 +15,12 @@
 {% endif %}
 
 <div class="col">
-  <h1>Employee</h1>
-  <a href="{% url 'company:employeeAdd' %}">Add new employee</a>
+  <h1 class="display-5">Employee Management</h1>
   <br>
+  <a class="btn btn-outline-primary" href="{% url 'company:employeeAdd' %}">Add new employee</a>
+  <br>
+  <br>
+  <h4>List of Employees</h4>
   <table class="table table-striped table-sm">
     <thead>
       <tr>

@@ -1,0 +1,16 @@
+<ul>
+  <li>
+      <h6>
+        {{ task.task_name }}
+        {% if not task.completed %}
+          <a href="{% url 'job:processTask' task.id %}" class="btn btn-outline-secondary btn-sm" role="button">
+            <i class="bi bi-check-square-fill"></i> Complete Task
+          </a>
+        {% else %}
+          <span class="badge bg-success">Task completed</span>
+        {% endif %}
+      </h6>
+
+      <small>{{ task.description }}</small>
+  </li>
+</ul>

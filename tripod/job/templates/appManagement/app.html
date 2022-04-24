@@ -1,0 +1,40 @@
+{% extends 'admin_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <h2>Job - {{ job.job_name }}</h2>
+
+    {% comment %} Notifying when start date and start time is not available in the Job {% endcomment %}
+    {% if not job.start_date and not job.start_time %}
+      <div class="alert alert-warning" role="alert">
+        Job has no start date and start time 
+        <a href="{% url 'job:jobUpdateJob' job.id %}">
+          Update job
+        </a>
+      </div>
+    {% else %}
+      <p>Job start date {{ job.start_date }} and time {{ job.start_time }}</p> 
+    {% endif %}
+
+    {% comment %} Still user can continue to add appointment task, because there could have been verbal communication {% endcomment %}
+    <h3>Task - {{ task.task_name }}</h3>
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
+    <form method="POST" action="">
+      {% csrf_token %}
+      <br>
+      <div class="row">
+        <div class="col">
+          {{ form.start_date | as_crispy_field }}
+          {{ form.start_time | as_crispy_field }}
+          {{ form.end_date | as_crispy_field }}
+          {{ form.end_time | as_crispy_field }}
+          {{ form.description | as_crispy_field }}
+        </div>
+      </div>
+      <br>
+      <input class="btn btn-primary" type="submit" value="Save Appointment">
+    </form>
+{% endblock %}

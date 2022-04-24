@@ -1,0 +1,55 @@
+{% extends 'admin_base.html' %}
+
+{% block sidebar %}
+{% include 'sidebars/company_sidebar.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+{% if messages %}
+  <div class="row">
+    {% for message in messages %}
+    <p id="messages">{{message}}</p>
+  </div>
+{% endfor %}
+{% endif %}
+
+<div class="col">
+  <h1>Invoices</h1>
+  <table class="table table-striped table-sm">
+    <thead>
+      <tr>
+        <th>Job</th>
+        <th>Issue Date</th>
+        <th>Net Price</th>
+        <th>Paid amount</th>
+        <th>To be Paid</th>
+        <th>Last Paid Date</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for invoice in invoices %}
+        <tr>
+          {% if invoice.job %}
+            <th>
+              <a href="{% url 'company:invoiceDetail' invoice.id %}">{{ invoice.job }}</a>
+            </th>
+          {% else %}
+            <th>Job is deleted</th>
+          {% endif %}
+          <th>{{ invoice.issue_date|date }}</th>
+          <th>{{ invoice.total_price }}</th>
+          <th>{{ invoice.paid }}</th>
+          <th>{{ invoice.to_be_paid }}</th>
+          <th>{{ invoice.last_paid_date|date }}</th>
+          <th><a href="{% url 'job:jobPage' invoice.job.id %}">Go to Job</a></th>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+<div class="col-3">
+  Filters
+</div>
+{% endblock content %}

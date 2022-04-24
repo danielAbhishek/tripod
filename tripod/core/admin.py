@@ -1,13 +1,13 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from core.forms import CustomUserCreationForm, CustomUserChangeForm
+from core.forms import CustomUserCreationForm, CustomUserChangeFormAdminView
 from core.models import CustomUser, Company
 
 
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
-    form = CustomUserChangeForm
+    form = CustomUserChangeFormAdminView
     model = CustomUser
     list_display = (
         'email',
@@ -28,19 +28,10 @@ class CustomUserAdmin(UserAdmin):
         }),
         ('Advanced options', {
             'classes': ('collapse', ),
-            'fields': (
-                'first_name',
-                'last_name',
-                'username',
-                'gender',
-                'contact_number',
-                'contact_number_2',
-                'address',
-                'address_2',
-                'city',
-                'province',
-                'country',
-            )
+            'fields':
+            ('first_name', 'last_name', 'username', 'gender', 'contact_number',
+             'contact_number_2', 'address', 'address_2', 'city', 'province',
+             'country', 'force_password_change', 'password_change_code')
         }),
     )
     add_fieldsets = ((None, {

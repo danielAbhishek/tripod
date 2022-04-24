@@ -1,14 +1,18 @@
-{% extends 'admin_base.html' %}
+{% extends 'admin_base_without_nav.html' %}
 {% load crispy_forms_tags %}
 
 
 {% block content %}
-    <h3>Create New Employee</h3>
+    <h3 class="display-6">Create New Employee</h3>
     {% for message in messages %}
 		<p id="messages">{{message}}</p>
 		{% endfor %}
     <form method="POST" action="">
       {% csrf_token %}
+      <small>If you do not know the email of the client, please add "test@email.com" later it
+        can be changed, but make sure change before client tries to login</small>
+      <br>
+      <br>
       {{ form.email | as_crispy_field}}
       {{ form.username | as_crispy_field}}
       <br>

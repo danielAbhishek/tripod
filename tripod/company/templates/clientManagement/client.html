@@ -1,9 +1,9 @@
-{% extends 'admin_base.html' %}
+{% extends 'admin_base_without_nav.html' %}
 {% load crispy_forms_tags %}
 
 
 {% block content %}
-    <h3>Employee - {{ client.first_name }} {{ client.last_name }}</h3>
+    <h3 class="display-6">Update Employee - {{ client.first_name }} {{ client.last_name }}</h3>
     {% for message in messages %}
 		<p id="messages">{{message}}</p>
 		{% endfor %}
@@ -11,17 +11,20 @@
       {% csrf_token %}
       <br>
       <div class="row">
-        <h5>Personal Information</h5>
         <div class="col">
+        <h5>Personal Information</h5>
           {{ form.email | as_crispy_field}}
           {{ form.username | as_crispy_field}}
           {{ form.first_name | as_crispy_field}}
           {{ form.last_name | as_crispy_field}}
           {{ form.gender | as_crispy_field}}
-          {{ form.contact_number | as_crispy_field}}
-          {{ form.contact_number_2 | as_crispy_field}}
+        <br>
+          {{ form.is_active | as_crispy_field}}
         </div>
         <div class="col">
+        <h5>Contact Information</h5>          
+          {{ form.contact_number | as_crispy_field}}
+          {{ form.contact_number_2 | as_crispy_field}}
           {{ form.address | as_crispy_field}}
           {{ form.address_2 | as_crispy_field}}
           {{ form.city | as_crispy_field}}

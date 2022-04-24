@@ -37,6 +37,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     city = models.CharField(max_length=200, blank=True, null=True)
     province = models.CharField(max_length=200, blank=True, null=True)
     country = models.CharField(max_length=200, blank=True, null=True)
+    force_password_change = models.BooleanField(default=False,
+                                                blank=True,
+                                                null=True)
+    password_change_code = models.CharField(max_length=20,
+                                            null=True,
+                                            blank=True)
     # created_by = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     # created_at = models.DateTimeField(auto_now_add=True)
     # changed_by = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
@@ -54,6 +60,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class Company(models.Model):
     name = models.CharField(max_length=200)
     active = models.BooleanField()
+    address1 = models.CharField(max_length=200, null=True, blank=True)
+    address2 = models.CharField(max_length=200, null=True, blank=True)
+    city = models.CharField(max_length=150, null=True, blank=True)
+    contact_number = models.CharField(max_length=10, null=True, blank=True)
+    contact_email = models.EmailField(null=True, blank=True)
 
     def __str__(self):
         return self.name

@@ -1,0 +1,40 @@
+{% extends 'admin_base_without_nav.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
+{% else %}
+<div class="col">
+  <div class="card" style="width: auto; margin: 40px;">
+    <div class="card-body">
+      {% for quest in questionnaires %}
+      <h5 class="card-title">{{ quest.quest_temp }}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">{{ job }}</h6>
+      <br>
+      <ol>
+        <li><p class="card-text">{{ quest.quest_temp.question_one }}</p></li>
+        <small class="card-text">{{ quest.answer_one }}</small>
+        <br>
+        <li><p class="card-text">{{ quest.quest_temp.question_two }}</p></li>
+        <small class="card-text">{{ quest.answer_two }}</small>
+        <br>
+        <li><p class="card-text">{{ quest.quest_temp.question_three }}</p></li>
+        <small class="card-text">{{ quest.answer_three }}</small>
+        <br>
+        <li><p class="card-text">{{ quest.quest_temp.question_four }}</p></li>
+        <small class="card-text">{{ quest.answer_four }}</small>
+        <br>
+        <li><p class="card-text">{{ quest.quest_temp.question_five }}</p></li>
+        <small class="card-text">{{ quest.answer_five }}</small>
+      </ol>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

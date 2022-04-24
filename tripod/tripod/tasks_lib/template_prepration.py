@@ -9,7 +9,7 @@ import re
 
 
 class TemplateDatabaseObjects:
-    def __init__(self, user, company, template_objects):
+    def __init__(self, company, task, template_objects):
         """
         This class represents the initiation/ copy of the database objects
         that needed for them Template class to preare the content
@@ -19,8 +19,11 @@ class TemplateDatabaseObjects:
         * db_template_fields -> [field in TemplateField]
         * replace_dict -> {'field': 'object_field'} from TemplateField
         """
-        self.user = user
         self.company = company
+        self.task = task
+        self.appointment = task.appointment if task.appointment else None
+        self.job = self.task.get_job()
+        self.user = self.job.primary_client
         self.db_template_fields = []
         self.replace_dict = {}
         self.template_objects = template_objects
@@ -31,7 +34,9 @@ class TemplateDatabaseObjects:
         TemplateField and set it to the local variable
         """
         values = self.template_objects.values()
+        # print(values)
         result = [value['field'] for value in values]
+        # print(result)
         self.db_template_fields = result
         return None
 
@@ -55,29 +60,23 @@ class TemplateContent:
     * pattern -> regex pattern to find '{text}'
     * template_fields -> collection of template field in the content
     """
-    def __init__(self, template, subject, thank_you, signature):
+    def __init__(self, template):
         self._pattern = r"{([A-Za-z]+)}"
         self.template = template
         self.template_fields = []
-        self.subject = subject
-        self.thank_you = thank_you
-        self.signature = signature
 
     def get_template_fields(self):
+        print(self.template)
         """
         Taking tamplate fields from template body and setting
         the tempate_fields list
         """
         # adding template fields from body
-        self.template_fields = re.findall(
-            self._pattern, self.template.body)
-        if self.subject:
-            subject = re.findall(self._pattern, self.template.subject)
-            self.template_fields = self.template_fields + subject
-        if self.thank_you:
-            pass
-        if self.signature:
-            pass
+        self.template_fields = re.findall(self._pattern, self.template.body)
+
+        # adding template fields from subject
+        subject = re.findall(self._pattern, self.template.subject)
+        self.template_fields = self.template_fields + subject
 
         self.template_fields = list(set(self.template_fields))
 
@@ -96,19 +95,22 @@ class TemplateContent:
                 raise Exception(f'Passes field ({field}) not valid')
             database_objects.set_db_data_for_field(field)
 
+        print(database_objects.replace_dict)
         self.template = self.replace_data(database_objects.replace_dict)
         return self.template
 
     def replace_data(self, replace_dict):
         """passing replace_dict replace template fields with db values"""
-        self.template.body = self.template.body.format(
-            **replace_dict)
-        if self.subject:
+        try:
+            self.template.body = self.template.body.format(
+                **replace_dict)
             self.template.subject = self.template.subject.format(
                 **replace_dict
             )
-        if self.thank_you:
-            pass
-        if self.signature:
-            pass
+            # if self.thank_you:
+            #     pass
+            # if self.signature:
+            #     pass
+        except KeyError:
+            raise Excpetion('Replace Dictionary missing keys')
         return self.template

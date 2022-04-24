@@ -1,0 +1,146 @@
+{% extends 'customer_base.html' %}
+
+{% block sidebar %}
+{% include 'sidebars/customer_sidebar.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+
+{% if messages %}
+  <div class="row">
+    {% for message in messages %}
+    <p id="messages">{{message}}</p>
+  </div>
+{% endfor %}
+{% endif %}
+
+
+
+<div class="col">
+  {% comment %} Header {% endcomment %}
+  <h5 class="display-5">Invoice 
+  </h5>
+    <div class="row">
+      <div class="col-sm-6">
+        <p><strong>Invoice number: </strong>{{ invoice.get_issue_number }}</p>
+        <p><strong>Invoice date: </strong>{{ invoice.issue_date }}</p>
+      </div>
+      <div class="col-sm-6">
+        <p><strong>Due date: </strong>{{ invoice.full_pay_due_date }}</p>
+      </div>
+    <div>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-6">
+                <p>Company</p>
+              </div>
+              <div class="col-sm-6">
+                <p><strong>{{ company.name }}</strong></p>
+              </div>
+            </div>
+            <hr>
+            <h6>Contact Details</h6>
+            <ul class="list-unstyled">
+              <small>
+              <li>{{ company.address1 | default:"-" }}, {{ company.address2 | default:"" }}</li>
+              <li>{{ company.city | default:"-" }}</li>
+              <li>{{ company.contact_number | default:"-"  }}</li>
+              <li>{{ company.contact_email | default:"-"  }}</li>
+              </small>
+            </ul>
+          </div>
+        </div>
+      </div>
+     <div class="col-sm-6">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-6">
+                <p>Client</p>
+              </div>
+              <div class="col-sm-6">
+                <p><strong>{{ invoice.job.primary_client.username }}</strong></p>
+              </div>
+            </div>
+            <hr>
+            <h6>Contact Details</h6>
+            <ul class="list-unstyled">
+              <small>
+              <li>{{ invoice.job.primary_client.address  | default:"address1" }}, {{ cinvoice.job.primary_client.address2 | default:"" }}</li>
+              <li>{{ invoice.job.primary_client.city | default:"city" }}</li>
+              <li>{{ invoice.job.primary_client.contact_number | default:"contact number"  }}</li>
+              <li>{{ invoice.job.primary_client.email | default:"contact email"  }}</li>
+              </small>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  <br>
+    
+    <br>
+    <br>
+    <h5 class="display-6">Billing</h5>
+    <hr>
+    {% if invoice.job.package %}
+      <h6>Select package : {{ invoice.job.package }}</h6>
+      <table class="table table-stripped table-sm">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>QTY</th>
+            <th>Unit Price</th>
+            <th>Sub Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in pkgLink %}
+          <tr>
+            <th>{{ item.product }}</th>
+            <th>{{ item.units }}</th>
+            <th>{{ item.product.unit_price }}</th>
+            <th>{{ item.price }}</th>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table> 
+    {% else %}
+    <h6>Please select package</h6>
+    {% endif %}
+    <br>
+
+    <div class="row">
+      <div class="col-sm-6">
+        <p><strong>Notes: </strong></p>
+        <small>{{ invoice.notes | default:"" }}</small>
+      </div>
+      <div class="col-sm-6">
+        <table class="table table-stripped table-sm">
+          <thead>
+            <tr>
+              <th>Invoice Summary</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Subtotal</th>
+              <th>{{ invoice.price }}</th>
+            </tr>
+            <tr>
+              <th>Discount</th>
+              <th>{{ invoice.discount }}</th>
+            </tr>
+            <tr>
+              <th>Total</th>
+              <th>{{ invoice.total_price }}</th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <div>
+
+{% endblock content %}

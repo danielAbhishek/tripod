@@ -1,0 +1,333 @@
+{% extends 'customer_base.html' %}
+
+{% block sidebar %}
+{% include 'sidebars/customer_sidebar.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+
+{% if messages %}
+  <div class="row">
+    {% for message in messages %}
+    <p id="messages">{{message}}</p>
+  </div>
+{% endfor %}
+{% endif %}
+
+<div class="col">
+  <div class="row" style="width: auto; margin: 10px;">
+    <h1>{{ job }}
+      <span class="badge bg-secondary">{{ job_completion | floatformat }}%</span>
+    </h1>
+  </div>
+
+  <div class="row" style="margin: 10px;">
+    <div class="col">
+      <div class="card" style="width: auto; ">
+        <div class="card-body">
+          <h5 class="card-title">{{ job }}
+
+            {% if job.get_job_completion_in_numbers < 3 %}
+            <a class="btn btn-primary btn-sm" href="{% url 'core:jobUpdate' job.id %}" class="card-link">Update Job</a>
+            {% endif %}
+          </h5>
+
+          {% comment %} First Row  {% endcomment %}
+          <div class="row" style="margin: 10px;">
+          {% comment %} Venue card{% endcomment %}
+            <div class="col-sm-6">
+             <div class="card h-100 box-shadow">
+                <div class="card-header">
+                  <h6 class="my-0 font-weight-normal">Venue</h6>
+                </div>
+                <div class="card-body">
+                <ul class="list-unstyled">
+                  {% if job.venue %}
+                  <li>Venue - {{ job.venue }}</li>
+                  <li>Venue notes - {{ job.venue_notes }}</li>
+                  {% else %}
+                  <span class="badge bg-warning text-dark">Please update venue</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% comment %} Date and Time card{% endcomment %}
+            <div class="col-sm-6">
+             <div class="card h-100 box-shadow">
+                <div class="card-header">
+                  <h6 class="my-0 font-weight-normal">Date and Time</h6>
+                </div>
+                <div class="card-body">
+                <ul class="list-unstyled">
+                {% if job.start_date %}
+                  <li>Start Date - {{ job.start_date }}
+                    {% if job.all_day %}<small>Full day event</small>
+                    {% elif job.start_time %}
+                    <br>
+                    <small>
+                      Time - From {{ job.start_time }} To {{ job.end_time}}
+                    </small>
+                    {% else %}
+                    <br><p class="card-subtitle mb-2 text-muted">(Event time is not added)</p>
+                    {% endif %}
+                  </li>
+                {% else %}
+                  <span class="badge bg-warning text-dark">Please update date and time</span>
+                  <br>
+                {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {% comment %} Second Row  {% endcomment %}
+          <div class="row" style="width: auto; margin: 10px;">
+          {% comment %} Appointment card{% endcomment %}
+            <div class="col-sm-6">
+             <div class="card h-100 box-shadow">
+                <div class="card-header">
+                  <h6 class="my-0 font-weight-normal">Appointments</h6>
+                </div>
+                  {% if app_tasks %}
+                  <div class="card-body">
+                    {% for task in app_tasks %}
+                      <ul class="list-unstyled">
+                        {% if task.user_completed == 'su' %}
+                          <li>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                              <a href="{% url 'core:completeTask' task.id %}" class="btn btn-outline-secondary btn-sm" role="button">
+                                <i class="bi bi-check-square-fill"></i>Accept Appointment
+                              </a>
+                            </h6>
+                          </li>
+                          <li>Date - {{ task.appointment.start_date }}</li>
+                          <li>Time {{ task.appointment.start_time }} - {{ task.appointment.end_time }}</li> 
+                        {% elif task.user_completed == 'uc' %}
+                        <h6 class="card-subtitle mb-2 text-muted">Accepted <small>(If you have any concerns please contact us)</small></h6>
+                          <p>Appointment Details</p>
+                          <hr>
+                          <ul class="list-unstyled">
+                            <li>Date - {{ task.appointment.start_date }}</li>
+                            <li>Time {{ task.appointment.start_time }} - {{ task.appointment.end_time }}</li> 
+                          <ul>
+                        {% elif  task.user_completed == 'no' %} 
+                          <h6 class="card-subtitle mb-2 text-muted">Appointment is not available or scheduled yet</h6>
+                        {% endif %} 
+                      </ul>
+                    {% endfor %}
+                  </div>
+                  {% else %}
+                  <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">No appointments task for this job</h6>
+                  </div>
+                  {% endif %}
+              </div>
+            </div>
+          {% comment %} Packages card{% endcomment %}
+            <div class="col-sm-6">
+             <div class="card h-100 box-shadow">
+                <div class="card-header">
+                  <h6 class="my-0 font-weight-normal">Package and Services</h6>
+                </div>
+                  {% if job.get_job_completion_in_numbers > 1 %}
+                  <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Selected Package {{ job.package }}
+                      <small>(Now package can't be changed, if you have any questions please contact us)</small></h6>
+                  </div>
+                  {% else %}
+                  <div class="card-body">
+                    {% if not job.package %}
+                      <h6 class="card-subtitle mb-2 text-muted">No packages selected yet</h6>
+                      <a class="btn btn-primary btn-sm" href="{% url 'core:jobUpdatePackage' job.id %}">Select Package</a>
+                    {% else %}
+                    <h6 class="card-subtitle mb-2 text-muted">selected : {{ job.package }}</h6>
+                      <a class="btn btn-primary btn-sm" href="{% url 'core:jobUpdatePackage' job.id %}">Change Package</a>
+                    {% endif %}
+                  </div>
+                  {% endif %}
+              </div>
+            </div>
+          </div>
+
+          {% comment %} Third Row  {% endcomment %}
+          <div class="row" style="width: auto; margin: 10px;">
+          {% comment %} Contract and card{% endcomment %}
+            <div class="col-sm-6">
+             <div class="card h-100 box-shadow">
+                <div class="card-header">
+                  <h6 class="my-0 font-weight-normal">Contract and Invoice</h6>
+                </div>
+                  {% if contract_tasks and invoice %}
+                  <div class="card-body">
+                    {% for task in contract_tasks %}
+
+                        {% if task.user_completed == 'su' %}
+                        {% comment %} Contract {% endcomment %}
+                        <h6 class="card-subtitle mb-2 text-muted">Contract
+                        <a href="{% url 'core:jobContract' task.id %}" class="btn btn-outline-secondary btn-sm" role="button">
+                          <i class="bi bi-check-square-fill"></i> Check Contract
+                        </a>
+                        <a href="{% url 'core:completeTask' task.id %}" class="btn btn-outline-secondary btn-sm" role="button">
+                          <i class="bi bi-check-square-fill"></i> Accept Contract and Invoice
+                        </a>
+                        {% comment %} Invoice {% endcomment %}
+                        <h6 class="card-subtitle mb-2 text-muted">Invoice
+                          <a href="{% url 'core:jobInvoice' invoice.id %}" class="btn btn-outline-secondary btn-sm" role="button">
+                            <i class="bi bi-check-square-fill"></i> Check Invoice
+                          </a>
+                        </h6>
+                        {% elif task.user_completed == 'uc' %}
+                          <h6 class="card-subtitle mb-2 text-muted">Accepted</h6>
+                            <a href="{% url 'core:jobContract' task.id %}" class="btn btn-outline-secondary btn-sm" role="button">
+                            <i class="bi bi-check-square-fill"></i> Check Contract
+                            </a>
+                            <a href="{% url 'core:jobInvoice' invoice.id %}" class="btn btn-outline-secondary btn-sm" role="button">
+                            <i class="bi bi-check-square-fill"></i> Check Invoice
+                            </a>
+                            <br>
+                          <small>If you have any concerns please contact us</small>
+                        {% elif  task.user_completed == 'no' %} 
+                          <h6 class="card-subtitle mb-2 text-muted">Contract and Invoice not available yet</h6>
+                        {% endif %}
+                      </h6>
+                    {% endfor %}
+
+                  </div>
+                  {% else %}
+                    <div class="card-body">
+                      <h6 class="card-subtitle mb-2 text-muted">Contract and Invoice not available</h6>
+                    </div>
+                  {% endif %}
+              </div>
+            </div>
+          {% comment %} Questionnaire{% endcomment %}
+            <div class="col-sm-6">
+             <div class="card h-100 box-shadow">
+                <div class="card-header">
+                  <h6 class="my-0 font-weight-normal">Questionnaire</h6>
+                </div>
+                  {% if quest_tasks %}
+                  <div class="card-body">
+                    {% for task in quest_tasks %}
+                      {% if task.user_completed == 'su'%}
+                        <h6 class="card-subtitle mb-2 text-muted">
+                        <a href="{% url 'core:updateQuestForm' task.id %}" class="btn btn-outline-secondary btn-sm" role="button">
+                        <i class="bi bi-check-square-fill"></i> Update Questionnaire
+                        </a></h6>
+                      {% elif task.user_completed == 'uc' %}
+                        <h6 class="card-subtitle mb-2 text-muted">Questionnaire received</h6>
+                        <small>If you have any concerns please contact us</small>
+                      {% elif  task.user_completed == 'no' %} 
+                        <h6 class="card-subtitle mb-2 text-muted">Questionnaire is not available yet</h6>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                  {% else %}
+                  <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Questionnaire is not available yet</h6>
+                  </div>
+                  {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% comment %} Current Status {% endcomment %}
+<div class="col-5" style="margin: 10px;">
+  <div class="card" style="width: auto;">
+   <div class="card-body">
+      <h6 class="display-6">Job Status</h6>
+      <hr>
+      <h5 class="card-title">Current Status</h5>
+      {% if job.task_status is None or job.task_status == '' %}
+        <h5 class="card-subtitle mb-2 text-muted">Job Request is being processed</h5>
+        <small class="card-text">
+          Your request is being currently processed and also please look out for emails from us.
+          You can update the Job related information here, by clicking <i>update job</i> here in the Job card,
+          and also select the package that you prefer.
+        </small>
+      {% elif job.task_status == 'jbr' %}
+        <h6 class="card-subtitle mb-2 text-muted">Proceeding to booking and contract confirmation</h6>
+        <small class="card-text">
+          Awesome, your job request is confirmed. Now it is time to get your booking done and contract
+          signed off.
+          Please get your package confirmed, or you can select your preferred package here, and 
+          when the contract and invoice are available it will be visible here, for you to review and accept.
+        </small>
+      {% elif job.task_status == 'cnb' %}
+        <h6 class="card-subtitle mb-2 text-muted">Job confirmation is pending</h6>
+        <small class="card-text">
+          Great, you have booked successfully and accpeted the contract and invoice. Please work with
+          business owner and settle down the advance payment so the Job can be confirmed.
+        </small>
+      {% elif job.task_status == 'jbc' %}
+        <h6 class="card-subtitle mb-2 text-muted">Job confirmation is confirmed</h6>
+        <small class="card-text">
+          Congrats, your job has been confirmed. Please look for an appointment email, and if there
+          any changes to be made please inform or work with business owner.
+          And please fill the Questionnaire, it is to provide best and customized customer service.
+          After completing you will be receiving a reminder email with additional information.
+        </small>
+      {% elif job.task_status == 'prs' %}
+        <h6 class="card-subtitle mb-2 text-muted"></h6>
+        <small class="card-text">
+          we are ready for the big event, looking forward to meet you. If you still want to clarify
+          anythin, please call us we will be available.
+        </small>
+      {% elif job.task_status == 'mns' %}
+        <h6 class="card-subtitle mb-2 text-muted"></h6>
+        <small class="card-text">
+         Awesome, we had a great day working with you, well spent day. We will get back to you as soon as possible.
+         Thank you very much for choosing us, and hope we are stick to the expectation, or if you have any concerns
+         please let us know.
+         We will call you to let you know about the further procedures.
+        </small>
+      {% elif job.task_status == 'pos' %}
+        <h6 class="card-subtitle mb-2 text-muted"></h6>
+        <small class="card-text">
+          Great, we hope you're happy with our service and products. We are looking forward to hear from you,
+          and if you have any comments please let us know, and you can visit our social meadia pages and rate our
+          services and share with your friends and family, it will be much appreciated.
+        </small>
+       {% elif job.task_status == 'jbd' %}
+        <h6 class="card-subtitle mb-2 text-muted"></h6>
+        <small class="card-text">
+          Thank again for choosing us, and hopefully we would like to work with you in the future as well.
+          You are awesome :-)
+        </small>
+      {% else %}
+      <small>Unexpected error, please contact the business for more information</small>
+      {% endif %}
+    </div>
+ 
+    {% for work in works %}
+      <div class="card shadow-sm" style="width: auto; margin: 10px;">
+         <div class="card-body">
+           <div class="row">
+             <div class="col">
+               <h4 class="card-title">{{ work.work_name }}</h4>
+
+             </div>
+             <div class="col-2">
+               <h4>
+                 {% if work.work_completed_percentage == 100.0 %}
+                 <span class="badge rounded-pill bg-success">{{ work.work_completed_percentage }}%</span>
+                 {% else %}
+                 <span class="badge rounded-pill bg-secondary">{{ work.work_completed_percentage }}%</span>
+                 {% endif %}
+               </h4>
+             </div>
+           </div>
+         </div>
+       </div>
+      {% endfor %}
+
+  </div>
+</div>
+
+
+{% endblock content %}

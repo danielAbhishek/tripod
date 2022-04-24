@@ -1,11 +1,11 @@
-{% extends 'admin_base.html' %}
+{% extends 'admin_base_without_nav.html' %}
 {% load crispy_forms_tags %}
 
 
 {% block content %}
   <style >
     .products-packages-form {
-      border-bottom: 1px solid black;
+      border-bottom: 1px solid rgba(200, 233, 246, 0.8);
     }
 
     .hidden {
@@ -13,7 +13,7 @@
     }
   </style>
 
-    <h3></h3>
+    <h3 class="display-6">Package - {{ package.package_name }}</h3>
     {% for message in messages %}
 		<p id="messages">{{message}}</p>
 		{% endfor %}
@@ -29,7 +29,7 @@
           {% endif %}
           <br>
           {% if formset %}
-            <h4>products</h4>
+            <h4 class="display-6">Products</h4>
             {{ formset.management_form }}
 
             <div id="products-packages-form-list">
@@ -38,6 +38,7 @@
               <div class="products-packages-form">
                 {{ form.product | as_crispy_field }}
                 {{ form.units | as_crispy_field }}
+                <br>
               </div>
               {% endfor %}
             </div>
@@ -45,8 +46,7 @@
             <div id="empty-form" class="hidden">
               {{ formset.empty_form | crispy }}
             </div>
-            <br>
-            <button id="add-more" class="btn btn-primary" type="button" name="button">Add more</button>
+            <button id="add-more" class="btn btn-outline-primary" type="button" name="button">Add more</button>
           {% endif %}
         </div>
       </div>

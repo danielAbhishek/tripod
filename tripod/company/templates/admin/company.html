@@ -5,4 +5,8 @@
 {% endblock sidebar %}
 
 {% block content %}
+<h1 class="display-5">
+  <a href="{% url 'company:companyUpdate' company.id %}">{{ company.name }}
+  </a>
+</h1>
 {% endblock content %}

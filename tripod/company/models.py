@@ -1,11 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-from company.managers import (
-    PackageManager,
-    ProductManager,
-    PackageProductManager
-)
+from company.managers import (PackageManager, ProductManager,
+                              PackageProductManager)
 
 
 class Event(models.Model):
@@ -16,13 +13,17 @@ class Event(models.Model):
     """
     event_name = models.CharField(max_length=200)
     description = models.TextField()
-    created_by = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL,
-        related_name='eventCreated', null=True, blank=True)
+    created_by = models.ForeignKey(get_user_model(),
+                                   on_delete=models.SET_NULL,
+                                   related_name='eventCreated',
+                                   null=True,
+                                   blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    changed_by = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL,
-        related_name='eventChanged', null=True, blank=True)
+    changed_by = models.ForeignKey(get_user_model(),
+                                   on_delete=models.SET_NULL,
+                                   related_name='eventChanged',
+                                   null=True,
+                                   blank=True)
     changed_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
@@ -68,13 +69,17 @@ class Product(models.Model):
     description = models.TextField()
     display = models.BooleanField()
     is_active = models.BooleanField(default=True)
-    created_by = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL,
-        related_name='productCreated', null=True, blank=True)
+    created_by = models.ForeignKey(get_user_model(),
+                                   on_delete=models.SET_NULL,
+                                   related_name='productCreated',
+                                   null=True,
+                                   blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    changed_by = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL,
-        related_name='productChanged', null=True, blank=True)
+    changed_by = models.ForeignKey(get_user_model(),
+                                   on_delete=models.SET_NULL,
+                                   related_name='productChanged',
+                                   null=True,
+                                   blank=True)
     changed_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     # objects = ProductManager()
@@ -104,19 +109,24 @@ class Package(models.Model):
     """
     package_name = models.CharField(max_length=150)
     description = models.TextField()
-    event = models.ForeignKey(
-        Event, on_delete=models.SET_NULL, null=True, blank=True)
+    event = models.ForeignKey(Event,
+                              on_delete=models.SET_NULL,
+                              null=True,
+                              blank=True)
     is_active = models.BooleanField(default=True)
     price = models.FloatField(null=True, blank=True)
-    products = models.ManyToManyField(
-        Product, through='PackageLinkProduct')
-    created_by = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL,
-        related_name='packageCreated', null=True, blank=True)
+    products = models.ManyToManyField(Product, through='PackageLinkProduct')
+    created_by = models.ForeignKey(get_user_model(),
+                                   on_delete=models.SET_NULL,
+                                   related_name='packageCreated',
+                                   null=True,
+                                   blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    changed_by = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL,
-        related_name='packageChanged', null=True, blank=True)
+    changed_by = models.ForeignKey(get_user_model(),
+                                   on_delete=models.SET_NULL,
+                                   related_name='packageChanged',
+                                   null=True,
+                                   blank=True)
     changed_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     objects = PackageManager()
@@ -134,13 +144,17 @@ class PackageLinkProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     units = models.FloatField()
     price = models.FloatField()
-    created_by = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL,
-        related_name='plpCreated', null=True, blank=True)
+    created_by = models.ForeignKey(get_user_model(),
+                                   on_delete=models.SET_NULL,
+                                   related_name='plpCreated',
+                                   null=True,
+                                   blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    changed_by = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL,
-        related_name='plpChanged', null=True, blank=True)
+    changed_by = models.ForeignKey(get_user_model(),
+                                   on_delete=models.SET_NULL,
+                                   related_name='plpChanged',
+                                   null=True,
+                                   blank=True)
     changed_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     objects = PackageProductManager()
 
@@ -152,3 +166,42 @@ class PackageLinkProduct(models.Model):
 
     def calculate_discounted_price(self, discount_percentage):
         return self.product.discounted_price(self.units, discount_percentage)
+
+
+class Equipment(models.Model):
+    """
+    Equipments in the company
+    """
+    TYPES = [('cu', 'common use'), ('iu', 'individual use')]
+    AVAILABILITY = [
+        ('na', 'not available'),
+        ('av', 'available'),
+        ('um', 'under maintanence'),
+        ('ml', 'malfunction'),
+    ]
+    equipment_name = models.CharField(max_length=200)
+    e_type = models.CharField(max_length=2, choices=TYPES)
+    availability = models.CharField(max_length=2, choices=AVAILABILITY)
+    owner = models.ForeignKey(get_user_model(),
+                              on_delete=models.SET_NULL,
+                              null=True,
+                              blank=True)
+    price = models.FloatField(null=True, blank=True)
+
+    def __str__(self):
+        return self.equipment_name
+
+
+class EquipmentMaintanence(models.Model):
+    """
+    Maintanence data for the equipments
+    """
+    equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE)
+    maintanence_date = models.DateField()
+    next_available_date = models.DateField(null=True, blank=True)
+    maintanence_cost = models.FloatField(null=True, blank=True)
+    done = models.BooleanField()
+    maintanence_reason = models.TextField()
+
+    def __str__(self):
+        return self.equipment

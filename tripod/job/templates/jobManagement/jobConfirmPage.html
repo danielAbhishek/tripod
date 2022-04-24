@@ -1,9 +1,9 @@
-{% extends 'admin_base.html' %}
+{% extends 'admin_base_without_nav.html' %}
 {% load crispy_forms_tags %}
 
 
 {% block content %}
-    <h3>Job - {{ job.job_name }} {{ job.primary_client }}</h3>
+    <h3 class="display-5">Job - {{ job.job_name }} {{ job.primary_client.username }}</h3>
     {% for message in messages %}
 		<p id="messages">{{message}}</p>
 		{% endfor %}

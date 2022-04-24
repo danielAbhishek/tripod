@@ -1,11 +1,45 @@
-{% extends 'customer_base.html' %}
+{% extends 'guest_user_base.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-<h1>Hi
-  {% if user.is_authenticated %}
-    {{ user.username }}
-  {% else %}
-    Guest
-  {% endif %}
-</h1>
+
+<div class="row" style="padding:10px">
+  <div class="col-9">
+    <div clas="card">
+      <div class="card-body">
+        <h3 class="card-title">
+          Welcome to the Tripod, if you're visiting for the first time
+          please sign up here
+        </h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Sign Up Here</h5>
+        <br>
+
+        <form method="POST" action="">
+          {% csrf_token %}
+          {{ reg_form.email | as_crispy_field}}
+          {{ reg_form.username | as_crispy_field}}
+          {{ reg_form.first_name | as_crispy_field}}
+          {{ reg_form.last_name | as_crispy_field}}
+          {{ reg_form.gender | as_crispy_field}}
+          {{ reg_form.contact_number | as_crispy_field}}
+          {{ reg_form.city | as_crispy_field}}
+          {{ reg_form.country | as_crispy_field}}
+          {{ reg_form.job_request | as_crispy_field}}
+          <br>
+          <input class="btn btn-primary" type="submit" value="Create Request and Sign Up">
+          <br>
+          Have logins? <a class="link-primary" href="{% url 'core:login' %}">Login here</a>
+        </form>
+
+      <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+      </div>
+    </div>
+  </div> 
+</div> 
 {% endblock content %}

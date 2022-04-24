@@ -1,0 +1,54 @@
+ <!-- task is appointment and task appointment also created -->
+{% if task.task_type == 'qn' %}
+  <ul>
+    <li>
+        <h6>
+          {{ task.task_name }}
+
+          <!-- if user completed is no means just created only -->
+          {% if task.user_completed == 'no' %}
+
+            <a href="{% url 'job:processTask' task.id %}" class="btn btn-outline-secondary btn-sm" role="button">
+              <i class="bi bi-check-square-fill"></i> Send Questionnaire
+            </a>
+            <a href="#" class="disabled btn btn-outline-secondary btn-sm" role="button">
+              <i class="bi bi-check-square-fill"></i> Check Results
+            </a>
+
+          <!-- if user completed is sent to user -->
+          {% elif task.user_completed == 'su' %}
+            <a href="{% url 'job:processTask' task.id %}" class="disabled btn btn-outline-secondary btn-sm" role="button">
+              <i class="bi bi-check-square-fill"></i> User updates needed
+            </a>
+            <a href="#" class="disabled btn btn-outline-secondary btn-sm" role="button">
+              <i class="bi bi-check-square-fill"></i> Check Results
+            </a>
+
+          <!-- if user completed is completed by user -->
+          {% elif task.user_completed == 'uc' %}
+            {% if not task.completed %}
+              <a href="{% url 'job:processTask' task.id %}" class="btn btn-outline-secondary btn-sm" role="button">
+                <i class="bi bi-check-square-fill"></i> Complete Task
+              </a>
+            {% else %}
+              <span class="badge bg-success">Questionnaire completed</span>
+            {% endif %}
+            <a href="{% url 'job:questPage' job.id %}" class="btn btn-outline-secondary btn-sm" role="button">
+              <i class="bi bi-check-square-fill"></i> Check Results
+            </a>
+          {% endif %}
+
+        <!-- task infor -->
+        </h6>
+        <small>{{ task.description }}</small>
+        <br>
+        <small>Completing this task will send an questionnaire</small>
+        <small>
+          <ul>
+            <li>add later...</li>
+          </ul>
+        </small>
+    </li>
+  </ul>
+<!-- end of if statement -->
+{% endif %}

@@ -1,16 +1,39 @@
-{% extends 'admin_base.html' %}
+{% extends 'guest_user_base.html' %}
 
 {% block content %}
-    <h3>Login</h3>
     {% for message in messages %}
 		<p id="messages">{{message}}</p>
 		{% endfor %}
-    <form method="POST" action="">
-      {% csrf_token %}
-      <input type="text" name="email" placeholder="email" class="form-control">
-      <br>
-      <input type="password" name="password" placeholder="Password..." class="form-control" >
-      <br>
-      <input class="btn btn-primary" type="submit" value="Login">
-    </form>
+<div class="row" style="padding:10px">
+  <div class="col-9">
+    <div clas="card">
+      <div class="card-body">
+        <h3 class="card-title">
+          Welcome to the Tripod, please login here
+        </h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Login Here</h5>
+        <br>
+
+        <form method="POST" action="">
+          {% csrf_token %}
+          <input type="text" name="email" placeholder="email" class="form-control">
+          <br>
+          <input type="password" name="password" placeholder="Password..." class="form-control" >
+          <br>
+          <input class="btn btn-primary" type="submit" value="Login">
+        </form>
+
+      <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+      </div>
+    </div>
+  </div> 
+</div> 
+
 {% endblock content %}
+

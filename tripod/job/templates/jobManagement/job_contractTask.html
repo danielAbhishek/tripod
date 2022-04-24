@@ -1,0 +1,83 @@
+<!-- if task is appointment but appointment is not created -->
+{% if task.task_type == 'cn' and not task.job_package_added %}
+ <ul>
+   <li>
+       <h6>
+         {{ task.task_name }}
+         <a href="{% url 'job:processTask' task.id %}" class="disabled btn btn-outline-secondary btn-sm" role="button">
+           <i class="bi bi-check-square-fill"></i> Process Task
+         </a>
+         <a href="{% url 'job:completeTask' task.id %}" class="disabled btn btn-outline-secondary btn-sm" role="button">
+           <i class="bi bi-check-square-fill"></i> Complete Task
+         </a>
+       </h6>
+       <small>{{ task.description }}</small>
+       <div class="alert alert-warning" role="alert">
+         Please add package information to job before processing contract and invoice
+        </div>
+        <a href="{% url 'job:jobUpdateJob' job.id %}" class="btn btn-outline-secondary btn-sm" role="button">
+          <i class="bi bi-check-square-fill"></i> Add package
+        </a>
+        <a href="{% url 'company:packageAdd' %}" class="btn btn-outline-secondary btn-sm" role="button">
+          <i class="bi bi-check-square-fill"></i> Create new package
+        </a>
+   </li>
+ </ul>
+
+ <!-- task is appointment and task appointment also created -->
+{% elif task.task_type == 'cn' and task.job_package_added %}
+  <ul>
+    <li>
+        <h6>
+          {{ task.task_name }}
+
+          <!-- if user completed is no means just created only -->
+          {% if task.user_completed == 'no' %}
+
+            <a href="{% url 'job:processTask' task.id %}" class="btn btn-outline-secondary btn-sm" role="button">
+              <i class="bi bi-check-square-fill"></i> Send Contract
+            </a>
+            <a href="{% url 'job:jobUpdateInvoice' job.id %}" class="btn btn-outline-secondary btn-sm" role="button">
+              <i class="bi bi-check-square-fill"></i> Update Invoice
+            </a>
+
+          <!-- if user completed is sent to user -->
+          {% elif task.user_completed == 'su' %}
+            <a href="{% url 'job:processTask' task.id %}" class="disabled btn btn-outline-secondary btn-sm" role="button">
+              <i class="bi bi-check-square-fill"></i> User not accepted
+            </a>
+            <a href="#" class="disabled btn btn-outline-secondary btn-sm" role="button">
+              <i class="bi bi-check-square-fill"></i> Update Invoice
+            </a>
+
+          <!-- if user completed is completed by user -->
+          {% elif task.user_completed == 'uc' %}
+            {% if not task.completed %}
+              <a href="{% url 'job:processTask' task.id %}" class="btn btn-outline-secondary btn-sm" role="button">
+                <i class="bi bi-check-square-fill"></i> Complete Task
+              </a>
+            {% else %}
+              <span class="badge bg-success">Contract and invoice accepted</span>
+            {% endif %}
+            <a href="#" class="disabled btn btn-outline-secondary btn-sm" role="button">
+              <i class="bi bi-check-square-fill"></i> Update Invoice
+            </a>
+          {% endif %}
+
+        <!-- task infor -->
+        </h6>
+        <small>{{ task.description }}</small>
+        <br>
+        <hr>
+        <h6>Invoice</h6>
+        <small>
+          <ul>
+            <li>price - {{ job.invoice.price }}</li>
+            <li>discount - {{ job.invoice.discount }}</li>
+            <li>total price - {{ job.invoice.total_price }}</li>
+          </ul>
+        </small>
+    </li>
+  </ul>
+<!-- end of if statement -->
+{% endif %}

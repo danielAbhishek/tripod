@@ -1,0 +1,26 @@
+{% extends 'customer_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <h3>Job - {{ job.job_name }} {{ job.primary_client }}</h3>
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
+    <form method="POST" action="">
+      {% csrf_token %}
+      <br>
+      <div class="row">
+        <div class="col">
+          {{ form.venue | as_crispy_field }}
+          {{ form.venue_notes | as_crispy_field }}
+          {{ form.start_date | as_crispy_field }}
+          {{ form.end_date | as_crispy_field }}
+          {{ form.start_time | as_crispy_field }}
+          {{ form.end_time | as_crispy_field }}
+        </div>
+      </div>
+      <br>
+      <input class="btn btn-primary" type="submit" value="Update Job">
+    </form>
+{% endblock %}

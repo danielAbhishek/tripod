@@ -1,0 +1,28 @@
+{% extends 'admin_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
+
+<div class="col">
+  <div class="card" style="width: auto; margin: 40px;">
+    <div class="card-body">
+      <h5 class="card-title">Invoice</h5>
+      <h6 class="card-subtitle mb-2 text-muted">{{ job }}</h6>
+      <p class="card-text">Issue Date - {{ invoice.issue_date }}</p>
+      <ul>
+        <li><p class="card-text">Sub total - {{ invoice.price }}</p></li>
+        <li><p class="card-text">Discount - {{ invoice.discount }}</p></li>
+        <li><p class="card-text">Total price - {{ invoice.total_price }}</p></li>
+      </ul>
+      <br>
+      <hr>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

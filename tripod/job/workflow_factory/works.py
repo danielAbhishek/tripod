@@ -5,8 +5,10 @@ criteria that passed, and they does their job to create db objects.
 """
 from abc import ABC, abstractmethod
 
-from job.workflow_factory.tasks import ToDoTask, EmailTask, ContractTask
-
+from job.workflow_factory.tasks import (
+    ToDoTask, EmailTask, ContractTask,
+    QuestTask, AppointmentTask
+)
 from job.workflow_factory.forms import WorkForm
 
 
@@ -81,46 +83,96 @@ class SimpleWork(WorkBase):
         else:
             print(form.errors)
 
-    def add_simpleTask(self, obj):
-        """
-        automcatically created ToDoTask instance, get added to the database
-        """
-        name = obj.name + " (adding todo task)"
-        description = f"todo task {name} work\n{obj.description}"
-        toDoTask = ToDoTask(name, self.user, self.work)
-        toDoTask.set_data(description)
-        toDoTask = toDoTask.create_db_object()
-        self.tasks.append(toDoTask)
-        return self.tasks
+    def task_factory(self, obj):
+        """creating task factory"""
+        print(obj)
+        name = obj.name
+        description = obj.description + str(obj.class_object)
+        class_obj = eval(obj.class_object)
+        task = class_obj(name, self.user, self.work)
+        task.set_data(description, obj)
+        task = task.create_db_object()
+        return task
 
-    def add_emailTask(self, obj, template):
-        """
-        calling super/ parent add_tasks() to create todo task
-        and also creating the email todo task as well, using the
-        passed template
-        """
-        name = obj.name + " (sending email)"
-        description = f"sending email task {name} work\n{obj.description}"
-        emailTask = EmailTask(name, self.user, self.work)
-        emailTask.set_data(description, template)
-        emailTask = emailTask.create_db_object()
-        self.tasks.append(emailTask)
-        return self.tasks
-
-    def add_contractTask(self, obj, template):
-        """
-        calling super/ parent add_tasks() to create todo task
-        and also creating the email todo task as well, using the
-        passed template
-        """
-        # self.tasks = super(ContractToDo, self).add_tasks()
-        name = obj.name + " (sending contract)"
-        description = f"sending contract for booking task {name} work\n{obj.description}"
-        contractTask = ContractTask(name, self.user, self.work)
-        contractTask.set_data(description, template)
-        contractTask = contractTask.create_db_object()
-        self.tasks.append(contractTask)
-        return self.tasks
+    # def add_simpleTask(self, obj):
+    #     """
+    #     automcatically created ToDoTask instance, get added to the database
+    #     """
+    #     name = obj.name + " (adding todo task)"
+    #     description = f"todo task {name} work\n{obj.description}"
+    #     toDoTask = ToDoTask(name, self.user, self.work)
+    #     toDoTask.set_data(description, obj.step_number)
+    #     toDoTask = toDoTask.create_db_object()
+    #     self.tasks.append(toDoTask)
+    #     return self.tasks
+    #
+    # def add_emailTask(self, obj):
+    #     """
+    #     creating a email sharing task
+    #     """
+    #     name = obj.name + " (sending email)"
+    #     description = f"sending email task {name} work\n{obj.description}"
+    #     emailTask = EmailTask(name, self.user, self.work)
+    #     emailTask.set_data(description, obj.step_number, obj.email_template)
+    #     emailTask = emailTask.create_db_object()
+    #     self.tasks.append(emailTask)
+    #     return self.tasks
+    #
+    # def add_contractTask(self, obj):
+    #     """
+    #     creating a contract and invoice sharing task
+    #     """
+    #     # self.tasks = super(ContractToDo, self).add_tasks()
+    #     name = obj.name + " (sending contract)"
+    #     description = f"sending contract for booking task {name} work\n{obj.description}"
+    #     contractTask = ContractTask(name, self.user, self.work)
+    #     contractTask.set_data(description, obj.step_number, obj.contract_templete)
+    #     contractTask = contractTask.create_db_object()
+    #     self.tasks.append(contractTask)
+    #     return self.tasks
+    #
+    # def add_questTask(self, obj):
+    #     """
+    #     creating a questionnaire sharing task
+    #     """
+    #     # self.tasks = super(ContractToDo, self).add_tasks()
+    #     name = obj.name + " (sending questionnaire)"
+    #     description = f"sending questionnaire for booking task {name} work\n{obj.description}"
+    #     questTask = QuestTask(name, self.user, self.work)
+    #     questTask.set_data(description, obj.step_number, obj.quest_template)
+    #     questTask = questTask.create_db_object()
+    #     self.tasks.append(questTask)
+    #     return self.tasks
+    #
+    # def add_appointmentTask(self, obj):
+    #     """
+    #     creating the appointment making task
+    #     """
+    #     # self.tasks = super(ContractToDo, self).add_tasks()
+    #     name = obj.name + " (making an appointment)"
+    #     description = f"making an appointment and registering {name} work\n{obj.description}"
+    #     appTask = AppointmentTask(name, self.user, self.work)
+    #     appTask.set_data(description, obj.step_number, obj.email_template)
+    #     appTask = appTask.create_db_object()
+    #     self.tasks.append(appTask)
+    #     return self.tasks
+    #
+    # def createTasks(self, objs):
+    #     """
+    #     By providing the task type. and they should be available
+    #     in the work template class
+    #     """
+    #     for obj in objs:
+    #         if obj.class_object == 'SimpleToDo':
+    #             self.add_simpleTask(obj)
+    #         elif obj.class_object == 'EmailToDo':
+    #             self.add_emailTask(obj)
+    #         elif obj.class_object == 'ContractToDo':
+    #             self.add_contractTask(obj)
+    #         elif obj.class_object == 'QuestToDo':
+    #             self.add_questTask(obj)
+    #         elif obj.class_object == 'AppToDo':
+    #             self.add_appointmentTask(obj)
 
 
 #

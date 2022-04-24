@@ -21,7 +21,7 @@ class WorkFlowBase:
     * job -> job that created, and work and tasks needed to be created
     * workflow -> job's workflow
     * job_data -> job's created_at
-    * data_objs -> get data from WorkTemplate (a model that holds
+    * wt_objs -> get data from WorkTemplate (a model that holds
     the basic structural information of the works that comes under
     specif workflow) that is relavent to the workflow
     """
@@ -32,7 +32,7 @@ class WorkFlowBase:
         self.workflow = job.workflow
         self.job_date = job.created_at
         self.work_types = WorkType.objects.all()
-        self.data_objs = WorkTemplate.objects.filter(workflow=self.workflow)
+        self.wt_objs = WorkTemplate.objects.filter(workflow=self.workflow)
 
     def create_work_and_tasks(self):
         """
@@ -41,7 +41,6 @@ class WorkFlowBase:
         tasks will be automatically created
         """
         for work_type in self.work_types:
-
             # creating work database objects
             work_instance = SimpleWork(
                 user=self.user,
@@ -49,12 +48,8 @@ class WorkFlowBase:
                 work_type=work_type
             )
             work_instance.create_db_object()
-
-            # adding tasks under the work
-            for task_work in self.data_objs.filter(work_type=work_type):
-                if task_work.class_object == 'SimpleToDo':
-                    work_instance.add_simpleTask(task_work)
-                elif task_work.class_object == 'EmailToDo':
-                    work_instance.add_emailTask(task_work, task_work.email_template)
-                elif task_work.class_object == 'ContractToDo':
-                    work_instance.add_contractTask(task_work, task_work.contract_templete)
+            wt_objs = self.wt_objs.filter(work_type=work_type)
+            # mapping task creation to each object of work template
+            work_instance.tasks = list(
+                                    map(work_instance.task_factory, wt_objs)
+                                    )

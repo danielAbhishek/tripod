@@ -14,8 +14,10 @@
 {% endif %}
 
 <div class="col">
-  <h1>Products</h1>
-  <a href="{% url 'company:packageAdd' %}">Add new product</a>
+  <h1 class="display-5">Package Management</h1>
+  <br>
+  <a class="btn  btn-outline-primary" href="{% url 'company:packageAdd' %}">Add new package</a>
+  <br>
   <br>
 
   <div class="card-deck">
@@ -49,6 +51,7 @@
         <a href="#" class="card-link">Delete</a>
       </div>
     </div>
+    <br>
     {% endfor %}
   </div>
 

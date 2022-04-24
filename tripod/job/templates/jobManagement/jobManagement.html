@@ -15,19 +15,31 @@
 {% endif %}
 
 <div class="col">
-  <h1>Job Management</h1>
-  <a href="{% url 'job:jobReqAdd' %}">Add new Job request</a>
+  <h1 class="display-5">Job Management</h1>
   <br>
+  <a class="btn btn-outline-primary" href="{% url 'job:jobReqAdd' %}">Add new Job request</a>
+  <br><br><br>
+  <h4>List of Jobs</h4>
   <table class="table table-striped table-sm">
     <thead>
       <tr>
         <th>Name</th>
+        <th>Client</th>
+        <th>Event</th>
+        <th>Workflow</th>
+        <th>Status</th>
+        <th>Start_date</th>
       </tr>
     </thead>
     <tbody>
       {% for job in jobs %}
         <tr>
           <th><a href="{% url 'job:jobPage' job.id %}">{{ job.job_name }}</a></th>
+          <th>{{ job.primary_client }}</th>
+          <th>{{ job.event }}</th>
+          <th>{{ job.workflow }}</th>
+          <th>{{ job.task_status }}</th>
+          <th>{{ job.start_date }}</th>
         </tr>
         <tr>
 

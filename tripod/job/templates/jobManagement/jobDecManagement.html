@@ -1,0 +1,50 @@
+{% extends 'admin_base.html' %}
+
+{% block sidebar %}
+{% include 'sidebars/job_sidebar.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+
+{% if messages %}
+  <div class="row">
+    {% for message in messages %}
+    <p id="messages">{{message}}</p>
+  </div>
+{% endfor %}
+{% endif %}
+
+<div class="col">
+  <h1>Job Management</h1>
+  <a href="{% url 'job:jobReqAdd' %}">Add new Job request</a>
+  <br>
+  <table class="table table-striped table-sm">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Change as Job</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for reqJob in reqJobs %}
+        <tr>
+          <th><a href="#">{{ reqJob.job_name }}</a></th>
+          <th>
+            <a href="{% url 'job:jobChangeReqToJobPage' reqJob.id %}">
+              <input class="btn btn-primary" type="submit" value="Confirm Job">
+            </a>
+          </th>
+        </tr>
+        <tr>
+
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+<div class="col-3">
+  Filters
+</div>
+
+{% endblock content %}

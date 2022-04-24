@@ -1,8 +1,17 @@
-from company.models import Event, Product, Package, PackageLinkProduct
+from company.models import (Event, Product, Package, PackageLinkProduct,
+                            Equipment, EquipmentMaintanence)
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist
 
 from tripod.utils import add_basic_html_tags
+
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+
+class TimeInput(forms.TimeInput):
+    input_type = 'time'
 
 
 def update_package_after_adding_products(package):
@@ -32,6 +41,7 @@ class EventForm(forms.ModelForm):
         * data will be automatically populated for below columns
             (created_by, created_at, changed_by)
     """
+
     class Meta:
         model = Event
         fields = ['event_name', 'description']
@@ -73,6 +83,7 @@ class ProductForm(forms.ModelForm):
         * data will be automatically populated for below columns
             (created_by, created_at, change_by)
     """
+
     class Meta:
         model = Product
         fields = '__all__'
@@ -117,6 +128,7 @@ class PackageForm(forms.ModelForm):
         * also package instance price will be recalculated based on products
             that added thru many-to-many through table
     """
+
     class Meta:
         model = Package
         fields = ['package_name', 'description', 'event', 'is_active']
@@ -159,6 +171,7 @@ class PackageLinkProductAddForm(forms.ModelForm):
         * also package instance price will be recalculated based on products
             that added thru many-to-many through table
     """
+
     class Meta:
         model = PackageLinkProduct
         fields = ['product', 'units']
@@ -188,3 +201,21 @@ class PackageLinkProductAddForm(forms.ModelForm):
         obj = super(PackageLinkProductAddForm, self).save(*args, **kwargs)
         self.package = update_package_after_adding_products(self.package)
         return obj, self.package
+
+
+class EquipmentForm(forms.ModelForm):
+
+    class Meta:
+        model = Equipment
+        fields = '__all__'
+
+
+class EquipmentMaintanenceForm(forms.ModelForm):
+
+    class Meta:
+        model = EquipmentMaintanence
+        fields = '__all__'
+        widgets = {
+            'maintanence_date': DateInput(),
+            'next_available_date': DateInput()
+        }

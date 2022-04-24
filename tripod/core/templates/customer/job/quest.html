@@ -1,0 +1,48 @@
+{% extends 'customer_base_without_nav.html' %}
+{% load crispy_forms_tags %}
+
+{% block sidebar %}
+{% include 'sidebars/customer_sidebar.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+
+{% if messages %}
+  <div class="row">
+    {% for message in messages %}
+    <p id="messages">{{message}}</p>
+  </div>
+{% endfor %}
+{% endif %}
+
+<form method="POST" action="">
+  {% csrf_token %}
+  <h5 class="display-6">Questionnaire Form</h5>
+  <small>Please note that completing this form will send the questionnaire to
+    photographer directly, if you dont have the information currently, please complete it
+    later, thank you.
+  </small>
+  <div class="row">
+    <div class="col-3">
+    </div>
+    <div class="col">
+      <h6>{{ quest.question_one }}</h6> {{ form.answer_one | as_crispy_field }}
+      <br>
+      <h6>{{ quest.question_two }}</h6> {{ form.answer_two | as_crispy_field }}
+      <br>
+      <h6>{{ quest.question_three }}</h6> {{ form.answer_three | as_crispy_field }}
+      <br>
+      <h6>{{ quest.question_four }}</h6> {{ form.answer_four | as_crispy_field }}
+      <br>
+      <h6>{{ quest.question_five }}</h6> {{ form.answer_five | as_crispy_field }}
+      <br>
+    </div>
+    <div class="col-3">
+    </div>
+  </div>
+  <br>
+  <input class="btn btn-primary" type="submit" value="Send Questionnaire">
+</form>
+
+
+{% endblock content %}

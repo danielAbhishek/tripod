@@ -1,0 +1,20 @@
+{% extends 'admin_base_without_nav.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <h3 class="display-6">Create New Equipment</h3>
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
+    <form method="POST" action="">
+      {% csrf_token %}
+        {{ form.equipment_name | as_crispy_field }}
+        {{ form.e_type | as_crispy_field }}
+        {{ form.availability | as_crispy_field }}
+        {{ form.owner | as_crispy_field }}
+        {{ form.price | as_crispy_field }}
+      <br>
+      <input class="btn btn-primary" type="submit" value="Create Equipment">
+    </form>
+{% endblock %}

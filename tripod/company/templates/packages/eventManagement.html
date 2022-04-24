@@ -14,9 +14,12 @@
 {% endif %}
 
 <div class="col">
-  <h1>Events</h1>
-  <a href="{% url 'company:eventAdd' %}">Add new event</a>
+  <h1 class="display-5">Event Management</h1>
   <br>
+  <a class="btn btn-outline-primary" href="{% url 'company:eventAdd' %}">Add new event</a>
+  <br>
+  <br>
+  <h4>List of events</h4>
   <table class="table table-striped table-sm">
     <thead>
       <tr>
@@ -28,7 +31,7 @@
       {% for event in events %}
         <tr>
           <th><a href="{% url 'company:eventUpdate' event.id %}">{{ event.event_name }}</a></th>
-          <th>{{ event.description|truncatechars:20  }}</th>
+          <th>{{ event.description|truncatechars:40  }}</th>
         </tr>
       {% endfor %}
     </tbody>

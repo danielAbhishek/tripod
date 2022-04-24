@@ -1,4 +1,4 @@
-{% extends 'admin_base.html' %}
+{% extends 'admin_base_without_nav.html' %}
 
 
 {% block content %}
@@ -6,34 +6,139 @@
 		<p id="messages">{{message}}</p>
 		{% endfor %}
 
-    <div class="col">
-      <h1> Job - {{ job.job_name }}
-        <a href="{% url 'job:jobUpdateJob' job.id %}">
-          edit job
-        </a>
-      </h1>
-      <br>
+<!-- first column that has the information of job->work->tasks respectively -->
+  <div class="col">
+    <h3 class="display-6"> Job - {{ job.job_name }}
+      <a class="btn btn-outline-primary" href="{% url 'job:jobUpdateJob' job.id %}">
+        edit job
+      </a>
+    </h3>
+    <br>
 
-      {% for work in works %}
-      <div class="card" style="width: auto;">
-        <div class="card-body">
-          <h5 class="card-title">{{ work.work_name }}</h5>
-          <p class="card-text">{{ work.description }}</p>
-          {% if work.completed %}
-          <button type="button" class="btn btn-secondary btn-lg" disabled>
-            Completed
-          </button>
-          {% else %}
-          <a href="{% url 'job:processWork' work.id %}" class="btn btn-primary">
-            Complete Work
-          {% endif %}
-          </a>
+<!-- Looping thru works that passed from view (filtered by job) -->
+    {% for work in works %}
+      <div class="card shadow-sm" style="width: auto; margin: 10px;">
+
+<!-- Start of the card that is for the work -->
+       <div class="card-body">
+         <div class="row">
+           <div class="col">
+             <h4 class="card-title">{{ work.work_name }}</h4>
+
+           </div>
+           <div class="col-2">
+             <h4>
+               {% if work.work_completed_percentage == 100.0 %}
+               <span class="badge rounded-pill bg-success">{{ work.work_completed_percentage }}%</span>
+               {% else %}
+               <span class="badge rounded-pill bg-secondary">{{ work.work_completed_percentage }}%</span>
+               {% endif %}
+             </h4>
+           </div>
+         </div>
+       </div>
+
+          <!-- Adding accordion which acts as toggle to showcase the tasks -->
+          <div id="accordion" style="width: auto; margin: 2px">
+
+           <!-- start of the card which has tasks button -->
+            <div class="card">
+
+             <div class="card-header" id="headingOne">
+               <h5 class="mb-0">
+                 <button class="btn btn-outline-secondary" data-toggle="collapse" data-target="#collapse{{ work }}" aria-expanded="true" aria-controls="collapseOne">
+                   Tasks
+                 </button>
+               </h5>
+             </div>
+
+            <!-- Div for list of tasks -->
+              <div id="collapse{{ work }}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                <div class="card-body">
+                 <!-- Looping thru the tasks under the respective work -->
+                  {% for task in work.task_set.all %}
+                    <!-- if the task simple -->
+                    {% if not task.user_task %}
+                      {% include 'jobManagement/job_simpleTask.html' %}
+                    <!-- if the task used task needed user updates -->
+                    {% elif task.user_task %}
+                      <!-- appointment task -->
+                      {% include 'jobManagement/job_appTask.html' %}
+                      <!-- contract task -->
+                      {% include 'jobManagement/job_contractTask.html' %}
+                      <!-- questionnaire task -->
+                      {% include 'jobManagement/job_questTask.html' %}
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            <!-- end of card div -->
+            </div>
+          <!-- end of accordion div -->
+          </div>
+        <!-- end of card-show -->
         </div>
-      </div>
-      {% endfor %}
 
+      {% endfor %}
     </div>
-    <div class="col-3">
-      Filters
+
+    <!-- new column -->
+    <div class="col-6">
+      <div class="card" style="width: auto; margin-top: 40px;">
+
+       <div class="card-header" id="headingOne">
+         <div class="card-body">
+           <h5 class="card-title">Invoice</h5>
+           <p class="card-text"><small>Invoice can be checked here, and also you can update discount and special notes</small></p>
+           <a href="{% url 'company:invoiceDetail' job.invoice.id %}" class="btn btn-primary">Invoice</a>
+         </div>
+       </div>
+      </div>
+
+      <div class="card" style="width: auto; margin-top: 40px;">
+       <div class="card-header" id="headingOne">
+         <div class="card-body">
+           <h5 class="card-title">Questionnaire</h5>
+           <p class="card-text">Check Questionnaire</p>
+           <a href="{% url 'job:questPage' job.id %}" class="btn btn-primary">Questionnaire</a>
+         </div>
+       </div>
+      </div>
+
+      <div class="card" style="width: auto; margin-top: 40px;">
+       <div class="card-header" id="headingOne">
+         <div class="card-body">
+           <h5 class="card-title">Payment History</h5>
+           <p class="card-text">Displaying payment paid details</p>
+           {% for ph in pyHistory %}
+            <ul>
+              <li>
+                {{ ph.payment_amount }} paid on {{ ph.payment_date | date }}
+                <small>({{ ph.diplay_py_methods }})</small>
+                <a href="{% url 'job:updatePayHistoryPage' ph.id %}">update</a>
+              </li>
+            </ul>
+           {% endfor %}
+
+          {% if not job.invoiced_client %}   
+            <a href="{% url 'job:addPayHistoryPage' job.id %}" class="btn btn-primary">Add paid record</a>
+          {% else %} 
+            <a class="disabled btn btn-primary">Invoiced Client</a>
+          {% endif %}
+         </div>
+       </div>
+      </div>
+
+      <div class="card" style="width: auto; margin-top: 40px;">
+       <div class="card-header" id="headingOne">
+         <div class="card-body">
+           <h5 class="card-title">Issue Receipt</h5>
+           <p class="card-text">Download and the receipt and share with client</p>
+
+           <a href="#" class="btn btn-primary">Download receipt</a>
+         </div>
+       </div>
+      </div>
+
     </div>
 {% endblock %}

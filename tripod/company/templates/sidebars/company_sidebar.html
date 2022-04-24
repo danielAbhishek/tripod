@@ -31,10 +31,23 @@
   </li>
   <br>
 
-  <h6>Job Management</h6>
+<h6>Equipment Management</h6>
   <li>
-    <a class="link-primary" href="#">
-      Job
+    <a class="link-primary" href="{% url 'company:equipmentManagement' %}">
+      Equipments
+    </a>
+  </li>
+  <li>
+    <a class="link-primary" href="{% url 'company:equipmentMaintanence' %}">
+      Equipment Maintanence
+    </a>
+  </li>
+   <br>
+
+  <h6>Finance</h6>
+  <li>
+    <a class="link-primary" href="{% url 'company:invoiceManagement' %}">
+      Invoices
     </a>
   </li>
 

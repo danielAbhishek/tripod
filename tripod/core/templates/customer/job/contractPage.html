@@ -1,0 +1,23 @@
+{% extends 'customer_base.html' %}
+
+{% block sidebar %}
+{% include 'sidebars/customer_sidebar.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+
+{% if messages %}
+  <div class="row">
+    {% for message in messages %}
+    <p id="messages">{{message}}</p>
+  </div>
+{% endfor %}
+{% endif %}
+
+<h1>Job Contract</h1>
+<p>{{ jobContract.status }}</p>
+<p>{{ jobContract.contract_date }}</p>
+<p>{{ jobContract.contract }}</p>
+
+
+{% endblock content %}

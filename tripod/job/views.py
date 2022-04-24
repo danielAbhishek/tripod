@@ -1,14 +1,16 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.exceptions import ObjectDoesNotExist
 
-from job.workflow_factory.workflow import WorkFlowBase
+# from job.workflow_factory.workflow import WorkFlowBase
 from job.models import Job, Work, Task
-from job.forms import JobReqCreateForm, JobUpdateConfirmForm
+from job.forms import JobReqCreateForm, JobUpdateConfirmForm, AppointmentForm
 
-from finance.utils import prepare_invoice_sharing
+from finance.models import PaymentHistory, Invoice
+from finance.forms import (InvoiceUpdateForm, PaymentHistoryForm, ReceiptForm)
 
 from tripod.utils import superuser_check
-from tripod.tasks_lib.email import EmailClient
+# from tripod.tasks_lib.email import EmailClient
 
 
 @login_required(login_url='company:staffLogin')
@@ -29,8 +31,19 @@ def jobReqManagementPage(request):
     jobs = Job.objects.filter(status='req')
     context = {'reqJobs': jobs}
 
-    return render(
-        request, 'jobManagement/jobReqManagement.html', context)
+    return render(request, 'jobManagement/jobReqManagement.html', context)
+
+
+@login_required(login_url='company:staffLogin')
+@user_passes_test(superuser_check)
+def jobDecManagementPage(request):
+    """
+    declined job management page
+    """
+    jobs = Job.objects.filter(status='dec')
+    context = {'reqJobs': jobs}
+
+    return render(request, 'jobManagement/jobDecManagement.html', context)
 
 
 @login_required(login_url="company:staffLogin")
@@ -41,8 +54,7 @@ def jobReqAddPage(request):
     """
     form = JobReqCreateForm(userObj=None)
     if request.method == "POST":
-        form = JobReqCreateForm(
-            request.POST, userObj=request.user)
+        form = JobReqCreateForm(request.POST, userObj=request.user)
         if form.is_valid():
             form.save()
         return redirect('job:jobReqManagementPage')
@@ -61,17 +73,16 @@ def jobChangeReqToJob(request, pk):
     form = JobUpdateConfirmForm(instance=job, userObj=None, operation=None)
 
     if request.method == 'POST':
-        form = JobUpdateConfirmForm(
-            request.POST, instance=job,
-            userObj=request.user, operation='confirming Job'
-        )
+        form = JobUpdateConfirmForm(request.POST,
+                                    instance=job,
+                                    userObj=request.user,
+                                    operation='confirming Job')
         if form.is_valid():
             form.save()
         return redirect('job:jobPage', job.id)
 
     context = {'form': form, 'job': job}
-    return render(
-        request, 'jobManagement/jobConfirmPage.html', context)
+    return render(request, 'jobManagement/jobConfirmPage.html', context)
 
 
 @login_required(login_url='company:staffLogin')
@@ -83,8 +94,7 @@ def jobManagementPage(request):
     jobs = Job.objects.filter(status='job')
     context = {'jobs': jobs}
 
-    return render(
-        request, 'jobManagement/jobManagement.html', context)
+    return render(request, 'jobManagement/jobManagement.html', context)
 
 
 @login_required(login_url="company:staffLogin")
@@ -97,17 +107,16 @@ def jobUpdateJob(request, pk):
     form = JobUpdateConfirmForm(instance=job, userObj=None, operation=None)
 
     if request.method == 'POST':
-        form = JobUpdateConfirmForm(
-            request.POST, instance=job,
-            userObj=request.user, operation='updating'
-        )
+        form = JobUpdateConfirmForm(request.POST,
+                                    instance=job,
+                                    userObj=request.user,
+                                    operation='updating')
         if form.is_valid():
             form.save()
         return redirect('job:jobPage', job.id)
 
     context = {'form': form, 'job': job}
-    return render(
-        request, 'jobManagement/jobUpdatePage.html', context)
+    return render(request, 'jobManagement/jobUpdatePage.html', context)
 
 
 @login_required(login_url='company:staffLogin')
@@ -117,45 +126,155 @@ def jobPage(request, pk):
     job page
     """
     job = Job.objects.get(pk=pk)
-    works = Work.objects.filter(job=job)
-    context = {'job': job, 'works': works}
+    invoice = job.invoice
+    payment_history = invoice.paymenthistory_set.all()
+    works = Work.objects.filter(job=job).order_by('work_order')
+    context = {
+        'job': job,
+        'works': works,
+        'invoice': invoice,
+        'pyHistory': payment_history
+    }
 
-    return render(
-        request, 'jobManagement/job.html', context)
-
-
-def process_work(work, user, invoice):
-    # TODO -  has to develop this further
-    tasks = Task.objects.filter(work=work)
-    for task in tasks:
-        if task.task_type == 'em':
-            print('sending email')
-            task.send_email(user)
-            # task.completed = True
-            # task.save()
-        elif task.task_type == 'cn':
-            print('sending contract')
-            invoice_content = prepare_invoice_sharing(invoice)
-            task.send_contract_and_invoice(user, invoice_content)
-        elif task.task_type == 'qn':
-            print('sending question')
-        else:
-            print('completing task')
-            # task.completed = True
-            # task.save()
+    return render(request, 'jobManagement/job.html', context)
 
 
 @login_required(login_url='company:staffLogin')
 @user_passes_test(superuser_check)
-def completeWork(request, pk):
-    work = Work.objects.get(pk=pk)
-    job_id = work.job.id
-    invoice = work.job.invoice
-    try:
-        process_work(work, request.user, invoice)
-    except Exception as e:
-        print(e)
+def processTask(request, pk):
+    task = Task.objects.get(pk=pk)
+    work = task.work
+    job = work.job
+
+    # making sure that task is process correctly
+    task.process_task(request.user)
+    return redirect('job:jobPage', job.id)
+
+
+@login_required(login_url='company:staffLogin')
+@user_passes_test(superuser_check)
+def completeTask(request, pk):
+    task = Task.objects.get(pk=pk)
+    job = task.get_job()
+    task.user_completed = task.update_user_completed()
+    task.completed = task.update_task_completed()
+    task.save()
+    return redirect('job:jobPage', job.id)
+
+
+@login_required(login_url='company:staffLogin')
+@user_passes_test(superuser_check)
+def appointmentPage(request, pk):
+    task = Task.objects.get(pk=pk)
+    job = task.get_job()
+    app = task.appointment
+
+    if app:
+        form = AppointmentForm(instance=app)
     else:
-        work.completed = True
-        # work.save()
-    return redirect('job:jobPage', job_id)
+        form = AppointmentForm()
+
+    if request.method == 'POST':
+        if app:
+            form = AppointmentForm(request.POST, instance=app)
+        else:
+            form = AppointmentForm(request.POST)
+
+        if form.is_valid():
+            appObj = form.save()
+            task.appointment = appObj
+            task.save()
+        else:
+            print(form.errors)
+
+        return redirect('job:jobPage', job.id)
+
+    context = {'form': form, 'task': task, 'job': job}
+    return render(request, 'appManagement/app.html', context)
+
+
+@login_required(login_url='company:staffLogin')
+@user_passes_test(superuser_check)
+def updateInvoice(request, pk):
+    """Add discount if wanted to notes before sharing invoice"""
+    invoice = Invoice.objects.get(pk=pk)
+    form = InvoiceUpdateForm(instance=invoice)
+
+    if request.method == 'POST':
+        form = InvoiceUpdateForm(request.POST, instance=invoice)
+        if form.is_valid():
+            invoice = form.save(commit=False)
+            if invoice.discount:
+                invoice.total_price = invoice.price - (invoice.price *
+                                                       invoice.discount)
+            invoice.save()
+            return redirect('company:invoiceDetail', invoice.id)
+
+    context = {'form': form, 'invoice': invoice, 'job': invoice.job}
+    return render(request, 'jobManagement/invoice.html', context)
+
+
+@login_required(login_url='company:staffLogin')
+@user_passes_test(superuser_check)
+def invoicePage(request, pk):
+    """displaying invoice page"""
+    job = Job.objects.get(pk=pk)
+    invoice = job.invoice
+
+    context = {'invoice': invoice}
+
+    return render(request, 'jobManagement/invoicePage.html', context)
+
+
+@login_required(login_url='company:staffLogin')
+@user_passes_test(superuser_check)
+def questPage(request, pk):
+    """displaying invoice page"""
+    job = Job.objects.get(pk=pk)
+    tasks = job.get_user_quest_tasks()
+    questionnaires = [task.job_quest for task in tasks]
+
+    context = {
+        'questionnaires': questionnaires,
+        'job': job,
+    }
+
+    return render(request, 'jobManagement/questPage.html', context)
+
+
+@login_required(login_url='company:staffLogin')
+@user_passes_test(superuser_check)
+def addPayHistoryPage(request, pk):
+    """adding payment history"""
+    job = Job.objects.get(pk=pk)
+    invoice = job.invoice
+    form = PaymentHistoryForm(invoice=invoice)
+
+    if request.method == 'POST':
+        form = PaymentHistoryForm(request.POST, invoice=invoice)
+        if form.is_valid():
+            ph = form.save(commit=False)
+            ph.invoice = invoice
+            ph.save()
+            return redirect('job:jobPage', job.id)
+
+    context = {'form': form, 'invoice': invoice}
+    return render(request, 'jobManagement/PayHistory.html', context)
+
+
+@login_required(login_url='company:staffLogin')
+@user_passes_test(superuser_check)
+def updatePayHistoryPage(request, pk):
+    """adding payment history"""
+    ph = PaymentHistory.objects.get(pk=pk)
+    job = ph.invoice.job
+    form = PaymentHistoryForm(instance=ph)
+
+    if request.method == 'POST':
+        form = PaymentHistoryForm(request.POST, instance=ph)
+        if form.is_valid():
+            ph = form.save()
+            return redirect('job:jobPage', job.id)
+
+    context = {'form': form}
+    return render(request, 'jobManagement/PayHistory.html', context)

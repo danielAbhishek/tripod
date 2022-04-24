@@ -1,4 +1,4 @@
-{% extends 'admin_base.html' %}
+{% extends 'admin_base_without_nav.html' %}
 {% load crispy_forms_tags %}
 
 
@@ -11,6 +11,11 @@
       {% csrf_token %}
       {{ form.job_name | as_crispy_field }}
       {{ form.primary_client | as_crispy_field }}
+      <br>
+      <small>If client is new add to the system</small>
+      <a class="btn btn-outline-primary" href="{% url 'company:clientAdd' %}">Add new client</a>
+      <br>
+      <br>
       {{ form.workflow | as_crispy_field }}
       {{ form.description | as_crispy_field }}
       <br>

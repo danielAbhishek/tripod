@@ -14,9 +14,12 @@
 {% endif %}
 
 <div class="col">
-  <h1>Clients</h1>
-  <a href="{% url 'company:clientAdd' %}">Add new client</a>
+  <h1 class="display-5">Client Management</h1>
   <br>
+  <a class="btn btn-outline-primary" href="{% url 'company:clientAdd' %}">Add new client</a>
+  <br>
+  <br>
+  <h4>List of Clients</h4>
   <table class="table table-striped table-sm">
     <thead>
       <tr>

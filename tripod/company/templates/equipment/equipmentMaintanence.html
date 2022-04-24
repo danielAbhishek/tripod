@@ -1,0 +1,26 @@
+{% extends 'admin_base_without_nav.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <h3 class="display-6">Equipment - {{ equipment.equipemnt.equipment_name }}</h3>
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
+    <form method="POST" action="">
+      {% csrf_token %}
+      <br>
+      <div class="row">
+        <div class="col">
+          {{ form.equipment | as_crispy_field }}
+          {{ form.maintanence_date | as_crispy_field }}
+          {{ form.next_available_date | as_crispy_field }}
+          {{ form.maintanence_cost | as_crispy_field }}
+          {{ form.done | as_crispy_field }}
+          {{ form.maintanence_reason | as_crispy_field }}
+        </div>
+      </div>
+      <br>
+      <input class="btn btn-primary" type="submit" value="Update Equipment Maintanence">
+    </form>
+{% endblock %}

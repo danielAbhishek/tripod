@@ -1,0 +1,26 @@
+{% extends 'admin_base_without_nav.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <h3 class="display-6">Company - {{ company.name }}</h3>
+    {% for message in messages %}
+		<p id="messages">{{message}}</p>
+		{% endfor %}
+    <form method="POST" action="">
+      {% csrf_token %}
+      <br>
+      <div class="row">
+        <div class="col">
+          {{ form.name| as_crispy_field }}
+          {{ form.address1 | as_crispy_field }}
+          {{ form.address2 | as_crispy_field }}
+          {{ form.city | as_crispy_field }}
+          {{ form.contact_number | as_crispy_field }}
+          {{ form.contact_email | as_crispy_field }}
+        </div>
+      </div>
+      <br>
+      <input class="btn btn-primary" type="submit" value="Update Company">
+    </form>
+{% endblock %}

@@ -1,9 +1,9 @@
-{% extends 'admin_base.html' %}
+{% extends 'admin_base_without_nav.html' %}
 {% load crispy_forms_tags %}
 
 
 {% block content %}
-    <h3>Event - {{ event.event_name }} {{ staff.last_name }}</h3>
+    <h3 class="display-6">Event - {{ event.event_name }}</h3>
     {% for message in messages %}
 		<p id="messages">{{message}}</p>
 		{% endfor %}
