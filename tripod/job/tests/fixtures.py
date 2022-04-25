@@ -1,26 +1,19 @@
-
 import random
 
 from faker import Faker
 from datetime import date, timedelta
 
-from job.forms import JobCreateForm
+from job.forms import JobReqCreateForm
 from company.forms import EventForm, PackageForm
-from settings.forms import (
-    WorkflowForm, EmailTemplateForm, SourceForm, WorkTemplateForm
-)
+from settings.forms import (WorkflowForm, EmailTemplateForm, SourceForm,
+                            WorkTemplateForm, WorkTypeForm,
+                            ContractTemplateForm, QuestionnaireTemplateForm)
 
 
 class JobFixtureSetup:
-    def __init__(
-                self,
-                user,
-                client,
-                secondary_client,
-                workflows,
-                events,
-                packages,
-                sources):
+
+    def __init__(self, user, client, secondary_client, workflows, events,
+                 packages, sources):
         self.faker = Faker()
         self.data = {}
         self.seed = 0
@@ -42,9 +35,7 @@ class JobFixtureSetup:
             inner_data['job_name'] = job
             inner_data['description'] = self.faker.paragraph(nb_sentences=2)
             inner_data['primary_client'] = self.client
-            inner_data['status'] = ['req', 'job'][random.randint(0, 1)]
             if job == 'Wedding':
-                inner_data['status'] = 'job'
                 inner_data['workflow'] = self.workflows[0]
                 inner_data['event'] = self.events[0]
                 inner_data['package'] = self.packages[0]
@@ -62,18 +53,17 @@ class JobFixtureSetup:
             inner_data['end_date'] = end_date
             all_day = True if self.seed % 2 == 0 else False
             inner_data['all_day'] = all_day
-            if not all_day:
-                date_time = self.faker.date_time()
-                inner_data['start_time'] = date_time.time()
-                end_time = date_time + timedelta(hours=random.randint(0, 8))
-                inner_data['end_time'] = end_time
-            else:
-                inner_data['start_time'] = None
-                inner_data['end_time'] = None
+            #  if not all_day:
+            #  date_time = self.faker.date_time()
+            #  inner_data['start_time'] = date_time.time()
+            #  end_time = date_time + timedelta(hours=random.randint(0, 8))
+            #  inner_data['end_time'] = end_time
+            #  else:
+            #  inner_data['start_time'] = None
+            #  inner_data['end_time'] = None
             inner_data['note'] = self.faker.paragraph(nb_sentences=2)
             inner_data['secondary_client'] = self.secondary_client
             inner_data['source'] = self.sources[random.randint(0, 4)]
-            inner_data['completed'] = False
             self.seed += 1
         return None
 
@@ -81,22 +71,21 @@ class JobFixtureSetup:
         self.get_data()
         for key in self.data:
             data = self.data[key]
-            jobForm = JobCreateForm(
-                data=data, userObj=self.user
-            )
+            jobForm = JobReqCreateForm(data=data, userObj=self.user)
             job_obj = jobForm.save()
             self.job_objs.append(job_obj)
         return self.data, self.job_objs
 
 
 class EventFixtureSetup:
+
     def __init__(self, user):
         self.faker = Faker()
         self.data = {}
         self.seed = 0
         self.events = [
             'Wedding', 'Birthday', 'Pre-Shoot', 'Portrait', 'Outdoor'
-            ]
+        ]
         self.event_objs = []
         self.user = user
 
@@ -114,23 +103,24 @@ class EventFixtureSetup:
         self.get_data()
         for key in self.data:
             data = self.data[key]
-            eventForm = EventForm(
-                data=data, userObj=self.user, operation='creating'
-            )
+            eventForm = EventForm(data=data,
+                                  userObj=self.user,
+                                  operation='creating')
             event_obj = eventForm.save()
             self.event_objs.append(event_obj)
         return self.data, self.event_objs
 
 
 class PackageFixtureSetup:
+
     def __init__(self, events, user):
         self.faker = Faker()
         self.data = {}
         self.seed = 0
         self.packages = [
-            'early-bird wedding', 'December kids',
-            'September portraits', 'Nuwara outdoor', 'Sampath bank customers'
-            ]
+            'early-bird wedding', 'December kids', 'September portraits',
+            'Nuwara outdoor', 'Sampath bank customers'
+        ]
         self.package_objs = []
         self.user = user
         self.events = events
@@ -160,15 +150,75 @@ class PackageFixtureSetup:
         self.get_data()
         for key in self.data:
             data = self.data[key]
-            packageForm = PackageForm(
-                data=data, userObj=self.user, operation='creating'
-            )
+            packageForm = PackageForm(data=data,
+                                      userObj=self.user,
+                                      operation='creating')
             package_obj = packageForm.save()
             self.package_objs.append(package_obj)
         return self.data, self.package_objs
 
 
+class WorkTypeFixtureSetup:
+
+    def __init__(self):
+        self.faker = Faker()
+        self.data = {}
+        self.seed = 0
+        self.workType_objs = []
+
+    def get_data(self):
+        Faker.seed(self.seed)
+        self.data = {
+            'Job request': {
+                'work_type': 'Job request',
+                'work_order': 1,
+                'description': self.faker.paragraph(nb_sentences=2)
+            },
+            'Contract booking': {
+                'work_type': 'Contract booking',
+                'work_order': 2,
+                'description': self.faker.paragraph(nb_sentences=2)
+            },
+            'Job confirmation': {
+                'work_type': 'Job confirmation',
+                'work_order': 3,
+                'description': self.faker.paragraph(nb_sentences=2)
+            },
+            'Pre shoot': {
+                'work_type': 'Pre shoot',
+                'work_order': 4,
+                'description': self.faker.paragraph(nb_sentences=2)
+            },
+            'Main shoot': {
+                'work_type': 'Main shoot',
+                'work_order': 5,
+                'description': self.faker.paragraph(nb_sentences=2)
+            },
+            'Post shoot': {
+                'work_type': 'Post shoot',
+                'work_order': 6,
+                'description': self.faker.paragraph(nb_sentences=2)
+            },
+            'Job done': {
+                'work_type': 'Job done',
+                'work_order': 7,
+                'description': self.faker.paragraph(nb_sentences=2)
+            }
+        }
+        return None
+
+    def create_and_get_objs(self):
+        self.get_data()
+        for key in self.data:
+            data = self.data[key]
+            workTypeForm = WorkTypeForm(data=data)
+            wt_obj = workTypeForm.save()
+            self.workType_objs.append(wt_obj)
+        return self.data, self.workType_objs
+
+
 class WorkflowFixtureSetup:
+
     def __init__(self, user):
         self.faker = Faker()
         self.data = {}
@@ -192,15 +242,18 @@ class WorkflowFixtureSetup:
         self.get_data()
         for key in self.data:
             data = self.data[key]
-            workflowForm = WorkflowForm(
-                data=data, userObj=self.user, operation='creation')
+            workflowForm = WorkflowForm(data=data,
+                                        userObj=self.user,
+                                        operation='creation')
             wf_obj = workflowForm.save()
             self.workflow_objs.append(wf_obj)
         return self.data, self.workflow_objs
 
 
 class WorkTemplateFixturesSetup:
-    def __init__(self, workflow_objs, emailTemp_objs):
+
+    def __init__(self, workflow_objs, emailTemp_objs, workType_objs,
+                 contTemp_objs, questTemp_objs):
         self.faker = Faker()
         self.data = {}
         self.seed = 0
@@ -208,6 +261,9 @@ class WorkTemplateFixturesSetup:
         self.workTemplate_objs = []
         self.workflow_objs = workflow_objs
         self.emailTemplate_objs = emailTemp_objs
+        self.contTemplate_objs = contTemp_objs
+        self.questTemplate_objs = questTemp_objs
+        self.workType_objs = workType_objs
 
     def get_data(self):
         for temp in self.workTemplates:
@@ -215,52 +271,117 @@ class WorkTemplateFixturesSetup:
             self.data[temp] = []
             inner_data = self.data[temp]
             emailTempObjs = [
-                email_temp_obj
-                for email_temp_obj in self.emailTemplate_objs
+                email_temp_obj for email_temp_obj in self.emailTemplate_objs
                 if email_temp_obj.workflow.workflow_name in 'simple wedding'
             ]
-            inner_data.append(
-                {
-                    'class_object': 'SimpleToDo',
-                    'step_number': 1,
-                    'name': 'Job request created',
-                    'workflow': self.workflow_objs[0],
-                    'description': self.faker.paragraph(nb_sentences=3),
-                    'day_delta': 3,
-                    'completed': True,
-                    'email_template': '',
-                    'contract_template': '',
-                    'quest_template': ''
-                }
-            )
-            inner_data.append(
-                {
-                    'class_object': 'EmailToDo',
-                    'step_number': 2,
-                    'name': 'Initial follow up to the request',
-                    'workflow': self.workflow_objs[0],
-                    'description': self.faker.paragraph(nb_sentences=3),
-                    'day_delta': 3,
-                    'completed': False,
-                    'email_template': emailTempObjs[0],
-                    'contract_template': '',
-                    'quest_template': ''
-                }
-            )
-            inner_data.append(
-                {
-                    'class_object': 'EmailToDo',
-                    'step_number': 3,
-                    'name': 'Second follow up to the request',
-                    'workflow': self.workflow_objs[0],
-                    'description': self.faker.paragraph(nb_sentences=3),
-                    'day_delta': 5,
-                    'completed': False,
-                    'email_template': emailTempObjs[1],
-                    'contract_template': '',
-                    'quest_template': ''
-                }
-            )
+            # worflow first record
+            wf_one = {
+                'work_type': self.workType_objs[0],
+                'class_object': 'ToDoTask',
+                'job_confirmation': False,
+                'step_number': 1,
+                'name': 'Job request created',
+                'workflow': self.workflow_objs[0],
+                'description': self.faker.paragraph(nb_sentences=3),
+                'auto_complete': True,
+                'day_delta': 3,
+                'check_invoice': False,
+                'email_template': '',
+                'contract_template': '',
+                'quest_template': ''
+            }
+            inner_data.append(wf_one)
+
+            # workflow second record
+            wf_two = {
+                'work_type': self.workType_objs[0],
+                'class_object': 'EmailTask',
+                'job_confirmation': False,
+                'step_number': 2,
+                'name': 'Initial follow up to the request',
+                'workflow': self.workflow_objs[0],
+                'description': self.faker.paragraph(nb_sentences=3),
+                'auto_complete': False,
+                'day_delta': 3,
+                'check_invoice': False,
+                'email_template': emailTempObjs[0],
+                'contract_template': '',
+                'quest_template': ''
+            }
+            inner_data.append(wf_two)
+
+            # workflow third record
+            wf_three = {
+                'work_type': self.workType_objs[1],
+                'class_object': 'EmailTask',
+                'job_confirmation': False,
+                'step_number': 3,
+                'name': 'Second follow up to the request',
+                'workflow': self.workflow_objs[0],
+                'description': self.faker.paragraph(nb_sentences=3),
+                'auto_complete': False,
+                'day_delta': 5,
+                'check_invoice': False,
+                'email_template': emailTempObjs[1],
+                'contract_template': '',
+                'quest_template': ''
+            }
+            inner_data.append(wf_three)
+
+            # workflow third record
+            wf_four = {
+                'work_type': self.workType_objs[1],
+                'class_object': 'ContractTask',
+                'job_confirmation': False,
+                'step_number': 4,
+                'name': 'Sharing the advance booking details and contract',
+                'workflow': self.workflow_objs[0],
+                'description': self.faker.paragraph(nb_sentences=3),
+                'auto_complete': False,
+                'day_delta': 5,
+                'check_invoice': False,
+                'email_template': '',
+                'contract_template': self.contTemplate_objs[0],
+                'quest_template': ''
+            }
+            inner_data.append(wf_four)
+
+            # workflow third record
+            wf_five = {
+                'work_type': self.workType_objs[1],
+                'class_object': 'AppointmentTask',
+                'job_confirmation': False,
+                'step_number': 5,
+                'name': 'Job accepted',
+                'workflow': self.workflow_objs[0],
+                'description': self.faker.paragraph(nb_sentences=3),
+                'auto_complete': False,
+                'day_delta': 5,
+                'check_invoice': False,
+                'email_template': emailTempObjs[2],
+                'contract_template': '',
+                'quest_template': ''
+            }
+            inner_data.append(wf_five)
+
+            # workflow third record
+            wf_six = {
+                'work_type': self.workType_objs[1],
+                'class_object': 'QuestTask',
+                'job_confirmation': False,
+                'step_number': 6,
+                'name': 'Get to know the customer',
+                'workflow': self.workflow_objs[0],
+                'description': self.faker.paragraph(nb_sentences=3),
+                'auto_complete': False,
+                'day_delta': 5,
+                'check_invoice': False,
+                'email_template': '',
+                'contract_template': '',
+                'quest_template': self.questTemplate_objs[0]
+            }
+            inner_data.append(wf_six)
+
             self.seed += 1
         return None
 
@@ -275,6 +396,7 @@ class WorkTemplateFixturesSetup:
 
 
 class EmailTemplateFixtureSetup:
+
     def __init__(self, workflow_objs, user):
         # self.faker = Faker()
         self.data = {}
@@ -288,39 +410,110 @@ class EmailTemplateFixtureSetup:
         for temp in self.templates:
             self.data[temp] = []
             inner_data = self.data[temp]
-            inner_data.append(
-                {
-                    'workflow': self.workflow_objs[0],
-                    'template_name': 'Initial follow up email',
-                    'subject': 'Follow up email - {company}',
-                    'body': 'Hi {customer}, \n\n email is from {company}',
-                    'thank_you': 'Best regards'
-                }
-            )
-            inner_data.append(
-                {
-                    'workflow': self.workflow_objs[0],
-                    'template_name': 'Second follow up email',
-                    'subject': 'Second follow up email - {company}',
-                    'body': 'Hi {customer}, \n\n email is from {company}',
-                    'thank_you': 'Best regards'
-                }
-            )
+            inner_data.append({
+                'workflow': self.workflow_objs[0],
+                'template_name': 'Initial follow up email',
+                'subject': 'Follow up email - company',
+                'body': 'Hi customer, \n\n email is from company',
+                'thank_you': 'Best regards'
+            })
+            inner_data.append({
+                'workflow': self.workflow_objs[0],
+                'template_name': 'Second follow up email',
+                'subject': 'Second follow up email - company',
+                'body': 'Hi customer, \n\n email is from company',
+                'thank_you': 'Best regards'
+            })
+            inner_data.append({
+                'workflow': self.workflow_objs[0],
+                'template_name': 'Thank you for booking',
+                'subject': 'Thank you email - company',
+                'body': 'Hi customer, \n\n email is from company',
+                'thank_you': 'Best regards'
+            })
         return None
 
     def create_and_get_objs(self):
         self.get_data()
         for key in self.data:
             for item in self.data[key]:
-                emailTempForm = EmailTemplateForm(
-                    data=item, userObj=self.user, operation='creating'
-                )
+                emailTempForm = EmailTemplateForm(data=item,
+                                                  userObj=self.user,
+                                                  operation='creating')
                 email_temp_obj = emailTempForm.save()
                 self.template_objs.append(email_temp_obj)
         return self.data, self.template_objs
 
 
+class ContractTemplateFixtureSetup:
+
+    def __init__(self, user):
+        # self.faker = Faker()
+        self.data = {}
+        self.user = user
+        self.template_objs = []
+        # self.seed = 0
+
+    def get_data(self):
+        self.data['template_name'] = 'Sample Commercial Contract'
+        self.data['subject'] = 'Commercial Contract'
+        self.data['body'] = """
+                            Short-Form General Photography Contract
+                            This agreement is between {company} (hereafter “Photographer” “the Photographer” or
+                            “Photography Company”) and {customer} (hereafter referred to as “CLIENT”).
+                        """
+        self.data['thank_you'] = 'thank you and regards'
+        self.data['signature'] = 'company'
+
+        return None
+
+    def create_and_get_objs(self):
+        self.get_data()
+        contractTempForm = ContractTemplateForm(data=self.data,
+                                                userObj=self.user,
+                                                operation='creating')
+        contract_temp_obj = contractTempForm.save()
+        self.template_objs.append(contract_temp_obj)
+        return self.data, self.template_objs
+
+
+class QuestionnaireTemplateFixtureSetup:
+
+    def __init__(self, user):
+        # self.faker = Faker()
+        self.data = {}
+        self.user = user
+        self.template_objs = []
+        # self.seed = 0
+
+    def get_data(self):
+        self.data['template_name'] = 'Simple Wedding Questionnaire'
+        self.data['subject'] = 'Simple Wedding Questionnaire'
+        self.data['body'] = "Please get back to us"
+        self.data['thank_you'] = 'thank you and regards'
+        self.data['signature'] = 'company'
+        self.data[
+            'question_one'] = 'What is the address of where couple will be getting ready?'
+        self.data[
+            'question_two'] = 'Please confirm exact details of the ceremony?'
+        self.data['question_three'] = 'Will there be first dance?'
+        self.data['question_four'] = 'Will there be formal speeches?'
+        self.data['question_five'] = 'Will there be a toss?'
+
+        return None
+
+    def create_and_get_objs(self):
+        self.get_data()
+        questTempForm = QuestionnaireTemplateForm(data=self.data,
+                                                  userObj=self.user,
+                                                  operation='creating')
+        quest_temp_obj = questTempForm.save()
+        self.template_objs.append(quest_temp_obj)
+        return self.data, self.template_objs
+
+
 class SourceFixtureSetup:
+
     def __init__(self):
         self.faker = Faker()
         self.data = {}

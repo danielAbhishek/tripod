@@ -5,10 +5,8 @@ criteria that passed, and they does their job to create db objects.
 """
 from abc import ABC, abstractmethod
 
-from job.workflow_factory.tasks import (
-    ToDoTask, EmailTask, ContractTask,
-    QuestTask, AppointmentTask
-)
+from job.workflow_factory.tasks import (ToDoTask, EmailTask, ContractTask,
+                                        QuestTask, AppointmentTask)
 from job.workflow_factory.forms import WorkForm
 
 
@@ -43,6 +41,7 @@ class SimpleWork(WorkBase):
     * tasks -> list of tasks which under specific work
     * work -> created work db object; init as None
     """
+
     def __init__(self, user, job, work_type):
         self.__data = {}
         self.user = user
@@ -74,9 +73,9 @@ class SimpleWork(WorkBase):
         self.set_data()
 
         # creating work db instance using form
-        form = WorkForm(
-            data=self.__data, userObj=self.user, operation='creating'
-        )
+        form = WorkForm(data=self.__data,
+                        userObj=self.user,
+                        operation='creating')
         if form.is_valid():
             self.work = form.save()
             return self.work
@@ -85,7 +84,7 @@ class SimpleWork(WorkBase):
 
     def task_factory(self, obj):
         """creating task factory"""
-        print(obj)
+        #  print(obj)
         name = obj.name
         description = obj.description + str(obj.class_object)
         class_obj = eval(obj.class_object)

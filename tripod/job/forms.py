@@ -16,6 +16,32 @@ class TimeInput(forms.TimeInput):
     input_type = 'time'
 
 
+class JobCreateForm(forms.ModelForm):
+    """job creating for testing purpose"""
+
+    class Meta:
+        model = Job
+        fields = '__all__'
+        exclude = ['created_at', 'changed_at']
+        widgets = {
+            'start_date': DateInput(),
+            'start_time': TimeInput(),
+            'end_date': DateInput(),
+            'end_time': TimeInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('userObj')
+        super().__init__(*args, **kwargs)
+        add_basic_html_tags("Please add job - ", self.fields, True)
+
+    def save(self, *args, **kwargs):
+        self.instance.create_by = self.user
+        self.instance.status = 'req'
+        jobObj = super(JobCreateForm, self).save(*args, **kwargs)
+        return jobObj
+
+
 class JobReqCreateForm(forms.ModelForm):
     """Workflow object creation"""
 
@@ -29,7 +55,7 @@ class JobReqCreateForm(forms.ModelForm):
         add_basic_html_tags("Please add job - ", self.fields, True)
 
     def save(self, *args, **kwargs):
-        self.instance.create_by = self.user
+        self.instance.created_by = self.user
         self.instance.status = 'req'
         jobObj = super(JobReqCreateForm, self).save(*args, **kwargs)
         return jobObj

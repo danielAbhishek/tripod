@@ -1,14 +1,14 @@
 from django import forms
 
 from tripod.utils import add_basic_html_tags
-from settings.models import (
-    Workflow, EmailTemplate, Source, TemplateField, WorkTemplate,
-    ContractTemplate, QuestionnaireTemplate
-)
+from settings.models import (Workflow, EmailTemplate, Source, TemplateField,
+                             WorkTemplate, ContractTemplate,
+                             QuestionnaireTemplate, WorkType)
 
 
 class WorkflowForm(forms.ModelForm):
     """Workflow object creation"""
+
     class Meta:
         model = Workflow
         fields = '__all__'
@@ -37,6 +37,7 @@ class WorkflowForm(forms.ModelForm):
 
 class EmailTemplateForm(forms.ModelForm):
     """Workflow object creation"""
+
     class Meta:
         model = EmailTemplate
         fields = '__all__'
@@ -64,6 +65,7 @@ class EmailTemplateForm(forms.ModelForm):
 
 class ContractTemplateForm(forms.ModelForm):
     """Workflow object creation"""
+
     class Meta:
         model = ContractTemplate
         fields = '__all__'
@@ -85,13 +87,14 @@ class ContractTemplateForm(forms.ModelForm):
             self.instance.created_at = self.obj.created_at
             self.instance.id = self.obj.id
             self.instance.changed_by = self.user
-        contrctTempObj = super(
-            ContractTemplateForm, self).save(*args, **kwargs)
+        contrctTempObj = super(ContractTemplateForm,
+                               self).save(*args, **kwargs)
         return contrctTempObj
 
 
 class QuestionnaireTemplateForm(forms.ModelForm):
     """Workflow object creation"""
+
     class Meta:
         model = QuestionnaireTemplate
         fields = '__all__'
@@ -113,13 +116,14 @@ class QuestionnaireTemplateForm(forms.ModelForm):
             self.instance.created_at = self.obj.created_at
             self.instance.id = self.obj.id
             self.instance.changed_by = self.user
-        questTempObj = super(
-            QuestionnaireTemplateForm, self).save(*args, **kwargs)
+        questTempObj = super(QuestionnaireTemplateForm,
+                             self).save(*args, **kwargs)
         return questTempObj
 
 
 class SourceForm(forms.ModelForm):
     """Workflow object creation"""
+
     class Meta:
         model = Source
         fields = '__all__'
@@ -127,13 +131,23 @@ class SourceForm(forms.ModelForm):
 
 class TemplateFieldForm(forms.ModelForm):
     """Workflow object creation"""
+
     class Meta:
         model = TemplateField
         fields = '__all__'
 
 
+class WorkTypeForm(forms.ModelForm):
+    """Work type creationg"""
+
+    class Meta:
+        model = WorkType
+        fields = '__all__'
+
+
 class WorkTemplateForm(forms.ModelForm):
     """Workflow object creation"""
+
     class Meta:
         model = WorkTemplate
         fields = '__all__'

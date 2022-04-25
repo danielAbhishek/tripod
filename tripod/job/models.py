@@ -471,6 +471,9 @@ class Task(models.Model):
             if not self.get_job().invoiced_client():
                 raise Exception('Invoice is not paid or updated completely')
 
+        if self.completed == True:
+            raise Exception("Task is already completed")
+
         # checking user responds needed task
         if not self.user_task:
             if self.task_type == 'em':
