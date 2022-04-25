@@ -5,7 +5,8 @@ from django.forms.models import modelformset_factory
 
 from company.models import (Event, Package, PackageLinkProduct, Product)
 from company.forms import (EventForm, ProductForm, PackageForm,
-                           PackageLinkProductAddForm)
+                           PackageLinkProductAddForm, EquipmentForm,
+                           EquipmentMaintanenceForm)
 from company.tests import fixtures
 
 
@@ -330,3 +331,51 @@ class PackageFormTests(TestCase):
 
         print(form.errors)
         self.assertEqual(new_package.price, 41000.00)
+
+
+class EquipmentFormTests(TestCase):
+
+    def setUp(self):
+        # create user
+        self.user = get_user_model().objects.create_user(
+            'test@gmail.com', 'abcd@1234')
+        # setting fixtures
+        self.equip_data = fixtures.equipments
+        self.equip_main_data = fixtures.equipment_maintanence
+
+    def create_equipment(self):
+        """creating equipments in db"""
+        data = self.equip_data["dslr camera"]
+        form = EquipmentForm(data=data)
+        equip = form.save()
+        return equip
+
+    def update_equipment(self):
+        """updating equipment in db"""
+        data = self.equip_data["wide lens"]
+        equip_inst = self.create_equipment()
+        form = EquipmentForm(instance=equip_inst, data=data)
+        return form.save()
+
+    def test_creating_equipment(self):
+        """creating equipment testing"""
+        equip = self.create_equipment()
+
+        self.assertEqual(equip.equipment_name, "DSLR camera")
+
+    def test_updating_equipment(self):
+        """updating equipment instance testing"""
+        equip = self.update_equipment()
+
+        self.assertEqual(equip.equipment_name, "wide lens")
+
+    def test_creating_maintanance_equipment(self):
+        """creating a new maintenance task for equipment"""
+        equip = self.create_equipment()
+        self.equip_main_data['dslr_maintanence']['equipment'] = equip
+        form = EquipmentMaintanenceForm(
+            data=self.equip_main_data['dslr_maintanence'])
+        equip_main = form.save()
+
+        self.assertEqual(equip_main.maintanence_cost, 1000)
+        self.assertEqual(equip_main.equipment, equip)

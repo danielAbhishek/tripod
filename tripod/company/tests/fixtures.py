@@ -1,7 +1,5 @@
-from company.models import (
-    Event, Package, PackageLinkProduct, Product
-)
-
+from company.models import (Event, Package, PackageLinkProduct, Product)
+from datetime import datetime, timedelta
 
 products = {
     'photo frame': {
@@ -33,10 +31,15 @@ products = {
     }
 }
 
-
 events = {
-    'wedding': {'event_name': 'Wedding', 'description': 'testing'},
-    'birthday': {'event_name': 'Birthday', 'description': 'new data'}
+    'wedding': {
+        'event_name': 'Wedding',
+        'description': 'testing'
+    },
+    'birthday': {
+        'event_name': 'Birthday',
+        'description': 'new data'
+    }
 }
 
 packages = {
@@ -58,4 +61,32 @@ product_units = {
     'photo frame': 3,
     'short video': 4,
     'photo album': 1,
+}
+
+equipments = {
+    'dslr camera': {
+        'equipment_name': 'DSLR camera',
+        'e_type': 'cu',
+        'availability': 'um',
+        # 'owner': self.user,
+        'price': 1000
+    },
+    'wide lens': {
+        'equipment_name': 'wide lens',
+        'e_type': 'iu',
+        'availability': 'ml',
+        # 'owner': self.user,
+        'price': 5000
+    }
+}
+
+equipment_maintanence = {
+    'dslr_maintanence': {
+        #  'equipment': self.equipment,
+        'maintanence_date': datetime.now().date(),
+        'next_available_date': datetime.now().date() + timedelta(days=10),
+        'maintanence_cost': 1000,
+        'done': False,
+        'maintanence_reason': 'abcd'
+    }
 }
