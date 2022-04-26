@@ -142,6 +142,7 @@ def jobPage(request, pk):
 @login_required(login_url='company:staffLogin')
 @user_passes_test(superuser_check)
 def processTask(request, pk):
+    """processing and completing the task from admin or business side"""
     task = Task.objects.get(pk=pk)
     work = task.work
     job = work.job
@@ -154,6 +155,7 @@ def processTask(request, pk):
 @login_required(login_url='company:staffLogin')
 @user_passes_test(superuser_check)
 def completeTask(request, pk):
+    """complete task from the user side"""
     task = Task.objects.get(pk=pk)
     job = task.get_job()
     task.user_completed = task.update_user_completed()

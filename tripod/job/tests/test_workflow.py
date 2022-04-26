@@ -6,15 +6,18 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 
 from job.models import Work, Task, Job
+from company.models import PackageLinkProduct
 
 from job.forms import JobUpdateConfirmForm
 from job.tests.fixtures import (
-    JobFixtureSetup, EventFixtureSetup, PackageFixtureSetup,
-    WorkflowFixtureSetup, WorkTemplateFixturesSetup, EmailTemplateFixtureSetup,
-    SourceFixtureSetup, WorkTypeFixtureSetup,
+    JobFixtureSetup, EventFixtureSetup, ProductFixtureSetup,
+    PackageFixtureSetup, WorkflowFixtureSetup, WorkTemplateFixturesSetup,
+    EmailTemplateFixtureSetup, SourceFixtureSetup, WorkTypeFixtureSetup,
     QuestionnaireTemplateFixtureSetup, ContractTemplateFixtureSetup)
 
 from job.workflow_factory.workflow import WorkFlowBase
+
+from finance.forms import PaymentHistoryForm
 from finance.utils import register_invoice_data_for_job
 
 
@@ -61,17 +64,24 @@ class WorkFlowTest(TestCase):
 
         # work template
         self.workTempFixture = WorkTemplateFixturesSetup(
-            self.workflow_objs, self.emailTemp_objs, self.workType_objs)
+            self.workflow_objs, self.emailTemp_objs, self.workType_objs,
+            self.contTemp_objs, self.questTemp_objs)
         (self.workTemp_data,
          self.workTemp_objs) = self.workTempFixture.create_and_get_objs()
 
-        # package
+        # event
         self.eventFixture = EventFixtureSetup(self.user)
         (self.event_data,
          self.event_objs) = self.eventFixture.create_and_get_objs()
 
+        # product
+        self.productFixture = ProductFixtureSetup(self.user)
+        (self.prod_data,
+         self.prod_objs) = self.productFixture.create_and_get_objs()
+
         # package
-        self.packageFixture = PackageFixtureSetup(self.event_objs, self.user)
+        self.packageFixture = PackageFixtureSetup(self.event_objs, self.user,
+                                                  self.prod_objs)
         (self.package_data,
          self.package_objs) = self.packageFixture.create_and_get_objs()
 
@@ -207,6 +217,39 @@ class WorkFlowTest(TestCase):
 
         self.assertTrue(jrc_task.completed)
 
+    def test_exception_raised_for_confirming_without_workflow(self):
+        """trying to confirm a job without a workflow will raise an error"""
+        wedding_job = [
+            job for job in self.job_objs if job.job_name == 'Wedding'
+        ][0]
+        wedding_job.workflow = None
+        wedding_job.save()
+
+        with self.assertRaises(Exception):
+            self.wedding_job_confirm()
+
+    def test_invoice_not_created_if_package_is_not_available(self):
+        """when confirming a job, if the package is not available then invoice should be 0"""
+        wedding_job = [
+            job for job in self.job_objs if job.job_name == 'Wedding'
+        ][0]
+        wedding_job.package = None
+        wedding_job.save()
+
+        job = self.wedding_job_confirm()
+
+        self.assertEqual(job.invoice.price, 0)
+
+    def test_invoice_creation_after_confirming_job(self):
+        """invoice should be created after the job is confirmed"""
+        job = self.wedding_job_confirm()
+        plp = PackageLinkProduct.objects.filter(package=job.package)
+        package_amount = 0
+        for item in plp:
+            package_amount += item.units * item.product.unit_price
+
+        self.assertEqual(job.invoice.price, package_amount)
+
     def test_works_created_for_wedding(self):
         """
         testing that works db objects were created as a part of workflow
@@ -229,7 +272,7 @@ class WorkFlowTest(TestCase):
         for work in works:
             tasks = work.task_set.all()
             task_count += len(tasks)
-        self.assertEqual(task_count, 3)
+        self.assertEqual(task_count, 6)
 
     def test_processing_already_completed_task(self):
         """Already completed task should raise exception as completed"""

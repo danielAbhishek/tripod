@@ -4,7 +4,8 @@ from faker import Faker
 from datetime import date, timedelta
 
 from job.forms import JobReqCreateForm
-from company.forms import EventForm, PackageForm
+from company.forms import (EventForm, PackageForm, ProductForm,
+                           PackageLinkProductAddForm)
 from settings.forms import (WorkflowForm, EmailTemplateForm, SourceForm,
                             WorkTemplateForm, WorkTypeForm,
                             ContractTemplateForm, QuestionnaireTemplateForm)
@@ -111,12 +112,50 @@ class EventFixtureSetup:
         return self.data, self.event_objs
 
 
-class PackageFixtureSetup:
+class ProductFixtureSetup:
 
-    def __init__(self, events, user):
+    def __init__(self, user):
         self.faker = Faker()
         self.data = {}
         self.seed = 0
+        self.products = ['photo frame', 'short video', 'photo album']
+        self.prod_objs = []
+        self.user = user
+
+    def get_data(self):
+        for prod in self.products:
+            Faker.seed(self.seed)
+            self.data[prod] = {}
+            inner_data = self.data[prod]
+            inner_data['product_name'] = prod
+            inner_data['unit_price'] = 5000 if prod == 'photo album' else 2000
+            inner_data[
+                'unit_measure_type'] = 'm' if prod == 'short video' else 'u'
+            inner_data['product_type'] = 'vd' if prod == 'short vide' else 'ph'
+            inner_data['description'] = self.faker.paragraph(nb_sentences=3)
+            inner_data['display'] = True
+            inner_data['is_active'] = True
+        return None
+
+    def create_and_get_objs(self):
+        self.get_data()
+        for key in self.data:
+            data = self.data[key]
+            prodForm = ProductForm(data=data,
+                                   userObj=self.user,
+                                   operation='creating')
+            prod_obj = prodForm.save()
+            self.prod_objs.append(prod_obj)
+        return self.data, self.prod_objs
+
+
+class PackageFixtureSetup:
+
+    def __init__(self, events, user, products):
+        self.faker = Faker()
+        self.data = {}
+        self.seed = 0
+        self.prod_objs = products
         self.packages = [
             'early-bird wedding', 'December kids', 'September portraits',
             'Nuwara outdoor', 'Sampath bank customers'
@@ -154,6 +193,17 @@ class PackageFixtureSetup:
                                       userObj=self.user,
                                       operation='creating')
             package_obj = packageForm.save()
+            # adding products to package
+            products = self.prod_objs[0:random.randint(1, 3)]
+            for prod in products:
+                form = PackageLinkProductAddForm(data={
+                    'product': prod,
+                    'units': random.randint(1, 5)
+                })
+                if form.is_valid():
+                    form.save(package=package_obj,
+                              operation='creating',
+                              userObj=self.user)
             self.package_objs.append(package_obj)
         return self.data, self.package_objs
 
