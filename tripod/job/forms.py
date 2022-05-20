@@ -47,7 +47,9 @@ class JobReqCreateForm(forms.ModelForm):
 
     class Meta:
         model = Job
-        fields = ['job_name', 'primary_client', 'workflow', 'description']
+        fields = [
+            'job_name', 'primary_client', 'workflow', 'description', 'source'
+        ]
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('userObj')
@@ -69,8 +71,14 @@ class JobUpdateConfirmForm(forms.ModelForm):
         fields = '__all__'
         exclude = [
             'status', 'completed', 'created_by', 'created_at', 'changed_by',
-            'changed_at'
+            'changed_at', 'task_status'
         ]
+        widgets = {
+            'start_date': DateInput(),
+            'start_time': TimeInput(),
+            'end_date': DateInput(),
+            'end_time': TimeInput(),
+        }
 
     def __init__(self, *args, **kwargs):
         self.operation = kwargs.pop('operation')

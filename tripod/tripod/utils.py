@@ -1,16 +1,13 @@
-
 import string
 import random
 
 
 def add_basic_html_tags(main_component, fields, description=False):
     for field in fields:
-        fields[str(field)].widget.attrs.update(
-            {
-                "placeholder": f"{main_component}-{str(field)}",
-                "class": "form-control"
-            }
-        )
+        fields[str(field)].widget.attrs.update({
+            "placeholder": f"{main_component}-{str(field)}",
+            "class": "form-control"
+        })
     if description:
         fields['description'].widget.attrs.update({'rows': '2'})
 
@@ -24,7 +21,7 @@ def superuser_check(user):
 
 
 def force_password_change_check(user):
-    return user.force_password_change
+    return not user.force_password_change
 
 
 def random_char():

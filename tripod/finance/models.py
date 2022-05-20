@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.db import models
@@ -44,12 +45,12 @@ class Invoice(models.Model):
     def paid(self):
         ph = self.paymenthistory_set.all()
         if ph:
-            return sum([p.payment_amount for p in ph])
+            return Decimal(sum([p.payment_amount for p in ph]))
         else:
-            return 0
+            return Decimal(0)
 
     def to_be_paid(self):
-        return self.total_price - self.paid()
+        return Decimal(self.total_price) - self.paid()
 
     def last_paid_date(self):
         ph = self.paymenthistory_set.all()

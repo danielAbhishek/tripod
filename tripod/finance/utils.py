@@ -34,7 +34,6 @@ def register_invoice_data_for_job(job, package=False):
 
 def prepare_invoice_sharing(job):
     """preparing invoice summary to share"""
-    print(job)
     if not job.package:
         raise Exception('Please select the package before generating invoice')
     products = job.package.products.all()

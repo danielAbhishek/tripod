@@ -3,9 +3,19 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 
 from blog.forms import CustomerCreationForm
+from company.models import Package
 
 
-def registerPage(request):
+def tripodPage(request):
+    """
+    Account registration view function for customers or users
+    using email, username and password
+    """
+    context = {}
+    return render(request, 'main/tripodPage.html', context)
+
+
+def contactPage(request):
     """
     Account registration view function for customers or users
     using email, username and password
@@ -22,7 +32,27 @@ def registerPage(request):
             messages.success(request, f'Account was created for {user}')
             return redirect('core:login')
         else:
-            print(form.errors)
+            messages.error(request, 'Invalid form submission')
 
-    context = {'form': form}
-    return render(request, 'main/register.html', context)
+    context = {'reg_form': form}
+    return render(request, 'main/contactUs.html', context)
+
+
+def featuresPage(request):
+    """
+    a features page, where all the packages details will be shown 
+    and additional information will be provided
+    """
+    packages_objs = Package.objects.all()
+    packages = {'packages': []}
+    for package in packages_objs:
+        package_inst = {}
+        product_list = []
+        for product in package.products.all():
+            product_list.append(product)
+        package_inst['package_obj'] = package
+        package_inst['product_list'] = product_list
+        packages['packages'].append(package_inst)
+    context = {'packages': packages}
+
+    return render(request, 'main/features.html', context)

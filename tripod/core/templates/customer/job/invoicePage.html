@@ -6,19 +6,11 @@
 
 {% block content %}
 
-{% if messages %}
-  <div class="row">
-    {% for message in messages %}
-    <p id="messages">{{message}}</p>
-  </div>
-{% endfor %}
-{% endif %}
-
 
 
 <div class="col">
   {% comment %} Header {% endcomment %}
-  <h5 class="display-5">Invoice 
+  <h5 class="display-5">Invoice
   </h5>
     <div class="row">
       <div class="col-sm-6">
@@ -81,7 +73,7 @@
 
     </div>
   <br>
-    
+
     <br>
     <br>
     <h5 class="display-6">Billing</h5>
@@ -107,7 +99,7 @@
           </tr>
           {% endfor %}
         </tbody>
-      </table> 
+      </table>
     {% else %}
     <h6>Please select package</h6>
     {% endif %}

@@ -1,20 +1,27 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render
-from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth import (authenticate, login, logout, get_user_model,
+                                 update_session_auth_hash)
 from django.db import IntegrityError
+from django.db.models import Q
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.forms.models import modelformset_factory
+from django.core.exceptions import ObjectDoesNotExist
 
-from core.forms import (AccountCreationForm, CustomUserChangeForm, CompanyForm)
+from core.forms import (AccountCreationForm, CustomUserChangeForm, CompanyForm,
+                        StaffProfileUpdateForm)
 from core.models import Company
 from company.models import (Event, Product, Package, PackageLinkProduct,
                             Equipment, EquipmentMaintanence)
 from company.forms import (EventForm, ProductForm, PackageForm,
                            PackageLinkProductAddForm, EquipmentForm,
                            EquipmentMaintanenceForm)
-from company.utils import superuser_check
+from company.utils import superuser_check, staff_check
 
 from finance.models import Invoice, PaymentHistory
+
+from tripod.utils import get_company
 
 
 def staffLoginPage(request):
@@ -23,8 +30,10 @@ def staffLoginPage(request):
     email and password
     """
     if request.user.is_authenticated and request.user.is_staff:
+        messages.info(request, 'Already logged in')
         return redirect('company:staffCompany')
     else:
+        company = get_company()
         if request.method == "POST":
             email = request.POST.get('email')
             password = request.POST.get('password')
@@ -32,16 +41,17 @@ def staffLoginPage(request):
             user = authenticate(request, email=email, password=password)
 
             if user is None:
-                messages.info(request, 'Username or password incorrect')
+                messages.error(request, 'Username or password incorrect')
             elif not user.is_staff:
-                messages.info(request, 'Staffs only can access')
+                messages.error(request, 'Staffs only can access')
             elif user is not None and user.is_staff:
                 login(request, user)
+                messages.success(request, 'Successfully logged in')
                 return redirect('company:staffCompany')
             else:
-                messages.info(request, 'Username or password incorrect')
+                messages.error(request, 'Username or password incorrect')
 
-        context = {}
+        context = {'company': company}
         return render(request, 'staffs/login.html', context)
 
 
@@ -52,11 +62,12 @@ def staffLogoutPage(request):
     staffs home
     """
     logout(request)
+    messages.success(request, 'Successfully logged out')
     return redirect('company:staffLogin')
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url='permission_error')
 def staffCompanyHomePage(request):
     """
     Company homepage which is only visible to admin logins,
@@ -67,21 +78,84 @@ def staffCompanyHomePage(request):
     return render(request, 'admin/company.html', context)
 
 
+@login_required(login_url="company:staffLogin")
+@user_passes_test(staff_check, login_url='permission_error')
+def changePassword(request):
+    """
+    Changing password of the user who logged in
+    """
+    form = PasswordChangeForm(request.user)
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            user.force_password_change = False
+            user.password_change_code = ''
+            user.save()
+            update_session_auth_hash(request, user)
+            message.success(request, "Your password was successfully updated")
+            return redirect('company:staffCompany')
+        else:
+            messages.error(request, 'Invalid form submission')
+
+    context = {'form': form}
+    return render(request, 'staffs/change_password.html', context)
+
+
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url="permission_error")
+def updateProfile(request):
+    user = request.user
+    form = StaffProfileUpdateForm(instance=user)
+
+    if request.method == "POST":
+        form = StaffProfileUpdateForm(request.POST or None, instance=user)
+
+        if form.is_valid():
+            user.email = form.cleaned_data['email']
+            user.username = form.cleaned_data['username']
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.gender = form.cleaned_data['gender']
+            user.contact_number = form.cleaned_data['contact_number']
+            user.contact_number_2 = form.cleaned_data['contact_number_2']
+            user.address = form.cleaned_data['address']
+            user.address_2 = form.cleaned_data['address_2']
+            user.city = form.cleaned_data['city']
+            user.province = form.cleaned_data['province']
+            user.country = form.cleaned_data['country']
+            user.save()
+            messages.success(request, "Successfully update the profile")
+            return redirect('company:staffCompany')
+        else:
+            messages.error(request, "Invalid form submission")
+            return render(request, 'staffs/update_profile.html', context)
+
+    context = {"form": form}
+    return render(request, 'staffs/update_profile.html', context)
+
+
+@login_required(login_url='company:staffLogin')
+@user_passes_test(superuser_check, login_url="permission_error")
 def employeeManagementPage(request):
     """
     employee management page, where employee basic information will get
     rendered in the page
     """
+    query = request.GET.get('q')
     users = get_user_model().objects.filter(is_staff=True)
+    if query is not None:
+        lookup = Q(email__icontains=query) | Q(
+            first_name__icontains=query) | Q(last_name__icontains=query)
+        users = users.filter(lookup)
+
     context = {'employees': users}
     return render(request, 'employeeManagement/employeeManagement.html',
                   context)
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def staffUpdatePage(request, pk):
     """
     while form showing the selected instance of the staff details
@@ -94,6 +168,7 @@ def staffUpdatePage(request, pk):
         context = {'form': form, 'staff': staff}
 
         if request.method == 'POST':
+            form = CustomUserChangeForm(request.POST or None, instance=staff)
             if form.is_valid():
                 staff.email = form.cleaned_data['email']
                 staff.username = form.cleaned_data['username']
@@ -112,7 +187,17 @@ def staffUpdatePage(request, pk):
                 staff.is_active = form.cleaned_data['is_active']
                 staff.is_superuser = form.cleaned_data['is_superuser']
                 staff.save()
-            return redirect('company:employeeManagement')
+                if staff.is_active:
+                    messages.success(
+                        request, f'Successfully updated records for {staff}')
+                    return redirect('company:employeeManagement')
+                else:
+                    messages.success(request, f'Deactivated {staff}')
+                    return redirect('company:employeeManagement')
+            else:
+                messages.error(request, 'Form is entered with invalid records')
+                return render(request, 'employeeManagement/employee.html',
+                              context)
 
         return render(request, 'employeeManagement/employee.html', context)
     else:
@@ -122,44 +207,45 @@ def staffUpdatePage(request, pk):
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def staffAddPage(request):
     """
     Adding new employee
     """
+    context = {}
     form = AccountCreationForm(user_type='staff')
     if request.method == 'POST':
         form = AccountCreationForm(request.POST, user_type='staff')
         if form.is_valid():
-            try:
-                user = form.save()
-                messages.success(request, f'Account was created for {user}')
-                return redirect('company:employeeManagement')
-            except IntegrityError:
-                messages.error(
-                    request, f'User cannot be created with same\
-                email address - {email}')
-            except Exception as e:
-                messages.error(request, f'another type of error {e}')
+            user = form.save()
+            messages.success(request, f'Account was created for {user}')
+            return redirect('company:employeeManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form}
     return render(request, 'employeeManagement/employeeAdd.html', context)
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def clientManagementPage(request):
     """
     client management page, where client basic information will get
     rendered in the page
     """
+    query = request.GET.get('q')
     clients = get_user_model().objects.filter(is_client=True)
+    if query is not None:
+        lookup = Q(email__icontains=query) | Q(
+            first_name__icontains=query) | Q(last_name__icontains=query)
+        clients = clients.filter(lookup)
     context = {'clients': clients}
     return render(request, 'clientManagement/clientManagement.html', context)
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def clientUpdatePage(request, pk):
     """
     while form showing the selected instance of the client details
@@ -173,7 +259,6 @@ def clientUpdatePage(request, pk):
 
         if request.method == 'POST':
             form = CustomUserChangeForm(request.POST, instance=client)
-            print('here...')
             if form.is_valid():
                 client.email = form.cleaned_data['email']
                 client.username = form.cleaned_data['username']
@@ -192,7 +277,16 @@ def clientUpdatePage(request, pk):
                 client.is_superuser = False
                 client.is_active = form.cleaned_data['is_active']
                 client.save()
-            return redirect('company:clientManagement')
+                if client.is_active:
+                    messages.success(
+                        request, f'Successfully updated records for {client}')
+                    return redirect('company:clientManagement')
+                else:
+                    messages.success(request, f'Deactivated {client}')
+                    return redirect('company:clientManagement')
+            else:
+                messages.error(request, 'Form is entered with invalid records')
+                return render(request, 'clientManagement/client.html', context)
 
         return render(request, 'clientManagement/client.html', context)
     else:
@@ -202,7 +296,7 @@ def clientUpdatePage(request, pk):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def clientAddPage(request):
     """
     Adding new client
@@ -211,34 +305,36 @@ def clientAddPage(request):
     if request.method == 'POST':
         form = AccountCreationForm(request.POST, user_type='client')
         if form.is_valid():
-            try:
-                client = form.save()
-                messages.success(request, f'Account was created for {client}')
-                return redirect('company:clientManagement')
-            except IntegrityError:
-                messages.error(
-                    request, f'User cannot be created with same\
-                email address - {email}')
-            except Exception as e:
-                messages.error(request, f'another type of error {e}')
+            client = form.save()
+            messages.success(request, f'Account was created for {client}')
+            return redirect('company:clientManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
+
     context = {'form': form}
     return render(request, 'clientManagement/clientAdd.html', context)
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url='permission_error')
 def eventManagement(request):
     """
     Showing the events where the name will be link to the detail
     page.
     """
-    events = Event.objects.all()
+    query = request.GET.get('q')
+    events = None
+    if query is not None:
+        lookup = Q(event_name__icontains=query)
+        events = Event.objects.filter(lookup)
+    else:
+        events = Event.objects.all()
     context = {'events': events}
     return render(request, 'packages/eventManagement.html', context)
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url='permission_error')
 def eventUpdatePage(request, pk):
     """
     While checking the detail of the event also allowing the admin user
@@ -253,15 +349,18 @@ def eventUpdatePage(request, pk):
                          userObj=request.user,
                          operation='updating')
         if form.is_valid():
-            form.save()
-        return redirect('company:eventManagement')
+            event = form.save()
+            messages.success(request, f'Event {event} successfully updated')
+            return redirect('company:eventManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form, 'event': event}
     return render(request, 'packages/event.html', context)
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url='permission_error')
 def eventAddPage(request):
     """
     Adding a new event
@@ -274,26 +373,34 @@ def eventAddPage(request):
         if form.is_valid():
             event = form.save()
             messages.success(request, f'Event {event} successfully created')
-        return redirect('company:eventManagement')
+            return redirect('company:eventManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form}
     return render(request, 'packages/eventAdd.html', context)
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url='permission_error')
 def productManagement(request):
     """
     Showing the products where the name will be link to the detail
     page.
     """
-    products = Product.objects.all()
+    query = request.GET.get('q')
+    products = None
+    if query is not None:
+        lookup = Q(product_name__icontains=query)
+        products = Product.objects.filter(lookup)
+    else:
+        products = Product.objects.all()
     context = {'products': products}
     return render(request, 'packages/productManagement.html', context)
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url='permission_error')
 def productUpdatePage(request, pk):
     """
     While checking the detail of the product also allowing the admin user
@@ -308,14 +415,19 @@ def productUpdatePage(request, pk):
                            userObj=request.user,
                            operation='updating')
         if form.is_valid():
-            form.save()
-        return redirect('company:productManagement')
+            product = form.save()
+            messages.success(request,
+                             f'Product {product} successfully updated')
+            return redirect('company:productManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
+
     context = {'form': form, 'product': product}
     return render(request, 'packages/product.html', context)
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url='permission_error')
 def productAddPage(request):
     """
     Adding a new product
@@ -327,22 +439,31 @@ def productAddPage(request):
                            operation='creating')
         if form.is_valid():
             product = form.save()
-            messages.success(request, f'Event {product} successfully created')
-        return redirect('company:productManagement')
+            messages.success(request,
+                             f'Product {product} successfully created')
+            return redirect('company:productManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form}
     return render(request, 'packages/productAdd.html', context)
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url='permission_error')
 def packageManagement(request):
     """
     Showing the products where the name will be link to the detail
     page.
     """
+    query = request.GET.get('q')
+    packages_objs = None
+    if query is not None:
+        lookup = Q(package_name__icontains=query)
+        packages_objs = Package.objects.filter(lookup)
+    else:
+        packages_objs = Package.objects.all()
     packages = {'packages': []}
-    packages_objs = Package.objects.all()
     for package in packages_objs:
         package_inst = {}
         product_list = []
@@ -356,7 +477,7 @@ def packageManagement(request):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url='permission_error')
 def packageUpdatePage(request, pk):
     """
     While checking the detail of the product also allowing the admin user
@@ -382,7 +503,11 @@ def packageUpdatePage(request, pk):
                                          userObj=request.user,
                                          operation='updating')
             package.save()
-        return redirect('company:packageManagement')
+            messages.success(request,
+                             f'Package {package} successfully updated')
+            return redirect('company:packageManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {
         'packageForm': packageForm,
@@ -393,7 +518,7 @@ def packageUpdatePage(request, pk):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url='permission_error')
 def packageAddPage(request):
     """
     Adding a new product
@@ -417,52 +542,73 @@ def packageAddPage(request):
                                          userObj=request.user,
                                          operation='creating')
             package.save()
-        return redirect('company:packageManagement')
+            messages.success(request,
+                             f'Package {package} successfully created')
+            return redirect('company:packageManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'packageForm': packageForm, 'formset': formset}
     return render(request, 'packages/packageAdd.html', context)
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url='permission_error')
 def invoiceManagement(request):
     """
     Showing the invoice where the name will be link to the detail
     page.
     """
-    invoices = Invoice.objects.all()
+    query = request.GET.get('q')
+    invoices = None
+    if query is not None:
+        lookup = Q(job__job_name__icontains=query)
+        invoices = Invoice.objects.filter(lookup)
+    else:
+        invoices = Invoice.objects.all()
     context = {'invoices': invoices}
     return render(request, 'finance/invoice.html', context)
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url='permission_error')
 def invoiceDetail(request, pk):
     """
     Showing the products where the name will be link to the detail
     page.
     """
     invoice = Invoice.objects.get(pk=pk)
-    pkgLink = PackageLinkProduct.objects.filter(package=invoice.job.package)
+    try:
+        job = invoice.job
+        pkgLink = PackageLinkProduct.objects.filter(package=job.package)
+    except ObjectDoesNotExist:
+        invoice.job = None
+        pkgLink = None
     company = Company.objects.filter(active=True).first()
     context = {'invoice': invoice, 'pkgLink': pkgLink, 'company': company}
     return render(request, 'finance/invoiceDetail.html', context)
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url='permission_error')
 def equipmentManagement(request):
     """
     Showing the equipments where the name will be link to the detail
     page.
     """
-    equipments = Equipment.objects.all()
+    query = request.GET.get('q')
+    equipments = None
+    if query is not None:
+        lookup = Q(equipment_name__icontains=query)
+        equipments = Equipment.objects.filter(lookup)
+    else:
+        equipments = Equipment.objects.all()
     context = {'equipments': equipments}
     return render(request, 'equipment/equipmentManagement.html', context)
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url='permission_error')
 def equipmentUpdatePage(request, pk):
     """
     While checking the detail of the equipment also allowing the admin user
@@ -474,15 +620,19 @@ def equipmentUpdatePage(request, pk):
     if request.method == "POST":
         form = EquipmentForm(request.POST, instance=equipment)
         if form.is_valid():
-            form.save()
-        return redirect('company:equipmentManagement')
+            equip = form.save()
+            messages.success(request,
+                             f'Equipment {equip} successfully updated')
+            return redirect('company:equipmentManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form, 'equipment': equipment}
     return render(request, 'equipment/equipment.html', context)
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url='permission_error')
 def equipmentAddPage(request):
     """
     Adding a new event
@@ -494,25 +644,33 @@ def equipmentAddPage(request):
             equipment = form.save()
             messages.success(request,
                              f'Equipment {equipment} successfully created')
-        return redirect('company:equipmentManagement')
+            return redirect('company:equipmentManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form}
     return render(request, 'equipment/equipmentAdd.html', context)
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url='permission_error')
 def equipmentMaintanence(request):
     """
     Showing the equipments maintanence page
     """
-    equipments = EquipmentMaintanence.objects.all()
+    query = request.GET.get('q')
+    equipments = None
+    if query is not None:
+        lookup = Q(equipment__equipment_name__icontains=query)
+        equipments = EquipmentMaintanence.objects.filter(lookup)
+    else:
+        equipments = EquipmentMaintanence.objects.all()
     context = {'equipments': equipments}
     return render(request, 'equipment/equipmentsMaintanence.html', context)
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url='permission_error')
 def equipmentMaintanenceUpdatePage(request, pk):
     """
     While checking the detail of the equipment Maintanence also allowing the admin user
@@ -524,15 +682,19 @@ def equipmentMaintanenceUpdatePage(request, pk):
     if request.method == "POST":
         form = EquipmentMaintanenceForm(request.POST, instance=equipment)
         if form.is_valid():
-            form.save()
-        return redirect('company:equipmentMaintanence')
+            obj = form.save()
+            messages.success(
+                request, f'Equipment Maintanence {obj} successfully updated')
+            return redirect('company:equipmentMaintanence')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form, 'equipment': equipment}
     return render(request, 'equipment/equipmentMaintanence.html', context)
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url='permission_error')
 def equipmentMaintanenceAddPage(request):
     """
     Adding a new equipment maintanence
@@ -545,14 +707,16 @@ def equipmentMaintanenceAddPage(request):
             messages.success(
                 request,
                 f'Equipment Maintanence ({equipment}) successfully created')
-        return redirect('company:equipmentMaintanence')
+            return redirect('company:equipmentMaintanence')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form}
     return render(request, 'equipment/equipmentMaintanenceAdd.html', context)
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(superuser_check)
+@user_passes_test(staff_check, login_url='permission_error')
 def companyUpdate(request, pk):
     company = Company.objects.get(pk=pk)
     form = CompanyForm(instance=company)
@@ -562,7 +726,10 @@ def companyUpdate(request, pk):
             company = form.save(commit=False)
             company.active = True
             company.save()
+            messages.success(request, f'Company {company} successfully added')
+            return redirect('company:staffCompany')
+        else:
+            messages.error(request, 'Invalid form submission')
 
-        return redirect('company:staffCompany')
-    context = {'form': form}
+    context = {'form': form, 'company': company}
     return render(request, 'admin/companyUpdate.html', context)

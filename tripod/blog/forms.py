@@ -16,19 +16,18 @@ class CustomerCreationForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = [
-            'email', 'username', 'first_name', 'last_name',
-            'gender', 'contact_number', 'city', 'country'
-            ]
+            'email', 'username', 'first_name', 'last_name', 'gender',
+            'contact_number', 'city', 'country'
+        ]
 
     def __init__(self, *args, **kwargs):
-        self.password = TEMP_PASSWORD
+        self.random_code = random_char()
         super(CustomerCreationForm, self).__init__(*args, **kwargs)
 
     def save(self, *args, **kwargs):
-        random_code = random_char()
-        self.instance.password = random_code
+        self.instance.password = self.random_code
         self.instance.force_password_change = True
-        self.instance.password_change_code = random_code
+        self.instance.password_change_code = self.random_code
         account = CustomUser.objects.create_client(
             email=self.instance.email,
             password=self.instance.password,
@@ -40,13 +39,13 @@ class CustomerCreationForm(forms.ModelForm):
             city=self.instance.city,
             country=self.instance.country,
             force_password_change=self.instance.force_password_change,
-            password_change_code=self.instance.password_change_code
-        )
+            password_change_code=self.instance.password_change_code)
+        print(self.random_code)
+        print(self.instance.password)
+        print(self.instance.password_change_code)
         send_code(account)
-        Job.objects.create(
-            job_name=account.first_name + " request",
-            job_request=self.cleaned_data['job_request'],
-            primary_client=account,
-            status='req'
-        )
+        Job.objects.create(job_name=account.first_name + " request",
+                           job_request=self.cleaned_data['job_request'],
+                           primary_client=account,
+                           status='req')
         return account

@@ -1,22 +1,105 @@
-{% extends 'customer_base.html' %}
+{% extends 'customer_base_without_nav.html' %}
 
-{% block sidebar %}
-{% include 'sidebars/customer_sidebar.html' %}
-{% endblock sidebar %}
+
+
 
 {% block content %}
-
-{% if messages %}
-  <div class="row">
-    {% for message in messages %}
-    <p id="messages">{{message}}</p>
-  </div>
-{% endfor %}
-{% endif %}
-
 <div class="col">
+  <div class="row" style="width: auto; margin: 5px;">
+    <div class="col-3">
+      <span>
+        <h6 class="display-6">Jobs Page</h6>
+      </span>
+    </div>
+    <div class="col-9 align-text-bottom">
+    </div>
+  </div>
+    <div class="row" >
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+
+          {% comment %} First Row  {% endcomment %}
+          <div class="row" style="margin: 10px;">
+          {% comment %} Venue card{% endcomment %}
+            <div class="col-sm-4">
+             <div class="card h-100 box-shadow">
+                <div class="card-header">
+                  <h6 class="my-0 font-weight-normal">Job Requests</h6>
+                </div>
+                <div class="card-body">
+
+                  <div class="media text-muted pt-1">
+                    <div class="d-flex justify-content-between w-100">
+                      <strong class="text-gray-dark">Job Requests Management</strong>
+
+                      <a class="btn btn-outline-secondary btn-sm" href="{% url 'core:jobReqAdd' %}">Add new Job request</a>
+                      <a class="btn btn-sm btn-outline-secondary" href="{% url 'core:jobRequests' %}">go to page</a>
+
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="d-flex justify-content-between align-items-center w-100">
+                    <form action={% url 'core:jobRequests'%} method='GET'>
+                      <input class="btn btn-outline-secondary btn-sm" type="text" name="q" />
+                      <input class="btn btn-secondary my-2 btn-sm" type="submit" value="search job request"/> 
+                    </form>
+                  </div>
 
 
+                </div>
+              </div>
+            </div>
+          {% comment %} Date and Time card{% endcomment %}
+            <div class="col-sm-4">
+             <div class="card h-100 box-shadow">
+                <div class="card-header">
+                  <h6 class="my-0 font-weight-normal">Confirmed Jobs</h6>
+                </div>
+                <div class="card-body">
+
+                  <div class="media text-muted pt-1">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                      <strong class="text-gray-dark">Confirmed Job Management</strong>
+                      <a class="btn btn-sm btn-outline-secondary" href="{% url 'core:jobs' %}">go to page</a>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="d-flex justify-content-between align-items-center w-100">
+                    <form action={% url 'core:jobs' %} method='GET'>
+                      <input class="btn btn-outline-secondary btn-sm" type="text" name="q" />
+                      <input class="btn btn-secondary my-2 btn-sm" type="submit" value="search confirmed job"/> 
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% comment %} Date and Time card{% endcomment %}
+              <div class="col-sm-4">
+               <div class="card h-100 box-shadow">
+                  <div class="card-header">
+                    <h6 class="my-0 font-weight-normal">Declined Jobs</h6>
+                  </div>
+                  <div class="card-body">
+
+                    <div class="media text-muted pt-1">
+                      <div class="d-flex justify-content-between align-items-center w-100">
+                        <strong class="text-gray-dark">Declined Job Management</strong>
+                        <a class="btn btn-sm btn-outline-secondary" href="{% url 'core:declinedJobs' %}">go to page</a>
+                      </div>
+                    </div>
+                    <hr>
+                  <div class="d-flex justify-content-between align-items-center w-100">
+                    <form action={% url 'core:declinedJobs' %} method='GET'>
+                      <input class="btn btn-outline-secondary btn-sm" type="text" name="q" />
+                      <input class="btn btn-secondary my-2 btn-sm" type="submit" value="search declined job"/> 
+                    </form>
+                  </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+    </div>
+  </div>
 </div>
-
 {% endblock content %}

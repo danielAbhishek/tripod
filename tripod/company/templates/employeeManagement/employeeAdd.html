@@ -1,17 +1,14 @@
-{% extends 'admin_base.html' %}
+{% extends 'admin_base_without_nav.html' %}
 {% load crispy_forms_tags %}
 
 
 {% block content %}
-    <h3 class="display-6">Create New Employee</h3>
-    {% for message in messages %}
-		<p id="messages">{{message}}</p>
-		{% endfor %}
+    <h2>Create New Employee</h2>
     <form method="POST" action="">
       {% csrf_token %}
       {{ form.email | as_crispy_field}}
       {{ form.username | as_crispy_field}}
       <br>
-      <input class="btn btn-primary" type="submit" value="Create Account">
+      <input class="btn btn-primary" type="submit" value="Create Employee Account">
     </form>
 {% endblock %}

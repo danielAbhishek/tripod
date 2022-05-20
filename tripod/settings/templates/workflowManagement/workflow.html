@@ -1,12 +1,10 @@
-{% extends 'admin_base.html' %}
+{% extends 'admin_base_without_nav.html' %}
 {% load crispy_forms_tags %}
 
 
 {% block content %}
-    <h3>workflow - {{ workflow.workflow_name }}</h3>
-    {% for message in messages %}
-		<p id="messages">{{message}}</p>
-		{% endfor %}
+    <h2>workflow - {{ workflow.workflow_name }}</h2>
+
     <form method="POST" action="">
       {% csrf_token %}
       <br>

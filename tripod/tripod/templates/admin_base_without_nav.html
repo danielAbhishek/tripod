@@ -11,9 +11,13 @@
     <div class="">
       {% if request.user.is_superuser %}
         {% include 'admin_navbar.html' %}
+      {% elif request.user.is_staff %}
+        {% include 'staff_navbar.html' %}
+      {% else %}
+        {% include 'admin_guest_nav.html'%}
       {% endif %}
     </div>
-
+    {% include 'messages.html' %}
     <div class="container-fluid">
       <div class="content">
         <div class="row" style="margin:10px">

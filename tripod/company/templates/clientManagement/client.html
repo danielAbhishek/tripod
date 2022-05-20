@@ -3,10 +3,7 @@
 
 
 {% block content %}
-    <h3 class="display-6">Update Employee - {{ client.first_name }} {{ client.last_name }}</h3>
-    {% for message in messages %}
-		<p id="messages">{{message}}</p>
-		{% endfor %}
+    <h2 class="display-6">Update Client - {{ client.first_name }} {{ client.last_name }}</h2>
     <form method="POST" action="">
       {% csrf_token %}
       <br>
@@ -22,7 +19,7 @@
           {{ form.is_active | as_crispy_field}}
         </div>
         <div class="col">
-        <h5>Contact Information</h5>          
+        <h5>Contact Information</h5>
           {{ form.contact_number | as_crispy_field}}
           {{ form.contact_number_2 | as_crispy_field}}
           {{ form.address | as_crispy_field}}

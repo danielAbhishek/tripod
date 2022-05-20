@@ -2,7 +2,10 @@ from core.models import CustomUser, Company
 from django import forms
 from django.contrib.auth.forms import (UserChangeForm, UserCreationForm)
 
-from tripod.ENV import TEMP_PASSWORD
+from tripod.settings import temp_password
+from tripod.utils import random_char
+
+from core.utils import send_code
 
 from job.models import Job, JobQuestionnaire
 
@@ -35,6 +38,18 @@ class CustomUserChangeForm(UserChangeForm):
         ]
 
 
+class StaffProfileUpdateForm(UserChangeForm):
+
+    class Meta:
+        model = CustomUser
+        fields = '__all__'
+        exclude = [
+            'password', 'groups', 'user_permissions', 'last_login',
+            'date_joined', 'force_password_change', 'password_change_code',
+            'is_staff', 'is_client', 'is_active', 'is_superuser'
+        ]
+
+
 class CustomUserChangeFormAdminView(UserChangeForm):
 
     class Meta:
@@ -49,12 +64,15 @@ class AccountCreationForm(forms.ModelForm):
         fields = ['email', 'username']
 
     def __init__(self, *args, **kwargs):
-        self.password = TEMP_PASSWORD
+        self.password = temp_password
         self.user_type = kwargs.pop('user_type')
         super(AccountCreationForm, self).__init__(*args, **kwargs)
 
     def save(self, *args, **kwargs):
-        self.instance.password = self.password
+        random_code = random_char()
+        self.instance.password = random_code
+        self.instance.force_password_change = True
+        self.instance.password_change_code = random_code
         if self.user_type == 'client':
             account = CustomUser.objects.create_client(
                 self.instance.email,
@@ -69,6 +87,7 @@ class AccountCreationForm(forms.ModelForm):
         else:
             raise TypeError(f'Incorrect user type given {self.user_type}')
 
+        send_code(account)
         return account
 
 

@@ -3,11 +3,7 @@
 
 
 {% block content %}
-{% if messages %}
-    {% for message in messages %}
-		<p id="messages">{{message}}</p>
-		{% endfor %}
-{% else %}
+
 <div class="col">
   <div class="card" style="width: auto; margin: 40px;">
     <div class="card-body">
@@ -35,6 +31,5 @@
     </div>
   </div>
 </div>
-{% endif %}
 
 {% endblock %}

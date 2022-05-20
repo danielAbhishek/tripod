@@ -201,10 +201,10 @@ class PackageFixtureSetup:
                     'units': random.randint(1, 5)
                 })
                 if form.is_valid():
-                    form.save(package=package_obj,
-                              operation='creating',
-                              userObj=self.user)
-            self.package_objs.append(package_obj)
+                    obj, package = form.save(package=package_obj,
+                                             operation='creating',
+                                             userObj=self.user)
+            self.package_objs.append(package)
         return self.data, self.package_objs
 
 

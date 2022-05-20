@@ -142,6 +142,26 @@ class Job(models.Model):
             return False
         return True
 
+    def get_tasks(self, lookup=None):
+        """return tasks"""
+        tasks_list = []
+        # works
+        works = self.work_set.all()
+
+        # looing thru works
+        for work in works:
+            tasks = work.task_set.all()
+            # filtering tasks
+            if lookup is not None:
+                tasks = tasks.filter(lookup)
+            else:
+                tasks = tasks.all()
+
+            # looping thru tasks
+            for task in tasks:
+                tasks_list.append(task)
+        return tasks_list
+
 
 class Appointment(models.Model):
     """
@@ -229,6 +249,7 @@ class Work(models.Model):
             elif self.work_name == "Job Done":
                 self.job.task_status = 'jbd'
             self.job.save()
+            return self.job
 
     @staticmethod
     def tasks_completed_percentage(tasks):
@@ -313,7 +334,7 @@ class Task(models.Model):
     # email = EmailManager()
 
     def __str__(self):
-        return self.task_name
+        return self.get_job().job_name + " - " + self.task_name
 
     def get_job(self):
         """Getting job that's for task"""
@@ -424,8 +445,9 @@ class Task(models.Model):
 
     def send_questionnaire(self):
         """sending questionnaire to fill"""
-        ec = EmailClient(self)
-        ec.send_email()
+        if self.email_template:
+            ec = EmailClient(self)
+            ec.send_email()
         # adding questionnaire job
         try:
             jobQuest = JobQuestionnaire.objects.get(job=self.get_job())

@@ -6,16 +6,9 @@
 
 {% block content %}
 
-{% if messages %}
-  <div class="row">
-    {% for message in messages %}
-    <p id="messages">{{message}}</p>
-  </div>
-{% endfor %}
-{% endif %}
 
 <div class="col">
-  <h1 class="display-5">Job Management</h1>
+  <h1 class="display-5">Job Requests Management</h1>
   <br>
   <a class="btn btn-outline-primary" href="{% url 'job:jobReqAdd' %}">Add new Job request</a>
   <br><br><br>

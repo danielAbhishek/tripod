@@ -6,35 +6,37 @@
 
 {% block content %}
 
-{% if messages %}
-  <div class="row">
-    {% for message in messages %}
-    <p id="messages">{{message}}</p>
-  </div>
-{% endfor %}
-{% endif %}
 
 <div class="col">
-  <h1>Email Templates</h1>
-  <a href="{% url 'settings:emailTemplateAdd' %}">Add new email Template</a>
-  <br>
-  <table class="table table-striped table-sm">
-    <thead>
-      <tr>
-        <th>Workflow</th>
-        <th>Name</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for emailTemplate in emailTemplates %}
-        <tr>
-          <th>{{ emailTemplate.workflow }}</th>
-          <th><a href="{% url 'settings:emailTemplateUpdatePage' emailTemplate.id %}">{{ emailTemplate.template_name }}</a></th>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="container">
+    <section class="jumbotron text-left">
+      <h1 class="jumbotron-heading">Email Template Management</h1>
+      <!-- <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don't simply skip over it entirely.</p> -->
+      <p>
+        <a class="btn btn-outline-primary" href="{% url 'settings:emailTemplateAdd' %}">Add new email Template</a>
+        <a href="#" class="btn btn-secondary my-2">Search</a>
+      </p>
+    </section>
+    <hr>
 
+    <h6 class="text-muted">List of Email Templates</h6>
+    <table class="table text-left align-middle">
+      <thead class="thead-light">
+        <tr>
+          <th>Workflow</th>
+          <th>Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for emailTemplate in emailTemplates %}
+          <tr>
+            <th>{{ emailTemplate.workflow }}</th>
+            <th><a class="nav-link" href="{% url 'settings:emailTemplateUpdatePage' emailTemplate.id %}">{{ emailTemplate.template_name }}</a></th>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 <div class="col-3">
   Filters

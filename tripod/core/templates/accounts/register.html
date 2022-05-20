@@ -4,9 +4,7 @@
 
 {% block content %}
     <h3>REGISTER ACCOUNT</h3>
-    {% for message in messages %}
-		<p id="messages">{{message}}</p>
-		{% endfor %}
+
     <form method="POST" action="">
       {% csrf_token %}
       {{ form.email | as_crispy_field}}

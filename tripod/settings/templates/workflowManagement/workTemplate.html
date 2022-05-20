@@ -1,12 +1,10 @@
-{% extends 'admin_base.html' %}
+{% extends 'admin_base_without_nav.html' %}
 {% load crispy_forms_tags %}
 
 
 {% block content %}
-    <h3>Work Template - {{ workTemplate.name }}</h3>
-    {% for message in messages %}
-		<p id="messages">{{message}}</p>
-		{% endfor %}
+    <h2>Work Template - {{ workTemplate.name }}</h2>
+
     <form method="POST" action="">
       {% csrf_token %}
       <br>
@@ -16,11 +14,13 @@
           {{ form.step_number | as_crispy_field }}
           {{ form.name | as_crispy_field }}
           {{ form.class_object | as_crispy_field }}
+          {{ form.work_type | as_crispy_field }}
           {{ form.description | as_crispy_field }}
           {{ form.day_delta | as_crispy_field }}
           {{ form.auto_complete | as_crispy_field }}
+          {{ form.check_invoice | as_crispy_field }}
           {{ form.email_template | as_crispy_field }}
-          {{ form.contract_templete | as_crispy_field }}
+          {{ form.contract_template | as_crispy_field }}
           {{ form.quest_template | as_crispy_field }}
         </div>
       </div>

@@ -1,0 +1,53 @@
+
+{% extends 'guest_user_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="row" style="padding:10px">
+  <div class="col-2">
+  </div>
+  <div class="col-3">
+    <div clas="card">
+      <div class="card-body">
+        <br>
+        <br>
+        <br>
+        <h3 class="display-3">
+          Get in touch
+        </h3>
+        <p class="lead">Email address - conway@tripod.com<p>
+        <p class="lead">Peter Conway - Colombo</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="">
+      <div class="card-body">
+        <br>
+        <h5 class="lead px-3 text-center"><i>Got a project in your mind, connect with me using the below form.</i></h5>
+        <br>
+        <form method="POST" action="">
+          {% csrf_token %}
+          {{ reg_form.email | as_crispy_field}}
+          {{ reg_form.username | as_crispy_field}}
+          {{ reg_form.first_name | as_crispy_field}}
+          {{ reg_form.last_name | as_crispy_field}}
+          {{ reg_form.gender | as_crispy_field}}
+          {{ reg_form.contact_number | as_crispy_field}}
+          {{ reg_form.city | as_crispy_field}}
+          {{ reg_form.country | as_crispy_field}}
+          {{ reg_form.job_request | as_crispy_field}}
+          <br>
+          <input class="btn btn-primary" type="submit" value="Create Request and Sign Up">
+          <br>
+        </form>
+        <br>
+        <i><b>Do you have logins? </b><a class="link-primary" href="{% url 'core:login' %}">Login here</a></i>
+      </div>
+    </div>
+  </div> 
+  <div class="col-1">
+  </div>
+</div> 
+{% endblock content %}

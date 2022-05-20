@@ -2,9 +2,7 @@
 
 
 {% block content %}
-    {% for message in messages %}
-		<p id="messages">{{message}}</p>
-		{% endfor %}
+
 
 <!-- first column that has the information of job->work->tasks respectively -->
   <div class="col">
@@ -120,9 +118,9 @@
             </ul>
            {% endfor %}
 
-          {% if not job.invoiced_client %}   
+          {% if not job.invoiced_client %}
             <a href="{% url 'job:addPayHistoryPage' job.id %}" class="btn btn-primary">Add paid record</a>
-          {% else %} 
+          {% else %}
             <a class="disabled btn btn-primary">Invoiced Client</a>
           {% endif %}
          </div>

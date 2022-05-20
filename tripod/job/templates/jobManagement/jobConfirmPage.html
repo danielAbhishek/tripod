@@ -4,9 +4,7 @@
 
 {% block content %}
     <h3 class="display-5">Job - {{ job.job_name }} {{ job.primary_client.username }}</h3>
-    {% for message in messages %}
-		<p id="messages">{{message}}</p>
-		{% endfor %}
+
     <form method="POST" action="">
       {% csrf_token %}
       <br>
@@ -19,6 +17,14 @@
           {{ form.event | as_crispy_field }}
           {{ form.venue | as_crispy_field }}
           {{ form.venue_notes | as_crispy_field }}
+          {{ form.package | as_crispy_field }}
+          {{ form.source | as_crispy_field }}
+          {{ form.start_date | as_crispy_field }}
+          {{ form.end_date | as_crispy_field }}
+          {{ form.all_day | as_crispy_field }}
+          {{ form.start_time | as_crispy_field }}
+          {{ form.end_time | as_crispy_field }}
+
         </div>
       </div>
       <br>

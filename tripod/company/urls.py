@@ -10,7 +10,10 @@ urlpatterns = [
     path('login/', views.staffLoginPage, name='staffLogin'),
     path('logout/', views.staffLogoutPage, name='staffLogout'),
     path('<int:pk>', views.companyUpdate, name='companyUpdate'),
-
+    path('account', views.updateProfile, name='updateProfile'),
+    path('account/change_password',
+         views.changePassword,
+         name='changePassword'),
     # Employee management
     path('employeeManagement',
          views.employeeManagementPage,

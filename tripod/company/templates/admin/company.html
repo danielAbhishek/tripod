@@ -1,12 +1,174 @@
-{% extends 'admin_base.html' %}
+{% extends 'admin_base_without_nav.html' %}
 
 {% block sidebar %}
 {% include 'sidebars/company_sidebar.html' %}
 {% endblock sidebar %}
 
 {% block content %}
-<h1 class="display-5">
-  <a href="{% url 'company:companyUpdate' company.id %}">{{ company.name }}
-  </a>
-</h1>
+
+
+<div class="col"> 
+  <div class="row" style="width: auto; margin: 5px;">
+    <div class="col-3">    
+      <span>
+        <h6 class="display-6">{{ company.name }}</h6>
+      </span>
+    </div>
+    <div class="col-9 align-text-bottom">
+    </div>
+  </div>
+    <div class="row" >
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+
+          {% comment %} First Row  {% endcomment %}
+          <div class="row" style="margin: 10px;">
+          {% comment %} Venue card{% endcomment %}
+            <div class="col-sm-6">
+             <div class="card h-100 box-shadow">
+                <div class="card-header">
+                  <h6 class="my-0 font-weight-normal">User Management</h6>
+                </div>
+                <div class="card-body">
+
+                  <div class="media text-muted pt-1">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                      <strong class="text-gray-dark">Employee Managment</strong>
+                      {% if request.user.is_superuser %}
+                        <a class="btn btn-sm btn-outline-secondary" href="{% url 'company:employeeManagement' %}">go to page</a>
+                      {% else %}
+                        <a class="btn btn-sm btn-outline-secondary disabled" href="{% url 'company:employeeManagement' %}">no permission</a>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  <hr>
+                  <div class="media text-muted pt-1">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                      <strong class="text-gray-dark">Client Managment</strong> 
+                      {% if request.user.is_superuser %}
+                        <a class="btn btn-sm btn-outline-secondary" href="{% url 'company:clientManagement' %}">go to page</a>
+                      {% else %}
+                        <a class="btn btn-sm btn-outline-secondary disabled" href="{% url 'company:clientManagement' %}">no permission</a>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          {% comment %} Date and Time card{% endcomment %}
+            <div class="col-sm-6">
+             <div class="card h-100 box-shadow">
+                <div class="card-header">
+                  <h6 class="my-0 font-weight-normal">Package Management</h6>
+                </div>
+                <div class="card-body">
+
+                  <div class="media text-muted pt-1">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                      <strong class="text-gray-dark">Event Managment</strong>
+                      <a class="btn btn-sm btn-outline-secondary" href="{% url 'company:eventManagement' %}">go to page</a>
+                    </div>
+                  </div>
+
+                  <hr>
+                  <div class="media text-muted pt-1">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                      <strong class="text-gray-dark">Product Managment</strong>
+                      <a class="btn btn-sm btn-outline-secondary" href="{% url 'company:productManagement' %}">go to page</a>
+                    </div>
+                  </div>
+
+                  <hr>
+                  <div class="media text-muted pt-1">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                      <strong class="text-gray-dark">Package Managment</strong>
+                      <a class="btn btn-sm btn-outline-secondary" href="{% url 'company:packageManagement' %}">go to page</a>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <br>
+          {% comment %} Second Row  {% endcomment %}
+          <div class="row" style="width: auto; margin: 10px;">
+          {% comment %} Appointment card{% endcomment %}
+            <div class="col-sm-6">
+             <div class="card h-100 box-shadow">
+                <div class="card-header">
+                  <h6 class="my-0 font-weight-normal">Finance Management</h6>
+                </div>
+                  <div class="card-body">
+
+                    <div class="media text-muted pt-1">
+                      <div class="d-flex justify-content-between align-items-center w-100">
+                        <strong class="text-gray-dark">Invoice</strong>
+                        {% if request.user.is_superuser %}
+                          <a class="btn btn-sm btn-outline-secondary" href="{% url 'company:invoiceManagement' %}">go to page</a>
+                        {% else %}
+                          <a class="btn btn-sm btn-outline-secondary disabled" href="{% url 'company:invoiceManagement' %}">no permission</a>
+                        {% endif %}
+                      </div>
+                    </div>
+
+                  </div>
+              </div>
+            </div>
+
+          {% comment %} Packages card{% endcomment %}
+            <div class="col-sm-6">
+             <div class="card h-100 box-shadow">
+                <div class="card-header">
+                  <h6 class="my-0 font-weight-normal">Equipment Managment</h6>
+                </div>
+                <div class="card-body">
+                    <div class="media text-muted pt-1">
+                      <div class="d-flex justify-content-between align-items-center w-100">
+                      <strong class="text-gray-dark">Equipment Managment</strong>
+                      <a class="btn btn-sm btn-outline-secondary" href="{% url 'company:equipmentManagement' %}">go to page</a>
+                      </div>
+                    </div>
+                    <hr>
+                    <div class="media text-muted pt-1">
+                      <div class="d-flex justify-content-between align-items-center w-100">
+                      <strong class="text-gray-dark">Equipment Maintanence</strong>
+                      <a class="btn btn-sm btn-outline-secondary" href="{% url 'company:equipmentMaintanence' %}">go to page</a>
+                      </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+
+        </div>
+    </div>
+  </div>
+</div>
+       
+{% comment %} Current Status {% endcomment %}
+<div class="col-4" style="margin: 5px;">
+  <div class="card" style="width: auto;">
+
+     <div class="card-body">
+       <h6 class="display-6">Your Company - {{ company.name }}</h6>
+        <hr>
+        <h6 class="text-muted">Name</h6> <h6>{{ company.name }}</h6>
+        <h6 class="text-muted">Address 1 </h6> <h6>{{ company.address1 }}</h6>
+        <h6 class="text-muted">Adress 2 </h6> <h6>{{ company.address2 }}</h6>
+        <h6 class="text-muted">City </h6> <h6>{{ company.city }}</h6>
+        <h6 class="text-muted">Contact Number </h6> <h6>{{ company.contact_number }}</h6>
+        <h6 class="text-muted">Contact Email </h6> <h6>{{ company.contact_email }}</h6>
+      </div>
+   
+      <div style="margin:5px;">
+        <a class="btn btn-outline-primary" href="{% url 'company:companyUpdate' company.id %}">Update company</a>
+      </div>
+
+  </div>
+</div>
+
 {% endblock content %}

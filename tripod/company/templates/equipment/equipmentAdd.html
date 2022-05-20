@@ -3,10 +3,7 @@
 
 
 {% block content %}
-    <h3 class="display-6">Create New Equipment</h3>
-    {% for message in messages %}
-		<p id="messages">{{message}}</p>
-		{% endfor %}
+    <h2>Create New Equipment</h2>
     <form method="POST" action="">
       {% csrf_token %}
         {{ form.equipment_name | as_crispy_field }}

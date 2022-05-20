@@ -5,18 +5,15 @@
 {% endblock sidebar %}
 
 {% block content %}
-{% if messages %}
-  <div class="row">
-    {% for message in messages %}
-    <p id="messages">{{message}}</p>
-  </div>
-{% endfor %}
-{% endif %}
 
 <div class="col">
   <h5 class="display-5">Invoice 
     <small class="text-muted">
-      <a href="{% url 'job:jobPage' invoice.job.id %}">{{ invoice.job }}</a>
+      {% if invoice.job %}
+        <a href="{% url 'job:jobPage' invoice.job.id %}">{{ invoice.job }}</a>
+      {% else %}
+        <p>Job is deleted</p>
+      {% endif %}
     </small>
   </h5>
     <div class="row">
@@ -181,11 +178,15 @@
         {% endfor %}
       </tbody>
     </table> 
+    {% if invoice.job %}
       {% if not invoice.job.invoiced_client %}   
         <a href="{% url 'job:addPayHistoryPage' invoice.job.id %}" class="btn btn-primary">Add paid record</a>
       {% else %} 
         <a class="disabled btn btn-primary">Invoiced Client</a>
       {% endif %}
+    {% else %}
+    <p>Job is deleted</p>
+    {% endif %}
 </div>
 
 {% endblock content %}

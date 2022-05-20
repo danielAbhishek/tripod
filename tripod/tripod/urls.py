@@ -16,14 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from tripod.views import not_available_404
-
+from tripod.views import not_available_404, permission_error, admin_page
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('error', not_available_404, name="error"),
+    path('permission_error', permission_error, name="permission_error"),
     path('', include('core.urls')),
     path('blog/', include('blog.urls')),
+    path('tripod-admin/', admin_page, name='adminPage'),
+    path('tripod-admin/dashboard/', include('dashboard.urls')),
     path('tripod-admin/company/', include('company.urls')),
     path('tripod-admin/job/', include('job.urls')),
     path('tripod-admin/settings/', include('settings.urls')),

@@ -6,13 +6,6 @@
 
 {% block content %}
 
-{% if messages %}
-  <div class="row">
-    {% for message in messages %}
-    <p id="messages">{{message}}</p>
-  </div>
-{% endfor %}
-{% endif %}
 
 <h1>Job Contract</h1>
 <p>{{ jobContract.status }}</p>

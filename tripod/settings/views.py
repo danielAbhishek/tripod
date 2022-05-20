@@ -1,6 +1,6 @@
-
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect, render
+from django.contrib import messages
 
 from settings.models import (
     Workflow, EmailTemplate, ContractTemplate, QuestionnaireTemplate,
@@ -53,8 +53,11 @@ def workflowUpdatePage(request, pk):
             operation='updating'
         )
         if form.is_valid():
-            form.save()
-        return redirect('settings:workflowManagement')
+            obj = form.save()
+            messages.success(request, f'Workflow {obj} successfully updated')
+            return redirect('settings:workflowManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form, 'workflow': workflow}
     return render(request, 'workflowManagement/workflow.html', context)
@@ -73,8 +76,11 @@ def workflowAddPage(request):
             operation='creating'
         )
         if form.is_valid():
-            form.save()
-        return redirect('settings:workflowManagement')
+            obj = form.save()
+            messages.success(request, f'Workflow {obj} successfully added')
+            return redirect('settings:workflowManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form}
     return render(request, 'workflowManagement/workflowAdd.html', context)
@@ -108,8 +114,11 @@ def workTemplateUpdatePage(request, pk):
             request.POST, instance=work_template
         )
         if form.is_valid():
-            form.save()
-        return redirect('settings:workTemplateManagement')
+            obj = form.save()
+            messages.success(request, f'Work Template {obj} successfully updated')
+            return redirect('settings:workTemplateManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form, 'workTemplate': work_template}
     return render(request, 'workflowManagement/workTemplate.html', context)
@@ -125,8 +134,11 @@ def workTemplateAddPage(request):
     if request.method == "POST":
         form = WorkTemplateForm(request.POST)
         if form.is_valid():
-            form.save()
-        return redirect('settings:workTemplateManagement')
+            obj = form.save()
+            messages.success(request, f'Workflow {obj} successfully added')
+            return redirect('settings:workTemplateManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form}
     return render(request, 'workflowManagement/workTemplateAdd.html', context)
@@ -162,8 +174,11 @@ def emailTemplateUpdatePage(request, pk):
             userObj=request.user, operation='updating'
         )
         if form.is_valid():
-            form.save()
-        return redirect('settings:emailTemplateManagement')
+            obj = form.save()
+            messages.success(request, f'Email Template {obj} successfully updated')
+            return redirect('settings:emailTemplateManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form, 'emailTemplate': email_template}
     return render(request, 'templateManagement/emailTemplate.html', context)
@@ -180,8 +195,11 @@ def emailTemplateAddPage(request):
         form = EmailTemplateForm(
             request.POST, userObj=request.user, operation='creating')
         if form.is_valid():
-            form.save()
-        return redirect('settings:emailTemplateManagement')
+            obj = form.save()
+            messages.success(request, f'Email Template {obj} successfully updated')
+            return redirect('settings:emailTemplateManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form}
     return render(request, 'templateManagement/emailTemplateAdd.html', context)
@@ -217,8 +235,11 @@ def contractTemplateUpdatePage(request, pk):
             userObj=request.user, operation='updating'
         )
         if form.is_valid():
-            form.save()
-        return redirect('settings:contractTemplateManagement')
+            obj = form.save()
+            messages.success(request, f'Contract Template {obj} successfully updated')
+            return redirect('settings:contractTemplateManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form, 'contractTemplate': contract_template}
     return render(request, 'templateManagement/contractTemplate.html', context)
@@ -235,8 +256,11 @@ def contractTemplateAddPage(request):
         form = ContractTemplateForm(
             request.POST, userObj=request.user, operation='creating')
         if form.is_valid():
-            form.save()
-        return redirect('settings:contractTemplateManagement')
+            obj = form.save()
+            messages.success(request, f'Contract Template {obj} successfully created')
+            return redirect('settings:contractTemplateManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form}
     return render(
@@ -273,8 +297,11 @@ def questTemplateUpdatePage(request, pk):
             userObj=request.user, operation='updating'
         )
         if form.is_valid():
-            form.save()
-        return redirect('settings:questTemplateManagement')
+            obj = form.save()
+            messages.success(request, f'Questionnaire Template {obj} successfully updated')
+            return redirect('settings:questTemplateManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form, 'questTemplate': quest_template}
     return render(request, 'templateManagement/questTemplate.html', context)
@@ -291,8 +318,11 @@ def questTemplateAddPage(request):
         form = QuestionnaireTemplateForm(
             request.POST, userObj=request.user, operation='creating')
         if form.is_valid():
-            form.save()
-        return redirect('settings:questTemplateManagement')
+            obj = form.save()
+            messages.success(request, f'Questionnaire Template {obj} successfully created')
+            return redirect('settings:questTemplateManagement')
+        else:
+            messages.error(request, 'Invalid form submission')
 
     context = {'form': form}
     return render(

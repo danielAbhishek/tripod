@@ -1,12 +1,10 @@
-{% extends 'admin_base.html' %}
+{% extends 'admin_base_without_nav.html' %}
 {% load crispy_forms_tags %}
 
 
 {% block content %}
-    <h3>Contract Template - {{ contractTemplate.template_name }}</h3>
-    {% for message in messages %}
-		<p id="messages">{{message}}</p>
-		{% endfor %}
+    <h2>Contract Template - {{ contractTemplate.template_name }}</h2>
+
     <form method="POST" action="">
       {% csrf_token %}
       <br>

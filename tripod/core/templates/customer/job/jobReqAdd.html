@@ -4,15 +4,13 @@
 
 {% block content %}
     <h3>Create New Job Request</h3>
-    {% for message in messages %}
-		<p id="messages">{{message}}</p>
-		{% endfor %}
+
     <form method="POST" action="">
       {% csrf_token %}
       {{ form.job_name | as_crispy_field }}
       {{ form.event | as_crispy_field }}
       {{ form.venue | as_crispy_field }}
-      {{ form.start_date | as_crispy_field }} 
+      {{ form.start_date | as_crispy_field }}
       {{ form.end_date | as_crispy_field }}
       <br>
       <input class="btn btn-primary" type="submit" value="Create Job Request">

@@ -6,12 +6,13 @@ app_name = 'core'
 
 urlpatterns = [
     # account pages urls
-    path('', views.home, name='home'),
-    path('accounts/change_password',
+    #  path('', views.home, name='home'),
+    path('account/<int:pk>', views.updateUserProfile, name='updateProfile'),
+    path('account/change_password',
          views.changePassword,
          name='changePassword'),
-    path('accounts/login/', views.loginPage, name='login'),
-    path('accounts/logout/', views.logoutPage, name='logout'),
+    path('account/login/', views.loginPage, name='login'),
+    path('account/logout/', views.logoutPage, name='logout'),
 
     # customer portal
     path('portal/', views.customerHome, name='customerHome'),

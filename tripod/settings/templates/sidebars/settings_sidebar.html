@@ -1,33 +1,35 @@
-<ul>
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="margin:2px">
+<ul class="list-unstyled" style="margin:5px">
 
   <h6>Workflow Management</h6>
-  <li>
-    <a class="link-primary" href="{% url 'settings:workflowManagement' %}">
+  <li class="nav-item">
+    <a class="nav-link link-primary" href="{% url 'settings:workflowManagement' %}">
       Workflow
     </a>
   </li>
-  <li>
-    <a class="link-primary" href="{% url 'settings:workTemplateManagement' %}">
+  <li class="nav-item">
+    <a class="nav-link link-primary" href="{% url 'settings:workTemplateManagement' %}">
       Work Template
     </a>
   </li>
-  <br>
+  <hr>
 
   <h6>Templates Management</h6>
-  <li>
-    <a class="link-primary" href="{% url 'settings:emailTemplateManagement' %}">
+  <li class="nav-item">
+    <a class="nav-link link-primary" href="{% url 'settings:emailTemplateManagement' %}">
       Email Template
     </a>
   </li>
-  <li>
-    <a class="link-primary" href="{% url 'settings:contractTemplateManagement' %}">
+  <li class="nav-item">
+    <a class="nav-link link-primary" href="{% url 'settings:contractTemplateManagement' %}">
       Contract Template
     </a>
   </li>
-  <li>
-    <a class="link-primary" href="{% url 'settings:questTemplateManagement' %}">
+  <li class="nav-item">
+    <a class="nav-link link-primary" href="{% url 'settings:questTemplateManagement' %}">
       Questionnaire Template
     </a>
   </li>
   <br>
 </ul>
+</div>

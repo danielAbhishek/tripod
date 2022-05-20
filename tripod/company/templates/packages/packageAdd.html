@@ -13,13 +13,9 @@
     }
   </style>
 
-    <h3 class="display-6">Create new package</h3>
-    {% for message in messages %}
-		<p id="messages">{{message}}</p>
-		{% endfor %}
+    <h2>Create new package</h2>
     <form method="POST" action="">
       {% csrf_token %}
-      <br>
       <div class="row">
         <div class="col">
           {% if packageForm %}
@@ -29,7 +25,7 @@
           {% endif %}
           <br>
           {% if formset %}
-            <h4 class="display-6">Add products</h4>
+            <p>Add products by clicking below</p>
             {{ formset.management_form }}
             <div id="products-packages-form-list">
               {% for form in formset %}
@@ -44,12 +40,12 @@
             <div id="empty-form" class="hidden">
               {{ formset.empty_form | crispy }}
             </div>
-            <button id="add-more" class="btn btn-outline-primary" type="button" name="button">Add more</button>
+            <button id="add-more" class="btn btn-outline-primary" type="button" name="button">Add product</button>
           {% endif %}
         </div>
       </div>
       <br>
-      <input class="btn btn-primary" type="submit" value="Add package">
+      <input class="btn btn-primary" type="submit" value="Create package">
     </form>
 
   <script type="text/javascript">

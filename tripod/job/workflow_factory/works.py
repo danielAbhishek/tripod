@@ -91,7 +91,6 @@ class SimpleWork(WorkBase):
         task = class_obj(name, self.user, self.work)
         task.set_data(description, obj)
         task = task.create_db_object()
-        return task
 
     # def add_simpleTask(self, obj):
     #     """

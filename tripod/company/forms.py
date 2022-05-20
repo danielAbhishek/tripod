@@ -15,9 +15,15 @@ class TimeInput(forms.TimeInput):
 
 
 def update_package_after_adding_products(package):
+    """
+    after adding products to the package link product table, which is an 
+    associate table that connects package and products table. package 
+    table should be updated with new package price
+    """
     plp_objs = PackageLinkProduct.objects.filter(package=package)
     if plp_objs.exists():
         total_price = 0
+        # looping thru products in many-to-many relation
         for obj in plp_objs:
             total_price += obj.units * obj.product.unit_price
         package.price = total_price

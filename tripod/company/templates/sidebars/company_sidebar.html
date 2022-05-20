@@ -1,54 +1,56 @@
-<ul>
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="margin:2px">
+<ul class="list-unstyled" style="margin:5px">
 
-  <h6>User Management</h6>
-  <li>
-    <a class="link-primary" href="{% url 'company:employeeManagement' %}">
+  <h6 class="text-muted">User Management</h6>
+  <li class="nav-item">
+    <a class="nav-link link-primary" href="{% url 'company:employeeManagement' %}">
       Employee
     </a>
   </li>
   <li>
-    <a class="link-primary" href="{% url 'company:clientManagement' %}">
+    <a class="nav-link link-primary" href="{% url 'company:clientManagement' %}">
       Clients
     </a>
   </li>
-  <br>
+<hr>
 
-  <h6>Package Management</h6>
+  <h6 class="text-muted">Package Management</h6>
   <li>
-    <a class="link-primary" href="{% url 'company:eventManagement' %}">
+    <a class="nav-link link-primary" href="{% url 'company:eventManagement' %}">
       Events
     </a>
   </li>
   <li>
-    <a class="link-primary" href="{% url 'company:productManagement' %}">
+    <a class="nav-link link-primary" href="{% url 'company:productManagement' %}">
       Products
     </a>
   </li>
   <li>
-    <a class="link-primary" href="{% url 'company:packageManagement' %}">
+    <a class="nav-link link-primary" href="{% url 'company:packageManagement' %}">
       Packages
     </a>
   </li>
-  <br>
+  <hr>
 
-<h6>Equipment Management</h6>
+<h6 class="text-muted">Equipment Management</h6>
   <li>
-    <a class="link-primary" href="{% url 'company:equipmentManagement' %}">
+    <a class="nav-link link-primary" href="{% url 'company:equipmentManagement' %}">
       Equipments
     </a>
   </li>
   <li>
-    <a class="link-primary" href="{% url 'company:equipmentMaintanence' %}">
+    <a class="nav-link link-primary" href="{% url 'company:equipmentMaintanence' %}">
       Equipment Maintanence
     </a>
   </li>
-   <br>
+   <hr>
 
-  <h6>Finance</h6>
+  <h6 class="text-muted">Finance</h6>
   <li>
-    <a class="link-primary" href="{% url 'company:invoiceManagement' %}">
+    <a class="nav-link link-primary" href="{% url 'company:invoiceManagement' %}">
       Invoices
     </a>
   </li>
 
 </ul>
+</div>

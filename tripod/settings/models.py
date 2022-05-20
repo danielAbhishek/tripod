@@ -128,7 +128,10 @@ class WorkType(models.Model):
     description = models.TextField()
 
     def __str__(self):
-        return self.work_type
+        return f"{str(self.work_order)} - {self.work_type}"
+
+    class Meta:
+        ordering = ('work_order', )
 
 
 class WorkTemplate(models.Model):
@@ -169,4 +172,7 @@ class WorkTemplate(models.Model):
         return self.name
 
     class Meta:
-        ordering = ('step_number', )
+        ordering = (
+            'workflow',
+            'step_number',
+        )

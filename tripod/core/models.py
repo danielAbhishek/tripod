@@ -30,8 +30,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         blank=True,
         null=True,
     )
-    contact_number = models.CharField(max_length=50, blank=True, null=True)
-    contact_number_2 = models.CharField(max_length=50, blank=True, null=True)
+    contact_number = models.CharField(max_length=10, blank=True, null=True)
+    contact_number_2 = models.CharField(max_length=10, blank=True, null=True)
     address = models.CharField(max_length=255, blank=True, null=True)
     address_2 = models.CharField(max_length=255, blank=True, null=True)
     city = models.CharField(max_length=200, blank=True, null=True)

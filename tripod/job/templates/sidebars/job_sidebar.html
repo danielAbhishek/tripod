@@ -1,21 +1,24 @@
-<ul>
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="margin:2px">
+<ul class="list-unstyled" style="margin:5px">
+
 
   <h6>Job Management</h6>
-  <li>
-    <a class="link-primary" href="{% url 'job:jobReqManagementPage' %}">
+  <li class="nav-item">
+    <a class="nav-link link-primary" href="{% url 'job:jobReqManagementPage' %}">
       Job Requests
     </a>
   </li>
-  <li>
-    <a class="link-primary" href="{% url 'job:jobManagementPage' %}">
+  <li class="nav-item">
+    <a class="nav-link link-primary" href="{% url 'job:jobManagementPage' %}">
       Jobs
     </a>
   </li>
-  <li>
-    <a class="link-primary" href="{% url 'job:jobDecManagementPage' %}">
+  <li class="nav-item">
+    <a class="nav-link link-primary" href="{% url 'job:jobDecManagementPage' %}">
       Declined Jobs
     </a>
   </li>
   <br>
 
 </ul>
+</div>

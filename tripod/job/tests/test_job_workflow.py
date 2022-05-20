@@ -2,26 +2,29 @@
 This test cases is created to test the automation of the workflow
 creation once the job is initiated
 """
+from datetime import date
+import random
+from decimal import Decimal
+
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
 from job.models import Work, Task, Job
-from company.models import PackageLinkProduct
-
 from job.forms import JobUpdateConfirmForm
 from job.tests.fixtures import (
     JobFixtureSetup, EventFixtureSetup, ProductFixtureSetup,
     PackageFixtureSetup, WorkflowFixtureSetup, WorkTemplateFixturesSetup,
     EmailTemplateFixtureSetup, SourceFixtureSetup, WorkTypeFixtureSetup,
     QuestionnaireTemplateFixtureSetup, ContractTemplateFixtureSetup)
-
 from job.workflow_factory.workflow import WorkFlowBase
 
-from finance.forms import PaymentHistoryForm
+from company.models import PackageLinkProduct
+
+from finance.forms import PaymentHistoryForm, InvoiceUpdateForm
 from finance.utils import register_invoice_data_for_job
 
 
-class WorkFlowTest(TestCase):
+class JobTest(TestCase):
 
     def setUp(self):
         self.user = get_user_model().objects.create_user(
@@ -168,17 +171,23 @@ class WorkFlowTest(TestCase):
         jobs, works = self.get_works_workflow('birthday')
         self.assertEqual(len(works), 0)
 
-    def confirming_job(self, job):
+    def confirming_job(self, job, package=True):
         """using JobUpdateConfirmForm to confirm the job"""
-        job_data = job.__dict__
-        job_data['primary_client'] = self.client
-        job_data['workflow'] = job.workflow
-        form = JobUpdateConfirmForm(instance=job,
-                                    data=job_data,
-                                    userObj=self.client,
-                                    operation='confirming Job')
-        if form.is_valid():
-            form.save()
+        #  job.workflow = self.workflow_objs[0]
+        job.primary_client = self.client
+        if package:
+            package = self.package_objs[random.randint(0, 4)]
+            job.package = package
+        else:
+            job.package = None
+        job.status = 'job'
+        job.save()
+        wfb = WorkFlowBase(self.user, job)
+        wfb.create_work_and_tasks()
+        if job.package:
+            register_invoice_data_for_job(job, package=True)
+        else:
+            register_invoice_data_for_job(job, package=False)
 
         return job
 
@@ -193,12 +202,22 @@ class WorkFlowTest(TestCase):
 
     def wedding_job_confirm(self):
         """returning confirmed wedding job"""
-        wedding_job = [
-            job for job in self.job_objs if job.job_name == 'Wedding'
-        ][0]
+        #  wedding_job = [
+        #  job for job in self.job_objs if job.job_name == 'Wedding'
+        #  ][0]
+        #  job = self.confirming_job(wedding_job)
+        wedding_job = Job.objects.filter(job_name="Wedding").last()
         job = self.confirming_job(wedding_job)
-
         return job
+
+    def get_package_amount_for_job(self, job):
+        """getting package amount for given job"""
+        plp = PackageLinkProduct.objects.filter(package=job.package)
+        package_amount = 0
+        for item in plp:
+            package_amount += item.units * item.product.unit_price
+
+        return package_amount
 
     def test_confirming_job(self):
         """
@@ -226,29 +245,7 @@ class WorkFlowTest(TestCase):
         wedding_job.save()
 
         with self.assertRaises(Exception):
-            self.wedding_job_confirm()
-
-    def test_invoice_not_created_if_package_is_not_available(self):
-        """when confirming a job, if the package is not available then invoice should be 0"""
-        wedding_job = [
-            job for job in self.job_objs if job.job_name == 'Wedding'
-        ][0]
-        wedding_job.package = None
-        wedding_job.save()
-
-        job = self.wedding_job_confirm()
-
-        self.assertEqual(job.invoice.price, 0)
-
-    def test_invoice_creation_after_confirming_job(self):
-        """invoice should be created after the job is confirmed"""
-        job = self.wedding_job_confirm()
-        plp = PackageLinkProduct.objects.filter(package=job.package)
-        package_amount = 0
-        for item in plp:
-            package_amount += item.units * item.product.unit_price
-
-        self.assertEqual(job.invoice.price, package_amount)
+            self.confirming_job(wedding_job)
 
     def test_works_created_for_wedding(self):
         """
@@ -286,7 +283,7 @@ class WorkFlowTest(TestCase):
 
     def test_processing_not_completed_simpletask(self):
         """
-        processing a simple task, and expecting task completed to be 
+        processing a simple task, and expecting task completed to be
         updated as True
         """
         job = self.wedding_job_confirm()
@@ -297,3 +294,60 @@ class WorkFlowTest(TestCase):
         jrc_task.process_task(self.client)
 
         self.assertTrue(jrc_task.completed)
+
+    def test_invoice_price_is_zero_if_created_without_package(self):
+        """when confirming a job, if the package is not available then invoice should be 0"""
+        wedding_job = [
+            job for job in self.job_objs if job.job_name == 'Wedding'
+        ][0]
+        job = self.confirming_job(wedding_job, package=False)
+        wedding_job = Job.objects.get(pk=job.id)
+
+        self.assertEqual(wedding_job.invoice.price, 0)
+
+    def test_invoice_creation_after_confirming_job(self):
+        """invoice should be created after the job is confirmed"""
+        job = self.wedding_job_confirm()
+        package_amount = self.get_package_amount_for_job(job)
+
+        self.assertEqual(job.invoice.price, package_amount)
+
+    def test_invoice_updating_after_cofirming_job(self):
+        """testing updating or changing invoice discount after confirming the job"""
+        job = self.wedding_job_confirm()
+        package_amount = self.get_package_amount_for_job(job)
+
+        form = InvoiceUpdateForm(instance=job.invoice,
+                                 data={
+                                     'discount': 0.5,
+                                     'notes': 'abcd'
+                                 })
+        if form.is_valid():
+            invoice = form.save(commit=False)
+            if invoice.discount:
+                invoice.total_price = Decimal(invoice.price) - (
+                    Decimal(invoice.price) * Decimal(invoice.discount))
+            invoice.save()
+
+        job = Job.objects.get(pk=job.id)
+        self.assertEqual(job.invoice.total_price,
+                         Decimal(package_amount - (package_amount * 0.5)))
+
+    def test_adding_payment_record(self):
+        """testing adding payment record to invoice"""
+        job = self.wedding_job_confirm()
+        invoice_price = job.invoice.price
+        form = PaymentHistoryForm(invoice=job.invoice,
+                                  data={
+                                      "payment_date": date.today(),
+                                      "payment_amount": 1000,
+                                      "payment_method": 'cc'
+                                  })
+
+        if form.is_valid():
+            ph = form.save(commit=False)
+            ph.invoice = job.invoice
+            ph.save()
+
+        self.assertEqual(Decimal(invoice_price - 1000),
+                         job.invoice.to_be_paid())

@@ -37,7 +37,7 @@
             <a href="{% url 'job:processTask' task.id %}" class="btn btn-outline-secondary btn-sm" role="button">
               <i class="bi bi-check-square-fill"></i> Send Contract
             </a>
-            <a href="{% url 'job:jobUpdateInvoice' job.id %}" class="btn btn-outline-secondary btn-sm" role="button">
+            <a href="{% url 'job:jobUpdateInvoice' job.invoice.id %}" class="btn btn-outline-secondary btn-sm" role="button">
               <i class="bi bi-check-square-fill"></i> Update Invoice
             </a>
 

@@ -1,0 +1,37 @@
+{% extends 'admin_base_without_nav.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <h2 class="display-6">{{ request.user.first_name }} {{ request.user.last_name }}</h2>
+    <form method="POST" action="">
+      {% csrf_token %}
+      <br>
+      <div class="row">
+        <div class="col">
+        <h5>Personal Information</h5>
+          {{ form.email | as_crispy_field}}
+          {{ form.username | as_crispy_field}}
+          {{ form.first_name | as_crispy_field}}
+          {{ form.last_name | as_crispy_field}}
+          {{ form.gender | as_crispy_field}}
+          <br>
+          <h5>Additional Settings</h5>
+          <a class="btn btn-secondary btn-sm" href="{% url 'company:changePassword'%}">Change Password</a>
+        </div>
+        <div class="col">
+        <h5>Contact Information</h5>
+          {{ form.contact_number | as_crispy_field}}
+          {{ form.contact_number_2 | as_crispy_field}}
+          {{ form.address | as_crispy_field}}
+          {{ form.address_2 | as_crispy_field}}
+          {{ form.city | as_crispy_field}}
+          {{ form.province | as_crispy_field}}
+          {{ form.country | as_crispy_field}}
+        </div>
+      </div>
+      <br>
+      <input class="btn btn-primary" type="submit" value="Update Account">
+    </form>
+{% endblock %}
+

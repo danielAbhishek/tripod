@@ -1,0 +1,233 @@
+{% extends 'admin_base_without_nav.html' %}
+
+{% block sidebar %}
+{% include 'sidebars/job_sidebar.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+<!--
+{{ client_kpis | safe }}
+<br>
+<hr>
+{{ employee_kpis_data | safe }}
+<br>
+<hr>
+{{ company_kpis_data }}
+<br>
+<hr>
+{{ job_kpis_data }}
+<br>
+<hr>
+{{ invoice_kpis_data | safe }} -->
+<!-- Start Content-->
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-xl-5 col-lg-6">
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                          <h4 class="text-muted fw-normal mt-0" title="Number of Customers">Customers</h4>
+                          <ul class="list-unstyled">
+                            <small>Total customers <strong>{{ client_kpis.total_users }}</strong> </small>
+                            <br>
+                            <small>Active customers <strong>{{ client_kpis.total_active_users }}</strong> </small>
+                          </ul>
+                          <br>
+                          <small><i>Number of customers who are with us</i></small>
+                          <table class="table table-centered table-nowrap table-hover mb-0">
+                              <tbody>
+                                  <tr>
+                                      <td>
+                                        <h5>{{ client_kpis.joined_below_ten_users }}</h5>
+                                        <span class="text-muted">Last ten days</span>
+                                      </td>
+                                      <td>
+                                        <h5>{{ client_kpis.joined_ten_to_thirty_users }}</h5>
+                                        <span class="text-muted">Ten to twenty days</span>
+                                      </td>
+                                      <td>
+                                        <h5>{{ client_kpis.joined_thirty_plus_users }}</h5>
+                                        <span class="text-muted">Thirty above</span>
+                                      </td>
+                                  </tr>
+                                </<tbody>
+                            </table>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </div> <!-- end col-->
+
+                <div class="col-sm-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                          <h4 class="text-muted fw-normal mt-0" title="Number of Customers">Employees</h4>
+                          <ul class="list-unstyled">
+                            <small>Total employees <strong>{{ employee_kpis_data.total_users }}</strong> </small>
+                            <br>
+                            <small>Active employees <strong>{{ employee_kpis_data.total_active_users }}</strong> </small>
+                          </ul>
+                          <br>
+                          <small><i>Top three packages</i></small>
+
+                          <table class="table table-centered table-nowrap table-hover mb-0">
+                              <tbody>
+                                  <tr>
+                                      <td>
+                                        <h5>{{ employee_kpis_data.joined_below_ten_users }}</h5>
+                                        <span class="text-muted">Last ten days</span>
+                                      </td>
+                                      <td>
+                                        <h5>{{ employee_kpis_data.joined_ten_to_thirty_users }}</h5>
+                                        <span class="text-muted">Ten to twenty days</span>
+                                      </td>
+                                      <td>
+                                        <h5>{{ employee_kpis_data.joined_thirty_plus_users }}</h5>
+                                        <span class="text-muted">Thirty above</span>
+                                      </td>
+                                  </tr>
+                                </<tbody>
+                            </table>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </div> <!-- end col-->
+            </div> <!-- end row -->
+
+            <br>
+            <div class="row">
+              <div class="col-sm-6">
+                  <div class="card h-100">
+                      <div class="card-body">
+                        <h4 class="text-muted fw-normal mt-0" title="Number of Customers">Services</h4>
+                        <ul class="list-unstyled">
+                          <small>Total events <strong>{{ company_kpis_data.total_events }}</strong> </small>
+                        <ul class="list-unstyled list-inline">
+                          <small class="list-inline-item">Total products <strong>{{ company_kpis_data.total_products }}</strong> </small>
+                          <small class="list-inline-item"> | Active products <strong>{{ company_kpis_data.active_products }}</strong> </small>
+                        </ul>
+                        <li>
+                          <small>Total packages <strong>{{ company_kpis_data.total_packages }}</strong> </small>
+                        </ul>
+
+                        <small><i>Top three packages</i></small>
+                        <ol class="list-group list-group-numbered">
+                          {% for key in company_kpis_data.job_by_package %}
+                          <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                              <h6>{{ key.package__package_name }}</h6>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">{{ key.jobs_count }}</span>
+                          </li>
+                          {% endfor %}
+                        </ol>
+                      </div> <!-- end card-body-->
+                  </div> <!-- end card-->
+              </div> <!-- end col-->
+
+              <div class="col-sm-6">
+                  <div class="card h-100">
+                      <div class="card-body">
+                        <h4 class="text-muted fw-normal mt-0" title="Number of Customers">Equipments</h4>
+                        <ul class="list-unstyled">
+                          <small>Total equipments <strong>{{ company_kpis_data.total_equipments }}</strong> </small>
+                        </ul>
+                        <br>
+                        <small><i>Equipment availability</i></small>
+
+                        <table class="table table-centered table-nowrap table-hover mb-0">
+                            <thead>
+                              <tr>
+                                <th>Status</th>
+                                <th>Equipments</th>
+                            </thead>
+                            <tbody>
+                              {% for key in company_kpis_data.equip_by_availability %}
+                                <tr>
+                                    <th>{{ key.availability }}<th>
+                                    <th>{{ key.equipments }}<th>
+                                </tr>
+                              {% endfor %}
+                              </<tbody>
+                          </table>
+                      </div> <!-- end card-body-->
+                  </div> <!-- end card-->
+              </div> <!-- end col-->
+            </div> <!-- end row -->
+
+        </div> <!-- end col -->
+
+        <div class="col">
+          <div class="card h-100">
+              <div class="card-body">
+                  <div class="float-end">
+                      <i class="mdi mdi-pulse widget-icon"></i>
+                  </div>
+                  <h4 class="text-muted fw-normal mt-0" title="Number of Customers">Payment History</h4>
+                  <h3 class="mt-3 mb-3"></h3>
+                  <p class="mb-0 text-muted">
+                    <span class="text-nowrap">Last 7 days revenue </span>
+                      <strong class="text me-2">
+                        Rs. {{ paid_kpi_data.last_seven_days_deposits.deposits | default:"0"}}
+                      </strong>
+                  </p>
+                  <p class="mb-0 text-muted">
+                    <span class="text-nowrap">last month revenue</span>
+                      <strong class="text me-2">
+                        Rs. {{ paid_kpi_data.last_thirty_days_deposits.deposits | default:"0"}}
+                      </strong>
+                  </p>
+
+                  {% if payment_plot %}
+                    <img src="data:image/png;base64, {{ payment_plot | safe }}" alt="">
+
+                  {% endif %}
+              </div> <!-- end card-body-->
+          </div> <!-- end card-->
+
+        </div> <!-- end col -->
+    </div>
+    <!-- end row -->
+    <br>
+    <div class="row">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h4 class="header-title">Invoice Summary</h4>
+                    </div>
+
+                    <!-- <div class="chart-content-bg">
+                        <div class="row text-center">
+                            <div class="col-sm-6">
+                                <p class="text-muted mb-0 mt-3">Last 7 days</p>
+                                <h2 class="fw-normal mb-3">
+                                    <small class="mdi mdi-checkbox-blank-circle text-primary align-middle me-1"></small>
+                                    <span>Rs. {{ paid_kpi_data.last_seven_days_deposits.deposits | default:"0"}}</span>
+                                </h2>
+                            </div>
+                            <div class="col-sm-6">
+                                <p class="text-muted mb-0 mt-3">Last 30 days</p>
+                                <h2 class="fw-normal mb-3">
+                                    <small class="mdi mdi-checkbox-blank-circle text-success align-middle me-1"></small>
+                                    <span>Rs. {{ paid_kpi_data.last_thirty_days_deposits.deposits | default:"0"}}</span>
+                                </h2>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    {{ invoice_kpis_data | safe }}
+                </div> <!-- end card-body-->
+            </div> <!-- end card-->
+    </div>
+    <!-- end row -->
+    <!-- end row -->
+
+</div>
+<!-- container -->
+
+</div>
+<!-- content -->
+
+
+
+{% endblock content %}

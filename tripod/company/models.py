@@ -7,9 +7,8 @@ from company.managers import (PackageManager, ProductManager,
 
 class Event(models.Model):
     """
-    Event database object
-        holds the information of event or programe to which business use
-        cases will be handled saperatly
+    Event database object holds the information of event or programe to 
+    which business user cases will be handled saperatly
     """
     event_name = models.CharField(max_length=200)
     description = models.TextField()
@@ -32,9 +31,8 @@ class Event(models.Model):
 
 class Product(models.Model):
     """
-    Propduct database object
-        This class only holds the information of the products that is relevent
-        for the business packages that sellable to clients or customers
+    This class only holds the information of the products that is relevent
+    for the business packages that sellable to clients or customers
     """
     # measure types
     UNIT = 'u'
@@ -98,6 +96,9 @@ class Product(models.Model):
         price = self.total_price(units)
         discount = price * discount_percentage
         return price - discount
+
+    class Meta:
+        ordering = ('product_name', )
 
 
 class Package(models.Model):
@@ -204,4 +205,4 @@ class EquipmentMaintanence(models.Model):
     maintanence_reason = models.TextField()
 
     def __str__(self):
-        return self.equipment
+        return self.equipment.equipment_name

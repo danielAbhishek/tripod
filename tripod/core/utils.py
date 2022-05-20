@@ -3,10 +3,9 @@ from tripod.tasks_lib.email import EmailClient
 
 def send_code(user):
     """sending email with the template"""
-    email_body = f"""
-    sending confirmation code
-    {user.password_change_code}
-    """
+    # creating email
+    subject = "Password reset code"
+    body = f"Please use the this reset code \n {user.password_change_code} \n\n *DON'T SHARE WITH ANYONE*"
     ec = EmailClient()
-    ec.add_content(email_body)
-    ec.send_email(template_type=None)
+    ec.new_content(body, subject, user.email)
+    ec.send_email(is_task=False)

@@ -7,6 +7,7 @@ from datetime import timedelta
 from settings.models import WorkTemplate, WorkType
 
 from job.workflow_factory.works import SimpleWork
+from job.utils import update_work_completion_for_job
 
 
 class WorkFlowBase:
@@ -25,6 +26,7 @@ class WorkFlowBase:
     the basic structural information of the works that comes under
     specif workflow) that is relavent to the workflow
     """
+
     def __init__(self, user, job):
         self.user = user
         self.job = job
@@ -40,16 +42,18 @@ class WorkFlowBase:
         and passing the information to the work creation classes, so works and
         tasks will be automatically created
         """
+        if self.workflow is None:
+            raise Exception("workflow is not available")
         for work_type in self.work_types:
             # creating work database objects
-            work_instance = SimpleWork(
-                user=self.user,
-                job=self.job,
-                work_type=work_type
-            )
+            work_instance = SimpleWork(user=self.user,
+                                       job=self.job,
+                                       work_type=work_type)
             work_instance.create_db_object()
             wt_objs = self.wt_objs.filter(work_type=work_type)
             # mapping task creation to each object of work template
-            work_instance.tasks = list(
-                                    map(work_instance.task_factory, wt_objs)
-                                    )
+            work_instance.tasks = list(map(work_instance.task_factory,
+                                           wt_objs))
+
+        update_work_completion_for_job(self.job)
+        self.job.save()

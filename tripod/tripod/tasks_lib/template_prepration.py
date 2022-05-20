@@ -4,11 +4,11 @@ like user and company, so the template fields and access the database values
 using the class function.
 """
 
-
 import re
 
 
 class TemplateDatabaseObjects:
+
     def __init__(self, company, task, template_objects):
         """
         This class represents the initiation/ copy of the database objects
@@ -46,7 +46,8 @@ class TemplateDatabaseObjects:
         the TemplateField table
         """
         temp_obj = self.template_objects.get(field=field)
-        self.replace_dict[temp_obj.field] = eval("self."+temp_obj.object_field)
+        self.replace_dict[temp_obj.field] = eval("self." +
+                                                 temp_obj.object_field)
         return None
 
 
@@ -60,13 +61,13 @@ class TemplateContent:
     * pattern -> regex pattern to find '{text}'
     * template_fields -> collection of template field in the content
     """
+
     def __init__(self, template):
         self._pattern = r"{([A-Za-z]+)}"
         self.template = template
         self.template_fields = []
 
     def get_template_fields(self):
-        print(self.template)
         """
         Taking tamplate fields from template body and setting
         the tempate_fields list
@@ -95,18 +96,15 @@ class TemplateContent:
                 raise Exception(f'Passes field ({field}) not valid')
             database_objects.set_db_data_for_field(field)
 
-        print(database_objects.replace_dict)
         self.template = self.replace_data(database_objects.replace_dict)
         return self.template
 
     def replace_data(self, replace_dict):
         """passing replace_dict replace template fields with db values"""
         try:
-            self.template.body = self.template.body.format(
-                **replace_dict)
+            self.template.body = self.template.body.format(**replace_dict)
             self.template.subject = self.template.subject.format(
-                **replace_dict
-            )
+                **replace_dict)
             # if self.thank_you:
             #     pass
             # if self.signature:
