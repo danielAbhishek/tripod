@@ -85,6 +85,10 @@ class Job(models.Model):
     def __str__(self):
         return self.job_name
 
+    def get_detail_task_status(self):
+        """Returning detail status for db value"""
+        return [i[1] for i in self.TASKCHOICES if i[0] == self.task_status][0]
+
     def get_user_appointment_tasks(self):
         """getting appointment tasks"""
         app_tasks = []

@@ -23,7 +23,7 @@
 <div class="container-fluid">
 
     <div class="row">
-        <div class="col-xl-5 col-lg-6">
+        <div class="col-5">
 
             <div class="row">
                 <div class="col-sm-6">
@@ -36,7 +36,7 @@
                             <small>Active customers <strong>{{ client_kpis.total_active_users }}</strong> </small>
                           </ul>
                           <br>
-                          <small><i>Number of customers who are with us</i></small>
+                          <small><i>Number of customers by</i></small>
                           <table class="table table-centered table-nowrap table-hover mb-0">
                               <tbody>
                                   <tr>
@@ -104,7 +104,7 @@
                           <small>Total events <strong>{{ company_kpis_data.total_events }}</strong> </small>
                         <ul class="list-unstyled list-inline">
                           <small class="list-inline-item">Total products <strong>{{ company_kpis_data.total_products }}</strong> </small>
-                          <small class="list-inline-item"> | Active products <strong>{{ company_kpis_data.active_products }}</strong> </small>
+                          <small class="list-inline-item">Active products <strong>{{ company_kpis_data.active_products }}</strong> </small>
                         </ul>
                         <li>
                           <small>Total packages <strong>{{ company_kpis_data.total_packages }}</strong> </small>
@@ -157,7 +157,7 @@
 
         </div> <!-- end col -->
 
-        <div class="col">
+        <div class="col-7">
           <div class="card h-100">
               <div class="card-body">
                   <div class="float-end">
@@ -179,7 +179,8 @@
                   </p>
 
                   {% if payment_plot %}
-                    <img src="data:image/png;base64, {{ payment_plot | safe }}" alt="">
+                    <img class="card-img-top" src="data:image/png;base64, {{ payment_plot | safe }}" alt="">
+                    <img class="card-img-top" src="data:image/png;base64, {{ payment_plot | safe }}" alt="">
 
                   {% endif %}
               </div> <!-- end card-body-->

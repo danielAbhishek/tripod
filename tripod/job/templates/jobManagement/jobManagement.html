@@ -30,7 +30,7 @@
           <th>{{ job.primary_client }}</th>
           <th>{{ job.event }}</th>
           <th>{{ job.workflow }}</th>
-          <th>{{ job.task_status }}</th>
+          <th>{{ job.get_detail_task_status }}</th>
           <th>{{ job.start_date }}</th>
         </tr>
         <tr>
@@ -40,9 +40,6 @@
     </tbody>
   </table>
 
-</div>
-<div class="col-3">
-  Filters
 </div>
 
 {% endblock content %}
