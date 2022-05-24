@@ -67,7 +67,8 @@ def staffLogoutPage(request):
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="company:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
 def staffCompanyHomePage(request):
     """
@@ -94,7 +95,7 @@ def changePassword(request):
             user.password_change_code = ''
             user.save()
             update_session_auth_hash(request, user)
-            message.success(request, "Your password was successfully updated")
+            messages.success(request, "Your password was successfully updated")
             return redirect('company:staffCompany')
         else:
             messages.error(request, 'Invalid form submission')
@@ -104,7 +105,8 @@ def changePassword(request):
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url="permission_error")
 def updateProfile(request):
     user = request.user
@@ -318,7 +320,8 @@ def clientAddPage(request):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
 def eventManagement(request):
     """
@@ -337,7 +340,8 @@ def eventManagement(request):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
 def eventUpdatePage(request, pk):
     """
@@ -364,7 +368,8 @@ def eventUpdatePage(request, pk):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
 def eventAddPage(request):
     """
@@ -387,7 +392,8 @@ def eventAddPage(request):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
 def productManagement(request):
     """
@@ -406,7 +412,8 @@ def productManagement(request):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
 def productUpdatePage(request, pk):
     """
@@ -434,7 +441,8 @@ def productUpdatePage(request, pk):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
 def productAddPage(request):
     """
@@ -458,7 +466,8 @@ def productAddPage(request):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
 def packageManagement(request):
     """
@@ -486,7 +495,8 @@ def packageManagement(request):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
 def packageUpdatePage(request, pk):
     """
@@ -528,7 +538,8 @@ def packageUpdatePage(request, pk):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
 def packageAddPage(request):
     """
@@ -595,13 +606,14 @@ def invoiceDetail(request, pk):
     except ObjectDoesNotExist:
         invoice.job = None
         pkgLink = None
-    company = Company.objects.filter(active=True).first()
+    company = get_company()
     context = {'invoice': invoice, 'pkgLink': pkgLink, 'company': company}
     return render(request, 'finance/invoiceDetail.html', context)
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
 def equipmentManagement(request):
     """
@@ -620,7 +632,8 @@ def equipmentManagement(request):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
 def equipmentUpdatePage(request, pk):
     """
@@ -645,7 +658,8 @@ def equipmentUpdatePage(request, pk):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
 def equipmentAddPage(request):
     """
@@ -667,7 +681,8 @@ def equipmentAddPage(request):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
 def equipmentMaintanence(request):
     """
@@ -685,7 +700,8 @@ def equipmentMaintanence(request):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
 def equipmentMaintanenceUpdatePage(request, pk):
     """
@@ -710,7 +726,8 @@ def equipmentMaintanenceUpdatePage(request, pk):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
 def equipmentMaintanenceAddPage(request):
     """
@@ -733,7 +750,8 @@ def equipmentMaintanenceAddPage(request):
 
 
 @login_required(login_url="company:staffLogin")
-@user_passes_test(force_password_change_check, login_url="companu:changePassword")
+@user_passes_test(force_password_change_check,
+                  login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
 def companyUpdate(request, pk):
     company = Company.objects.get(pk=pk)

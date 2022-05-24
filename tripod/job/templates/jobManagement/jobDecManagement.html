@@ -20,12 +20,12 @@
       </tr>
     </thead>
     <tbody>
-      {% for reqJob in reqJobs %}
+      {% for decJob in decJobs %}
         <tr>
-          <th><a href="#">{{ reqJob.job_name }}</a></th>
+          <th><a href="{% url 'job:jobPage' decJob.id %}">{{ decJob.job_name }}</a></th>
           <th>
-            <a href="{% url 'job:jobChangeReqToJobPage' reqJob.id %}">
-              <input class="btn btn-primary" type="submit" value="Confirm Job">
+            <a href="{% url 'job:confirmDeclinedJob' decJob.id %}">
+              <input class="btn btn-outline-primary btn-sm" type="submit" value="Confirm Job">
             </a>
           </th>
         </tr>

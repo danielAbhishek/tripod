@@ -3,11 +3,13 @@
 
 
 {% block content %}
-    <h3>Job - {{ job.job_name }} {{ job.primary_client }}</h3>
+    <h3>Job - {{ job.job_name }}</h3>
 
     <form method="POST" action="">
       {% csrf_token %}
-      <br>
+      <br> 
+      <a class="btn btn-outline-primary" href="{% url 'blog:features' %}">Click here to check packages</a>
+      <br><br>
       <div class="row">
         <div class="col">
          {{ form.package | as_crispy_field }}

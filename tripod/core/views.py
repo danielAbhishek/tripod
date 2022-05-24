@@ -343,6 +343,7 @@ def updateUserProfile(request, pk):
     """
     user = get_user_model().objects.get(pk=pk)
     form = CustomUserChangeForm(instance=user)
+    context = {'form': form, 'user': user}
 
     if request.method == "POST":
         form = CustomUserChangeForm(request.POST or None, instance=user)
@@ -367,8 +368,7 @@ def updateUserProfile(request, pk):
             messages.success(request, f"Successfully updated the profile")
             return redirect('core:customerHome')
         else:
-            messages.error(request, "Form is entered with invalid records")
+            messages.error(request, form.errors.as_text())
             return render(request, 'customer/updateUser.html', context)
 
-    context = {'form': form, 'user': user}
     return render(request, 'customer/updateUser.html', context)

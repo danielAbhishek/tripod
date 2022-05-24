@@ -37,7 +37,10 @@ class Invoice(models.Model):
         return str(self.issue_date.strftime("%Y%m%d")) + str(self.id)
 
     def __str__(self):
-        return self.description[:20]
+        try:
+            return f"{self.job} - invoice"
+        except:
+            return "Job is Deleted"
 
     def get_summary(self):
         pass

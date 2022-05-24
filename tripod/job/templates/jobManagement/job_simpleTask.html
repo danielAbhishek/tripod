@@ -6,6 +6,13 @@
           <a href="{% url 'job:processTask' task.id %}" class="btn btn-outline-secondary btn-sm" role="button">
             <i class="bi bi-check-square-fill"></i> Complete Task
           </a>
+
+          {% if task.task_type == 'em' %}
+          <a href="{% url 'job:processEmailTaskWithoutSending' task.id %}" class="btn btn-outline-secondary btn-sm" role="button">
+            <i class="bi bi-check-square-fill"></i> Complete without sedning email
+          </a>
+          {% endif %}
+
         {% else %}
           <span class="badge bg-success">Task completed</span>
         {% endif %}

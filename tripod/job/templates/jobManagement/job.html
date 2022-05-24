@@ -11,6 +11,12 @@
         edit job
       </a>
     </h3>
+    {% if job.status == 'dec' %}
+    <div class="alert alert-warning" role="alert">
+      This job has been declined, if you think it is declined mistakenly then please change it as confirmed Job.
+      <a class="btn btn-outline-primary btn-sm" href="{% url 'job:confirmDeclinedJob' job.id %}">Confirm Job</a>
+    </div>
+    {% endif %}
     <br>
 
 <!-- Looping thru works that passed from view (filtered by job) -->
@@ -97,7 +103,7 @@
        <div class="card-header" id="headingOne">
          <div class="card-body">
            <h5 class="card-title">Questionnaire</h5>
-           <p class="card-text">Check Questionnaire</p>
+           <p class="card-text"><small>Questionnaire results can be viewed here, make sure that user responded</small></p>
            <a href="{% url 'job:questPage' job.id %}" class="btn btn-primary">Questionnaire</a>
          </div>
        </div>
@@ -107,7 +113,7 @@
        <div class="card-header" id="headingOne">
          <div class="card-body">
            <h5 class="card-title">Payment History</h5>
-           <p class="card-text">Displaying payment paid details</p>
+           <p class="card-text"><small>Payment detials can be added here and summary of paid detail will be shown here</small></p>
            {% for ph in pyHistory %}
             <ul>
               <li>
@@ -130,10 +136,10 @@
       <div class="card" style="width: auto; margin-top: 40px;">
        <div class="card-header" id="headingOne">
          <div class="card-body">
-           <h5 class="card-title">Issue Receipt</h5>
-           <p class="card-text">Download and the receipt and share with client</p>
+           <h5 class="card-title">Download Invoice</h5>
+           <p class="card-text"><small>Download and the invoice and share with client</small></p>
 
-           <a href="#" class="btn btn-primary">Download receipt</a>
+           <a href="{% url 'job:downloadInvoice' job.id %}" class="btn btn-primary">Download invoice</a>
          </div>
        </div>
       </div>

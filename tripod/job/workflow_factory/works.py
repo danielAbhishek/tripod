@@ -49,6 +49,13 @@ class SimpleWork(WorkBase):
         self.work_type = work_type
         self.tasks = []
         self.work = None
+        self.task_types = {
+            'ToDoTask': 'simple Task',
+            'EmailTask': 'an email will be sent upon completion',
+            'ContractTask': 'contract and invoice will be shared with client',
+            'QuestTask': 'Questionnaire will be shared with client',
+            'AppointmentTask': 'booking information will be shared with client'
+        }
 
     def set_data(self):
         """
@@ -86,7 +93,7 @@ class SimpleWork(WorkBase):
         """creating task factory"""
         #  print(obj)
         name = obj.name
-        description = obj.description + str(obj.class_object)
+        description = f"{obj.description}\n{self.task_types[str(obj.class_object)]}"
         class_obj = eval(obj.class_object)
         task = class_obj(name, self.user, self.work)
         task.set_data(description, obj)

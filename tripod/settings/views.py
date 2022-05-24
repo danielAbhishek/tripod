@@ -2,20 +2,16 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect, render
 from django.contrib import messages
 
-from settings.models import (
-    Workflow, EmailTemplate, ContractTemplate, QuestionnaireTemplate,
-    Source, WorkTemplate
-)
-from settings.forms import (
-    WorkflowForm, WorkTemplateForm, EmailTemplateForm, ContractTemplateForm,
-    QuestionnaireTemplateForm
-)
+from settings.models import (Workflow, EmailTemplate, ContractTemplate,
+                             QuestionnaireTemplate, Source, WorkTemplate)
+from settings.forms import (WorkflowForm, WorkTemplateForm, EmailTemplateForm,
+                            ContractTemplateForm, QuestionnaireTemplateForm)
 
 from tripod.utils import superuser_check
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def staffSettingsPage(request):
     """
     Settings homepage which is only visible to admin logins,
@@ -25,7 +21,7 @@ def staffSettingsPage(request):
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def workflowManagement(request):
     """
     workflow management page, where you can define the workflow
@@ -34,12 +30,12 @@ def workflowManagement(request):
     workflows = Workflow.objects.all()
     context = {'workflows': workflows}
 
-    return render(
-        request, 'workflowManagement/workflowManagement.html', context)
+    return render(request, 'workflowManagement/workflowManagement.html',
+                  context)
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def workflowUpdatePage(request, pk):
     """
     updating the workflow item
@@ -48,10 +44,10 @@ def workflowUpdatePage(request, pk):
     form = WorkflowForm(instance=workflow, userObj=None, operation=None)
 
     if request.method == "POST":
-        form = WorkflowForm(
-            request.POST, instance=workflow, userObj=request.user,
-            operation='updating'
-        )
+        form = WorkflowForm(request.POST,
+                            instance=workflow,
+                            userObj=request.user,
+                            operation='updating')
         if form.is_valid():
             obj = form.save()
             messages.success(request, f'Workflow {obj} successfully updated')
@@ -64,17 +60,16 @@ def workflowUpdatePage(request, pk):
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def workflowAddPage(request):
     """
     Adding new workflow
     """
     form = WorkflowForm(userObj=None, operation=None)
     if request.method == "POST":
-        form = WorkflowForm(
-            request.POST, userObj=request.user,
-            operation='creating'
-        )
+        form = WorkflowForm(request.POST,
+                            userObj=request.user,
+                            operation='creating')
         if form.is_valid():
             obj = form.save()
             messages.success(request, f'Workflow {obj} successfully added')
@@ -87,7 +82,7 @@ def workflowAddPage(request):
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def workTemplateManagement(request):
     """
     work Template management page, where you can define the work template
@@ -96,12 +91,12 @@ def workTemplateManagement(request):
     workTemplates = WorkTemplate.objects.all()
     context = {'workTemplates': workTemplates}
 
-    return render(
-        request, 'workflowManagement/workTemplateManagement.html', context)
+    return render(request, 'workflowManagement/workTemplateManagement.html',
+                  context)
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def workTemplateUpdatePage(request, pk):
     """
     updating the work template
@@ -110,12 +105,11 @@ def workTemplateUpdatePage(request, pk):
     form = WorkTemplateForm(instance=work_template)
 
     if request.method == "POST":
-        form = WorkTemplateForm(
-            request.POST, instance=work_template
-        )
+        form = WorkTemplateForm(request.POST, instance=work_template)
         if form.is_valid():
             obj = form.save()
-            messages.success(request, f'Work Template {obj} successfully updated')
+            messages.success(request,
+                             f'Work Template {obj} successfully updated')
             return redirect('settings:workTemplateManagement')
         else:
             messages.error(request, 'Invalid form submission')
@@ -125,7 +119,7 @@ def workTemplateUpdatePage(request, pk):
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def workTemplateAddPage(request):
     """
     Adding new work template
@@ -145,7 +139,7 @@ def workTemplateAddPage(request):
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def emailTemplateManagement(request):
     """
     email Template management page, where you can define the email template
@@ -154,28 +148,30 @@ def emailTemplateManagement(request):
     emailTemplates = EmailTemplate.objects.all()
     context = {'emailTemplates': emailTemplates}
 
-    return render(
-        request, 'templateManagement/emailTemplateManagement.html', context)
+    return render(request, 'templateManagement/emailTemplateManagement.html',
+                  context)
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def emailTemplateUpdatePage(request, pk):
     """
     updating the email template
     """
     email_template = EmailTemplate.objects.get(pk=pk)
-    form = EmailTemplateForm(
-        instance=email_template, userObj=None, operation=None)
+    form = EmailTemplateForm(instance=email_template,
+                             userObj=None,
+                             operation=None)
 
     if request.method == "POST":
-        form = EmailTemplateForm(
-            request.POST, instance=email_template,
-            userObj=request.user, operation='updating'
-        )
+        form = EmailTemplateForm(request.POST,
+                                 instance=email_template,
+                                 userObj=request.user,
+                                 operation='updating')
         if form.is_valid():
             obj = form.save()
-            messages.success(request, f'Email Template {obj} successfully updated')
+            messages.success(request,
+                             f'Email Template {obj} successfully updated')
             return redirect('settings:emailTemplateManagement')
         else:
             messages.error(request, 'Invalid form submission')
@@ -185,18 +181,20 @@ def emailTemplateUpdatePage(request, pk):
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def emailTemplateAddPage(request):
     """
     Adding new work template
     """
     form = EmailTemplateForm(userObj=None, operation=None)
     if request.method == "POST":
-        form = EmailTemplateForm(
-            request.POST, userObj=request.user, operation='creating')
+        form = EmailTemplateForm(request.POST,
+                                 userObj=request.user,
+                                 operation='creating')
         if form.is_valid():
             obj = form.save()
-            messages.success(request, f'Email Template {obj} successfully updated')
+            messages.success(request,
+                             f'Email Template {obj} successfully updated')
             return redirect('settings:emailTemplateManagement')
         else:
             messages.error(request, 'Invalid form submission')
@@ -206,7 +204,7 @@ def emailTemplateAddPage(request):
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def contractTemplateManagement(request):
     """
     contract Template management page, where you can define the contract
@@ -215,28 +213,31 @@ def contractTemplateManagement(request):
     contractTemplates = ContractTemplate.objects.all()
     context = {'contractTemplates': contractTemplates}
 
-    return render(
-        request, 'templateManagement/contractTemplateManagement.html', context)
+    return render(request,
+                  'templateManagement/contractTemplateManagement.html',
+                  context)
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def contractTemplateUpdatePage(request, pk):
     """
     updating the contract template
     """
     contract_template = ContractTemplate.objects.get(pk=pk)
-    form = ContractTemplateForm(
-        instance=contract_template, userObj=None, operation=None)
+    form = ContractTemplateForm(instance=contract_template,
+                                userObj=None,
+                                operation=None)
 
     if request.method == "POST":
-        form = ContractTemplateForm(
-            request.POST, instance=contract_template,
-            userObj=request.user, operation='updating'
-        )
+        form = ContractTemplateForm(request.POST,
+                                    instance=contract_template,
+                                    userObj=request.user,
+                                    operation='updating')
         if form.is_valid():
             obj = form.save()
-            messages.success(request, f'Contract Template {obj} successfully updated')
+            messages.success(request,
+                             f'Contract Template {obj} successfully updated')
             return redirect('settings:contractTemplateManagement')
         else:
             messages.error(request, 'Invalid form submission')
@@ -246,29 +247,31 @@ def contractTemplateUpdatePage(request, pk):
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def contractTemplateAddPage(request):
     """
     Adding new work template
     """
     form = ContractTemplateForm(userObj=None, operation=None)
     if request.method == "POST":
-        form = ContractTemplateForm(
-            request.POST, userObj=request.user, operation='creating')
+        form = ContractTemplateForm(request.POST,
+                                    userObj=request.user,
+                                    operation='creating')
         if form.is_valid():
             obj = form.save()
-            messages.success(request, f'Contract Template {obj} successfully created')
+            messages.success(request,
+                             f'Contract Template {obj} successfully created')
             return redirect('settings:contractTemplateManagement')
         else:
             messages.error(request, 'Invalid form submission')
 
     context = {'form': form}
-    return render(
-        request, 'templateManagement/contractTemplateAdd.html', context)
+    return render(request, 'templateManagement/contractTemplateAdd.html',
+                  context)
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def questTemplateManagement(request):
     """
     questionnaire Template management page, where you can define the
@@ -277,28 +280,30 @@ def questTemplateManagement(request):
     questTemplates = QuestionnaireTemplate.objects.all()
     context = {'questTemplates': questTemplates}
 
-    return render(
-        request, 'templateManagement/questTemplateManagement.html', context)
+    return render(request, 'templateManagement/questTemplateManagement.html',
+                  context)
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def questTemplateUpdatePage(request, pk):
     """
     updating the quest template
     """
     quest_template = QuestionnaireTemplate.objects.get(pk=pk)
-    form = QuestionnaireTemplateForm(
-        instance=quest_template, userObj=None, operation=None)
+    form = QuestionnaireTemplateForm(instance=quest_template,
+                                     userObj=None,
+                                     operation=None)
 
     if request.method == "POST":
-        form = QuestionnaireTemplateForm(
-            request.POST, instance=quest_template,
-            userObj=request.user, operation='updating'
-        )
+        form = QuestionnaireTemplateForm(request.POST,
+                                         instance=quest_template,
+                                         userObj=request.user,
+                                         operation='updating')
         if form.is_valid():
             obj = form.save()
-            messages.success(request, f'Questionnaire Template {obj} successfully updated')
+            messages.success(
+                request, f'Questionnaire Template {obj} successfully updated')
             return redirect('settings:questTemplateManagement')
         else:
             messages.error(request, 'Invalid form submission')
@@ -308,22 +313,23 @@ def questTemplateUpdatePage(request, pk):
 
 
 @login_required(login_url='company:staffLogin')
-@user_passes_test(superuser_check)
+@user_passes_test(superuser_check, login_url="permission_error")
 def questTemplateAddPage(request):
     """
     Adding new work template
     """
     form = QuestionnaireTemplateForm(userObj=None, operation=None)
     if request.method == "POST":
-        form = QuestionnaireTemplateForm(
-            request.POST, userObj=request.user, operation='creating')
+        form = QuestionnaireTemplateForm(request.POST,
+                                         userObj=request.user,
+                                         operation='creating')
         if form.is_valid():
             obj = form.save()
-            messages.success(request, f'Questionnaire Template {obj} successfully created')
+            messages.success(
+                request, f'Questionnaire Template {obj} successfully created')
             return redirect('settings:questTemplateManagement')
         else:
             messages.error(request, 'Invalid form submission')
 
     context = {'form': form}
-    return render(
-        request, 'templateManagement/questTemplateAdd.html', context)
+    return render(request, 'templateManagement/questTemplateAdd.html', context)

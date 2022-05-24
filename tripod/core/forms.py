@@ -70,20 +70,18 @@ class AccountCreationForm(forms.ModelForm):
 
     def save(self, *args, **kwargs):
         random_code = random_char()
-        self.instance.password = random_code
-        self.instance.force_password_change = True
-        self.instance.password_change_code = random_code
         if self.user_type == 'client':
             account = CustomUser.objects.create_client(
                 self.instance.email,
-                self.instance.password,
-                username=self.cleaned_data['username'])
+                random_code,
+                username=self.cleaned_data['username'],
+                password_change_code=random_code)
         elif self.user_type == 'staff':
             account = CustomUser.objects.create_staff(
                 self.cleaned_data['email'],
-                self.instance.password,
+                random_code,
                 self.cleaned_data['username'],
-            )
+                password_change_code=random_code)
         else:
             raise TypeError(f'Incorrect user type given {self.user_type}')
 
@@ -160,6 +158,7 @@ class JobReqCreatedForm(forms.ModelForm):
         self.instance.create_by = self.user
         self.instance.primary_client = self.user
         self.instance.status = 'req'
+        self.instance.created_by = self.user
         jobObj = super(JobReqCreatedForm, self).save(*args, **kwargs)
         return jobObj
 

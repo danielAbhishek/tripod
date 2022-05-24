@@ -22,8 +22,11 @@
         <br>
         <div class="row">
           <div class="col">
-            {{ form.discount | as_crispy_field }}
-            {{ form.notes | as_crispy_field }}
+            {{ form.full_pay_due_date | as_crispy_field }}
+            {% if invoice_completion <= 50 %}
+              {{ form.discount | as_crispy_field }}
+            {% endif %}
+              {{ form.notes | as_crispy_field }}
           </div>
         </div>
         <br>

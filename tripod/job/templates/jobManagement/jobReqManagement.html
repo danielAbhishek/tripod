@@ -18,18 +18,29 @@
     <thead>
       <tr>
         <th>Name</th>
+        <th>Created On</th>
+        <th>Created By</th>
         <th>Confirm as Job</th>
+        <th>Delete Job</th>
       </tr>
     </thead>
     <tbody>
       {% for reqJob in reqJobs %}
         <tr>
           <th>{{ reqJob.job_name }}</th>
+          <th>{{ reqJob.created_at }}</th>
+          <th>{{ reqJob.created_by }}</th>
           <th>
             <a href="{% url 'job:jobChangeReqToJobPage' reqJob.id %}">
               <input class="btn btn-outline-primary btn-sm" type="submit" value="Confirm Job">
             </a>
           </th>
+          <th>
+            <a href="{% url 'job:delRequestJob' reqJob.id %}">
+              <input class="btn btn-outline-danger btn-sm" type="submit" value="Delete Job">
+            </a>
+          </th>
+
         </tr>
         <tr>
 

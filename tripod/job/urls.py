@@ -16,9 +16,15 @@ urlpatterns = [
     path('jobReqManagement/reqToJob/<int:pk>/',
          views.jobChangeReqToJob,
          name='jobChangeReqToJobPage'),
+    path('jobReqManagement/deleteJob/<int:pk>/',
+         views.delRequestJob,
+         name='delRequestJob'),
 
     # job management
     path('jobManagement', views.jobManagementPage, name='jobManagementPage'),
+    path('completedJobManagement',
+         views.completedJobManagementPage,
+         name='completedJobManagementPage'),
     path('jobManagement/job/<int:pk>', views.jobPage, name='jobPage'),
     path('jobManagement/jobUpdate/<int:pk>/',
          views.jobUpdateJob,
@@ -26,6 +32,9 @@ urlpatterns = [
     path('jobManagement/taskProcess/<int:pk>',
          views.processTask,
          name='processTask'),
+    path('jobManagement/taskEmailProcessWithoutSending/<int:pk>',
+         views.processEmailTaskWithoutSendingEmail,
+         name='processEmailTaskWithoutSending'),
     path('jobManagement/taskComplete/<int:pk>',
          views.completeTask,
          name='completeTask'),
@@ -42,6 +51,10 @@ urlpatterns = [
     path('jobManagement/job/<int:pk>/updatePayHistory/',
          views.updatePayHistoryPage,
          name='updatePayHistoryPage'),
+    path('jobManagement/job/<int:pk>/receipt',
+         views.downloadInvoice,
+         name='downloadInvoice'),
+
     # quest
     path('jobManagement/job/<int:pk>/questonniare',
          views.questPage,
@@ -51,7 +64,12 @@ urlpatterns = [
     path('jobDecManagement',
          views.jobDecManagementPage,
          name='jobDecManagementPage'),
-
+    path('jobDecManagement/jobDecline/<int:pk>',
+         views.declineJob,
+         name='declineJob'),
+    path('jobDecManagement/jobConfirm/<int:pk>',
+         views.confirmDeclinedJob,
+         name='confirmDeclinedJob'),
     # appointment management
     path('taskManagement/app/<int:pk>', views.appointmentPage, name='appPage'),
 ]

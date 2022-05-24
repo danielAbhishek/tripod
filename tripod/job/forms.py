@@ -95,7 +95,7 @@ class JobUpdateConfirmForm(forms.ModelForm):
 
         if self.operation == 'confirming Job':
             if not self.instance.workflow:
-                raise Exception('Workflow is needed to confirm the job')
+                raise ValueError('Workflow is needed to confirm the job')
             else:
                 self.instance.status = 'job'
                 jobObj = super(JobUpdateConfirmForm,

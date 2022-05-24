@@ -20,7 +20,8 @@ class InvoiceUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Invoice
-        fields = ['discount', 'notes']
+        fields = ['discount', 'full_pay_due_date', 'notes']
+        widgets = {'full_pay_due_date': DateInput()}
 
 
 class PaymentHistoryForm(forms.ModelForm):

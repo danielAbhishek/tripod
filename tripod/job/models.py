@@ -87,6 +87,8 @@ class Job(models.Model):
 
     def get_detail_task_status(self):
         """Returning detail status for db value"""
+        if self.task_status is None:
+            return self.TASKCHOICES[0][1]
         return [i[1] for i in self.TASKCHOICES if i[0] == self.task_status][0]
 
     def get_user_appointment_tasks(self):
@@ -204,7 +206,7 @@ class Work(models.Model):
     changed_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
-        return self.work_name
+        return f"{self.work_name} - {self.job}"
 
     def get_client(self):
         return self.job.primary_client
@@ -473,13 +475,14 @@ class Task(models.Model):
         self.completed = True
         self.save()
 
-    def process_task(self, user):
+    def process_task(self, user, send_email=True):
         """processing task based on the task type"""
         j_status = self.checking_current_work_process()
         """
         Checking if the preceeding tasks were completed before
         continuing with the next steps
         """
+        print(j_status, self.work.work_order)
         # if it is the first step then making sure first step only can be completed
         if j_status is None:
             if self.work.work_order > 1:
@@ -502,7 +505,7 @@ class Task(models.Model):
 
         # checking user responds needed task
         if not self.user_task:
-            if self.task_type == 'em':
+            if self.task_type == 'em' and send_email:
                 self.send_email()
             self.completed = True
             self.save()

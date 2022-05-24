@@ -21,7 +21,6 @@
           <h5 class="card-title">{{ job }}
 
             {% if job.get_job_completion_in_numbers < 3 or job.get_job_completion_in_numbers is None %}
-            {{ job.get_job_completion_in_numbers }}
             <a class="btn btn-primary btn-sm" href="{% url 'core:jobUpdate' job.id %}" class="card-link">Update Job</a>
             {% endif %}
           </h5>
@@ -258,8 +257,9 @@
       {% elif job.task_status == 'cnb' %}
         <h6 class="card-subtitle mb-2 text-muted">Job confirmation is pending</h6>
         <small class="card-text">
-          Great, you have booked successfully and accpeted the contract and invoice. Please work with
-          business owner and settle down the advance payment so the Job can be confirmed.
+          Great, you have booked successfully and accpeted the contract and invoice.
+          Check if you have received an appointment here, and if so please check and accept it.
+          And lease work with business owner and settle down the advance payment so the Job can be confirmed.
         </small>
       {% elif job.task_status == 'jbc' %}
         <h6 class="card-subtitle mb-2 text-muted">Job confirmation is confirmed</h6>
