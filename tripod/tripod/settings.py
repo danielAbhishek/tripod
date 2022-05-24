@@ -20,6 +20,7 @@ load_dotenv()  # loading env variables
 email_address = os.environ.get("EMAIL_ADDRESS")
 email_password = os.environ.get("EMAIL_PASSWORD")
 temp_password = os.environ.get("TEMP_PASS")
+db_password = os.environ.get("DB_PASS")
 
 # connecting with bootstrap classes
 MESSAGE_TAGS = {
@@ -106,8 +107,14 @@ WSGI_APPLICATION = 'tripod.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        #  'ENGINE': 'django.db.backends.sqlite3',
+        #  'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'tripod',
+        'USER': 'tripod',
+        'PASSWORD': db_password,
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
