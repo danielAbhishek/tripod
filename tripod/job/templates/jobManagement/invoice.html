@@ -16,21 +16,23 @@
         <li><p class="card-text">Total price - {{ invoice.total_price }}</p></li>
       </ul>
       <hr>
-      <h6>Update discount and notes</h6>
+      <h6>Update Invoice</h6>
       <form method="POST" action="">
         {% csrf_token %}
         <br>
         <div class="row">
           <div class="col">
             {{ form.full_pay_due_date | as_crispy_field }}
-            {% if invoice_completion <= 50 %}
+            {% if invoice_completion < 50 %}
               {{ form.discount | as_crispy_field }}
+            {% else %}
+              <p class="text-muted">Discount cannot be changed after accepting invoice</p>
             {% endif %}
               {{ form.notes | as_crispy_field }}
           </div>
         </div>
         <br>
-        <input class="btn btn-primary" type="submit" value="Update Discount and notes">
+        <input class="btn btn-primary" type="submit" value="Update Invoice">
       </form>
     </div>
   </div>

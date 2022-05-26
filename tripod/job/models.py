@@ -339,6 +339,9 @@ class Task(models.Model):
 
     # email = EmailManager()
 
+    class Meta:
+        ordering = ('task_order',)
+
     def __str__(self):
         return self.get_job().job_name + " - " + self.task_name
 

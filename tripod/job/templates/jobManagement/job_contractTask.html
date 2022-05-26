@@ -54,7 +54,7 @@
           {% elif task.user_completed == 'uc' %}
             {% if not task.completed %}
               <a href="{% url 'job:processTask' task.id %}" class="btn btn-outline-secondary btn-sm" role="button">
-                <i class="bi bi-check-square-fill"></i> Complete Task
+                <i class="bi bi-check-square-fill"></i> Confirm Invoice
               </a>
             {% else %}
               <span class="badge bg-success">Contract and invoice accepted</span>

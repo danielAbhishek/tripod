@@ -97,6 +97,7 @@ class JobUserUpdateForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = [
+            'job_name', 'description',
             'venue', 'venue_notes', 'start_date', 'end_date', 'start_time',
             'end_time', 'package'
         ]

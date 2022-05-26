@@ -134,7 +134,7 @@ def jobChangeReqToJob(request, pk):
 
 @login_required(login_url="company:staffLogin")
 @user_passes_test(superuser_check, login_url="permission_error")
-def delRequestJob(request, pk):
+def deleteJob(request, pk):
     """
     Deleting job that are in the request phase
     """

@@ -23,7 +23,7 @@
           {% comment %} First Row  {% endcomment %}
           <div class="row" style="margin: 10px;">
           {% comment %} Venue card{% endcomment %}
-            <div class="col-sm-4">
+            <div class="col-sm-3">
              <div class="card h-100 box-shadow">
                 <div class="card-header">
                   <h6 class="my-0 font-weight-normal">Job Requests</h6>
@@ -34,7 +34,7 @@
                     <div class="d-flex justify-content-between w-100">
                       <strong class="text-gray-dark">Job Requests Management</strong>
 
-                      <a class="btn btn-outline-secondary btn-sm" href="{% url 'job:jobReqAdd' %}">Add new Job request</a>
+                      <a class="btn btn-outline-secondary btn-sm" href="{% url 'job:jobReqAdd' %}">Add new</a>
                       <a class="btn btn-sm btn-outline-secondary" href="{% url 'job:jobReqManagementPage' %}">go to page</a>
 
                     </div>
@@ -43,7 +43,7 @@
                   <div class="d-flex justify-content-between align-items-center w-100">
                     <form action={% url 'job:jobReqManagementPage'%} method='GET'>
                       <input class="btn btn-outline-secondary btn-sm" type="text" name="q" />
-                      <input class="btn btn-secondary my-2 btn-sm" type="submit" value="search job request"/> 
+                      <input class="btn btn-secondary my-2 btn-sm" type="submit" value="search job request"/>
                     </form>
                   </div>
 
@@ -52,7 +52,7 @@
               </div>
             </div>
           {% comment %} Date and Time card{% endcomment %}
-            <div class="col-sm-4">
+            <div class="col-sm-3">
              <div class="card h-100 box-shadow">
                 <div class="card-header">
                   <h6 class="my-0 font-weight-normal">Confirmed Jobs</h6>
@@ -69,14 +69,38 @@
                   <div class="d-flex justify-content-between align-items-center w-100">
                     <form action={% url 'job:jobManagementPage' %} method='GET'>
                       <input class="btn btn-outline-secondary btn-sm" type="text" name="q" />
-                      <input class="btn btn-secondary my-2 btn-sm" type="submit" value="search confirmed job"/> 
+                      <input class="btn btn-secondary my-2 btn-sm" type="submit" value="search confirmed job"/>
                     </form>
                   </div>
                 </div>
               </div>
             </div>
             {% comment %} Date and Time card{% endcomment %}
-              <div class="col-sm-4">
+              <div class="col-sm-3">
+               <div class="card h-100 box-shadow">
+                  <div class="card-header">
+                    <h6 class="my-0 font-weight-normal">Completed Jobs</h6>
+                  </div>
+                  <div class="card-body">
+
+                    <div class="media text-muted pt-1">
+                      <div class="d-flex justify-content-between align-items-center w-100">
+                        <strong class="text-gray-dark">Completed Job Management</strong>
+                        <a class="btn btn-sm btn-outline-secondary" href="{% url 'job:completedJobManagementPage' %}">go to page</a>
+                      </div>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                      <form action={% url 'job:completedJobManagementPage' %} method='GET'>
+                        <input class="btn btn-outline-secondary btn-sm" type="text" name="q" />
+                        <input class="btn btn-secondary my-2 btn-sm" type="submit" value="search completed job"/>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% comment %} Date and Time card{% endcomment %}
+              <div class="col-sm-3">
                <div class="card h-100 box-shadow">
                   <div class="card-header">
                     <h6 class="my-0 font-weight-normal">Declined Jobs</h6>
@@ -93,7 +117,7 @@
                   <div class="d-flex justify-content-between align-items-center w-100">
                     <form action={% url 'job:jobDecManagementPage' %} method='GET'>
                       <input class="btn btn-outline-secondary btn-sm" type="text" name="q" />
-                      <input class="btn btn-secondary my-2 btn-sm" type="submit" value="search declined job"/> 
+                      <input class="btn btn-secondary my-2 btn-sm" type="submit" value="search declined job"/>
                     </form>
                   </div>
                   </div>

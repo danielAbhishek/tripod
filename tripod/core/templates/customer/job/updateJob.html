@@ -10,6 +10,8 @@
       <br>
       <div class="row">
         <div class="col">
+          {{ form.job_name | as_crispy_field }}
+          {{ form.description | as_crispy_field }}
           {{ form.venue | as_crispy_field }}
           {{ form.venue_notes | as_crispy_field }}
           {{ form.start_date | as_crispy_field }}

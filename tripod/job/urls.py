@@ -17,7 +17,7 @@ urlpatterns = [
          views.jobChangeReqToJob,
          name='jobChangeReqToJobPage'),
     path('jobReqManagement/deleteJob/<int:pk>/',
-         views.delRequestJob,
+         views.deleteJob,
          name='delRequestJob'),
 
     # job management
@@ -32,6 +32,9 @@ urlpatterns = [
     path('jobManagement/taskProcess/<int:pk>',
          views.processTask,
          name='processTask'),
+    path('jobManagement/deleteJob/<int:pk>/',
+         views.deleteJob,
+         name='deleteJob'),
     path('jobManagement/taskEmailProcessWithoutSending/<int:pk>',
          views.processEmailTaskWithoutSendingEmail,
          name='processEmailTaskWithoutSending'),

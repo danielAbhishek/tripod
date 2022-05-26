@@ -16,8 +16,8 @@ class TimeInput(forms.TimeInput):
 
 def update_package_after_adding_products(package):
     """
-    after adding products to the package link product table, which is an 
-    associate table that connects package and products table. package 
+    after adding products to the package link product table, which is an
+    associate table that connects package and products table. package
     table should be updated with new package price
     """
     plp_objs = PackageLinkProduct.objects.filter(package=package)
@@ -225,3 +225,13 @@ class EquipmentMaintanenceForm(forms.ModelForm):
             'maintanence_date': DateInput(),
             'next_available_date': DateInput()
         }
+
+    def save(self, *args, **kwargs):
+        obj = super(EquipmentMaintanenceForm, self).save(*args, **kwargs)
+        equipment = obj.equipment
+        if obj.done:
+            equipment.availability = 'av'
+        else:
+            equipment.availability = 'um'
+        equipment.save()
+        return obj

@@ -7,11 +7,11 @@
 {% block content %}
 
 <div class="col">
-  <h1 class="display-5">Job Management</h1>
+  <h1 class="display-5">Completed Job Management</h1>
   <br>
   <a class="btn btn-outline-primary" href="{% url 'job:jobReqAdd' %}">Add new Job request</a>
   <br><br><br>
-  <h4>List of Jobs</h4>
+  <h4>List of Completed Jobs</h4>
   <table class="table table-striped table-sm">
     <thead>
       <tr>
@@ -20,6 +20,7 @@
         <th>Event</th>
         <th>Workflow</th>
         <th>Start_date</th>
+        <th>Delete Job</th>
       </tr>
     </thead>
     <tbody>
@@ -30,6 +31,11 @@
           <th>{{ job.event }}</th>
           <th>{{ job.workflow }}</th>
           <th>{{ job.start_date }}</th>
+          <th>
+            <a href="{% url 'job:deleteJob' job.id %}">
+              <input class="btn btn-outline-danger btn-sm" type="submit" value="Delete Job">
+            </a>
+          </th>
         </tr>
         <tr>
 

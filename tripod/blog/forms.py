@@ -46,7 +46,8 @@ class CustomerCreationForm(forms.ModelForm):
             password_change_code=self.instance.password_change_code)
         send_code(account)
         Job.objects.create(job_name=account.first_name + " request",
-                           job_request=self.cleaned_data['job_request'],
+                           description=self.cleaned_data['job_request'],
                            primary_client=account,
+                           created_by=account,
                            status='req')
         return account

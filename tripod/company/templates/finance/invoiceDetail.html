@@ -7,7 +7,7 @@
 {% block content %}
 
 <div class="col">
-  <h5 class="display-5">Invoice 
+  <h5 class="display-5">Invoice
     <small class="text-muted">
       {% if invoice.job %}
         <a href="{% url 'job:jobPage' invoice.job.id %}">{{ invoice.job }}</a>
@@ -76,7 +76,7 @@
       </div>
     </div>
   <br>
-    
+
     <br>
     <br>
     <h5 class="display-6">Billing</h5>
@@ -102,7 +102,7 @@
           </tr>
           {% endfor %}
         </tbody>
-      </table> 
+      </table>
     {% else %}
     <h6>Please select package</h6>
     {% endif %}
@@ -136,7 +136,7 @@
           </tbody>
         </table>
         {% if invoice.job.get_job_completion_in_numbers < 3 or invoice.job.get_job_completion_in_numbers is None %}
-          <a href="{% url 'job:jobUpdateInvoice' invoice.id %}" class="btn btn-primary">Update discount and notes</a>
+          <a href="{% url 'job:jobUpdateInvoice' invoice.id %}" class="btn btn-primary">Update Invoice</a>
         {% else %}
           <a href="{% url 'job:jobUpdateInvoice' invoice.id %}" class=" disabled btn btn-primary">Invoice already sent</a>
         {% endif %}
@@ -171,17 +171,17 @@
       <tbody>
         {% for ph in invoice.paymenthistory_set.all %}
         <tr>
-          <th>{{ ph.payment_date }}</th>
+          <th>{{ ph.payment_date | date }}</th>
           <th>{{ ph.payment_method }}</th>
           <th>{{ ph.payment_amount }}</th>
         </tr>
         {% endfor %}
       </tbody>
-    </table> 
+    </table>
     {% if invoice.job %}
-      {% if not invoice.job.invoiced_client %}   
+      {% if not invoice.job.invoiced_client %}
         <a href="{% url 'job:addPayHistoryPage' invoice.job.id %}" class="btn btn-primary">Add paid record</a>
-      {% else %} 
+      {% else %}
         <a class="disabled btn btn-primary">Invoiced Client</a>
       {% endif %}
     {% else %}

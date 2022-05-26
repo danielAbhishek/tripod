@@ -40,27 +40,41 @@ def prepare_invoice_sharing(job):
     invoice = job.invoice
     product_info = ""
     for product in products:
-        product_info += f"""
-            {product.product_name} - {product.unit_price}
-            -- {product.description}
-        """
-    invoice_summary = f"""
-        invoice_summary
-        ---------------------------------------------
-        ---------------------------------------------
-        Issue date - {invoice.issue_date}
-        Issue number - {invoice.get_issue_number()}
 
-        Job - {invoice.job}
-        ---------------------------------------------
-        selected package is {invoice.job.package}
-        {invoice.job.package.description}
+        product_info += f"""
+                |------------------------------------------------------------------
+                |_Product - {product.product_name}
+                |_price - {product.unit_price}
+                |_Description - {product.description}
+                |------------------------------------------------------------------
+                """
+
+    invoice_summary = f"""
+
+
+    |
+    |  I N V O I C E   S U M M A R Y
+    |
+    |------------------------------------------------------------------
+    |   Issue date - {invoice.issue_date}
+    |   Issue number - {invoice.get_issue_number()}
+    |   Job - {invoice.job}
+    |   Package - {invoice.job.package}
+    |
+    |------------------------------------------------------------------
+    |   PRODUCTS
+    |------------------------------------------------------------------
+    |
     """ + product_info
     invoice_summary += f"""
-    ------------------------------------------------------
-    Subtotal                                    {invoice.price}
-    Subtotal                                    {invoice.discount}
-    Subtotal                                    {invoice.total_price}
+    |......................................................
+    |......................................................
+    |Subtotal                       {invoice.price}
+    |......................................................
+    |Discount                       {invoice.discount}
+    |......................................................
+    |Total                          {invoice.total_price}
+    |......................................................
     """
     invoice.description = invoice_summary
     invoice.save()

@@ -65,13 +65,15 @@ class EmailClient:
             self.template_content = self.get_content()
             msg = EmailMessage()
             msg['Subject'] = self.template_content.subject
-            print(self.template_content.subject)
             msg['From'] = email_address
             msg['To'] = self.user.email
             if self.additional_content is not None:
-                self.template_content.body + self.additional_content
-            msg.set_content(self.template_content.body +
-                            self.template_content.thank_you)
+                msg.set_content(self.template_content.body +
+                                self.additional_content +
+                                self.template_content.thank_you)
+            else:
+                msg.set_content(self.template_content.body +
+                                self.template_content.thank_you)
         else:
             if self.new_content or self.attachment:
                 msg = EmailMessage()

@@ -203,6 +203,8 @@ def jobUpdate(request, pk):
     if request.method == 'POST':
         form = JobUserUpdateForm(request.POST, instance=job)
         if form.is_valid():
+            job.job_name = form.cleaned_data['job_name']
+            job.description = form.cleaned_data['description']
             job.venue = form.cleaned_data['venue']
             job.venue_notes = form.cleaned_data['venue_notes']
             job.start_date = form.cleaned_data['start_date']

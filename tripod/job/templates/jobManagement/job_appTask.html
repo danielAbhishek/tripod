@@ -9,8 +9,13 @@
          </a>
        </h6>
        <small>{{ task.description }}</small>
+       {% if task.get_job.invoice.full_pay_due_date is None %}
        <div class="alert alert-warning" role="alert">
-         Please create or complete the appointment, by adding date and time in job and update
+          Please add the full payment due date in the invoice section
+        </div>
+        {% endif %}
+       <div class="alert alert-warning" role="alert">
+         Please create the appointment and continue
         </div>
         <a href="{% url 'job:appPage' task.id %}" class="btn btn-outline-secondary btn-sm" role="button">
           <i class="bi bi-check-square-fill"></i> Create Appointment
