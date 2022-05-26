@@ -23,6 +23,15 @@
           {{ packageForm.package_name | as_crispy_field }}
           {{ packageForm.description | as_crispy_field }}
           {{ packageForm.event | as_crispy_field }}
+          <small>
+            {% if package.is_active %}
+              Deactivate
+            {% else %}
+              Activate
+            {% endif %}
+            package here
+          </small>
+          {{ packageForm.is_active | as_crispy_field }}
           {% endif %}
           <br>
           {% if formset %}

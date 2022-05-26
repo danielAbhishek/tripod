@@ -7,18 +7,15 @@ from company.models import Package
 
 
 def tripodPage(request):
-    """
-    Account registration view function for customers or users
-    using email, username and password
-    """
+    """blog page"""
     context = {}
     return render(request, 'main/tripodPage.html', context)
 
 
 def contactPage(request):
     """
-    Account registration view function for customers or users
-    using email, username and password
+    Can be used to fill CustomerCreationForm, which will create an Account
+    and a job request.
     """
     # if request.user.is_authenticated:
     #     return redirect('core:home')
@@ -40,10 +37,9 @@ def contactPage(request):
 
 def featuresPage(request):
     """
-    a features page, where all the packages details will be shown 
-    and additional information will be provided
+    A features page where all the packages details will be visible
     """
-    packages_objs = Package.objects.all()
+    packages_objs = Package.objects.filter(is_active=True)
     packages = {'packages': []}
     for package in packages_objs:
         package_inst = {}

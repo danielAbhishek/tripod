@@ -1,13 +1,13 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-from company.managers import (PackageManager, ProductManager,
-                              PackageProductManager)
+# from company.managers import (PackageManager, ProductManager,
+                              # PackageProductManager)
 
 
 class Event(models.Model):
     """
-    Event database object holds the information of event or programe to 
+    Event database object holds the information of event or programe to
     which business user cases will be handled saperatly
     """
     event_name = models.CharField(max_length=200)
@@ -130,7 +130,7 @@ class Package(models.Model):
                                    blank=True)
     changed_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
-    objects = PackageManager()
+    # objects = PackageManager()
 
     def __str__(self):
         return self.package_name
@@ -157,7 +157,7 @@ class PackageLinkProduct(models.Model):
                                    null=True,
                                    blank=True)
     changed_at = models.DateTimeField(auto_now=True, null=True, blank=True)
-    objects = PackageProductManager()
+    # objects = PackageProductManager()
 
     def __str__(self):
         return f"{self.product.product_name} - {self.package.package_name}"
@@ -191,6 +191,16 @@ class Equipment(models.Model):
 
     def __str__(self):
         return self.equipment_name
+
+    def get_e_type(self):
+        for x in self.TYPES:
+            if x[0] == self.e_type:
+                return x[1]
+
+    def get_availability(self):
+        for x in self.AVAILABILITY:
+            if x[0] == self.availability:
+                return x[1]
 
 
 class EquipmentMaintanence(models.Model):

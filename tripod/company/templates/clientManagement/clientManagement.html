@@ -15,7 +15,7 @@
         <a class="btn btn-outline-primary" href="{% url 'company:clientAdd' %}">Add new client</a>
         <form action={% url 'company:clientManagement'%} method='GET'>
           <input class="btn btn-outline-secondary" type="text" name="q" />
-          <input class="btn btn-secondary my-2" type="submit" value="search"/> 
+          <input class="btn btn-secondary my-2" type="submit" value="search"/>
         </form>
       </div>
 
@@ -31,6 +31,7 @@
           <th>Last Name</th>
           <th>Acive</th>
           <th>Date Joined</th>
+          <th>Delete Client</th>
         </tr>
       </thead>
       <tbody>
@@ -41,6 +42,7 @@
             <th>{{ client.last_name }}</th>
             <th>{{ client.is_active }}</th>
             <th>{{ client.date_joined }}</th>
+            <th><a class="btn btn-outline-danger btn-sm" href="{% url 'company:clientDeletePage' client.id %}">Delete</a></th>
           </tr>
         {% endfor %}
       </tbody>

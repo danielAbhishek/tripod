@@ -15,7 +15,7 @@
         <a class="btn btn-outline-primary" href="{% url 'company:equipmentAdd' %}">Add new equipment</a>
         <form action={% url 'company:equipmentManagement'%} method='GET'>
           <input class="btn btn-outline-secondary" type="text" name="q" />
-          <input class="btn btn-secondary my-2" type="submit" value="search"/> 
+          <input class="btn btn-secondary my-2" type="submit" value="search"/>
         </form>
       </div>
 
@@ -29,14 +29,16 @@
           <th>Equipment</th>
           <th>Type</th>
           <th>Availability</th>
+          <th>Delete equipment</th>
         </tr>
       </thead>
       <tbody>
         {% for eq in equipments %}
           <tr>
             <th><a class="nav-link" href="{% url 'company:equipmentUpdate' eq.id %}">{{ eq.equipment_name }}</a></th>
-            <th>{{ eq.e_type }}</th>
-            <th>{{ eq.availability }}</th>
+            <th>{{ eq.get_e_type }}</th>
+            <th>{{ eq.get_availability }}</th>
+            <th><a class="btn btn-outline-danger btn-sm" href="{% url 'company:equipmentDeletePage' eq.id %}">Delete</a></th>
           </tr>
         {% endfor %}
       </tbody>

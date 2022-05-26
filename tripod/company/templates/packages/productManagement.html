@@ -15,7 +15,7 @@
         <a class="btn btn-outline-primary" href="{% url 'company:productAdd' %}">Add new product</a>
         <form action={% url 'company:productManagement'%} method='GET'>
           <input class="btn btn-outline-secondary" type="text" name="q" />
-          <input class="btn btn-secondary my-2" type="submit" value="search"/> 
+          <input class="btn btn-secondary my-2" type="submit" value="search"/>
         </form>
       </div>
 
@@ -29,6 +29,7 @@
           <th>Product</th>
           <th>Price</th>
           <th>Description</th>
+          <th>Product Delete</th>
         </tr>
       </thead>
       <tbody>
@@ -37,6 +38,7 @@
             <th><a class="nav-link" href="{% url 'company:productUpdate' product.id %}">{{ product.product_name }}</a></th>
             <th>{{ product.unit_price }} </th>
             <th>{{ product.description|truncatechars:40  }}</th>
+            <th><a class="btn btn-outline-danger btn-sm" href="{% url 'company:productDelete' product.id %}">Delete</a></th>
           </tr>
         {% endfor %}
       </tbody>

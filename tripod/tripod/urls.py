@@ -17,6 +17,9 @@ from django.contrib import admin
 from django.urls import path, include
 
 from tripod.views import not_available_404, permission_error, admin_page
+from tripod import settings
+
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,3 +34,6 @@ urlpatterns = [
     path('tripod-admin/settings/', include('settings.urls')),
     # path('tripod-admin/...', include('settings.urls')),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

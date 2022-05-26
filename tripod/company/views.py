@@ -4,6 +4,7 @@ from django.contrib.auth import (authenticate, login, logout, get_user_model,
                                  update_session_auth_hash)
 from django.db import IntegrityError
 from django.db.models import Q
+from django.db.models.deletion import RestrictedError
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.forms.models import modelformset_factory
@@ -47,7 +48,7 @@ def staffLoginPage(request):
             elif user is not None and user.is_staff:
                 login(request, user)
                 messages.success(request, 'Successfully logged in')
-                return redirect('company:staffCompany')
+                return redirect('adminPage')
             else:
                 messages.error(request, 'Username or password incorrect')
 
@@ -109,6 +110,9 @@ def changePassword(request):
                   login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url="permission_error")
 def updateProfile(request):
+    """
+    user profile updating
+    """
     user = request.user
     form = StaffProfileUpdateForm(instance=user)
 
@@ -300,6 +304,27 @@ def clientUpdatePage(request, pk):
 
 
 @login_required(login_url="company:staffLogin")
+@user_passes_test(superuser_check, login_url='permission_error')
+def userDeletePage(request, pk):
+    """
+    Delete a client profile
+    """
+    user = get_user_model().objects.get(pk=pk)
+    user_email = user.email
+    user_type = user.is_staff
+    try:
+        user.delete()
+        messages.success(request, f"{user_email} has been successfully deleted")
+    except RestrictedError:
+        messages.error(request, f"Cannot delete {user_email} has links with Job and other parts! delete job first")
+
+    if user_type:
+        return redirect('company:employeeManagement')
+    else:
+        return redirect('company:clientManagement')
+
+
+@login_required(login_url="company:staffLogin")
 @user_passes_test(superuser_check, login_url="permission_error")
 def clientAddPage(request):
     """
@@ -392,6 +417,20 @@ def eventAddPage(request):
 
 
 @login_required(login_url="company:staffLogin")
+@user_passes_test(superuser_check, login_url='permission_error')
+def eventDeletePage(request, pk):
+    """
+    Delete an event
+    """
+    event = Event.objects.get(pk=pk)
+    event_name = event.event_name
+    event.delete()
+
+    messages.success(request, f"{event_name} has been successfully deleted")
+    return redirect('company:eventManagement')
+
+
+@login_required(login_url="company:staffLogin")
 @user_passes_test(force_password_change_check,
                   login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
@@ -441,6 +480,20 @@ def productUpdatePage(request, pk):
 
 
 @login_required(login_url="company:staffLogin")
+@user_passes_test(superuser_check, login_url='permission_error')
+def productDeletePage(request, pk):
+    """
+    Delete an product
+    """
+    product = Product.objects.get(pk=pk)
+    product_name = product.product_name
+    product.delete()
+
+    messages.success(request, f"{product_name} has been successfully deleted")
+    return redirect('company:productManagement')
+
+
+@login_required(login_url="company:staffLogin")
 @user_passes_test(force_password_change_check,
                   login_url="companu:changePassword")
 @user_passes_test(staff_check, login_url='permission_error')
@@ -480,7 +533,7 @@ def packageManagement(request):
         lookup = Q(package_name__icontains=query)
         packages_objs = Package.objects.filter(lookup)
     else:
-        packages_objs = Package.objects.all()
+        packages_objs = Package.objects.all().order_by('-changed_at')
     packages = {'packages': []}
     for package in packages_objs:
         package_inst = {}
@@ -522,6 +575,7 @@ def packageUpdatePage(request, pk):
                 obj, package = form.save(package=package,
                                          userObj=request.user,
                                          operation='updating')
+            print(package.is_active)
             package.save()
             messages.success(request,
                              f'Package {package} successfully updated')
@@ -594,6 +648,20 @@ def invoiceManagement(request):
 
 @login_required(login_url="company:staffLogin")
 @user_passes_test(superuser_check, login_url='permission_error')
+def invoiceDeletePage(request, pk):
+    """
+    Delete an invoice
+    """
+    invoice = Invoice.objects.get(pk=pk)
+    invoice_id = invoice.get_issue_number()
+    invoice.delete()
+
+    messages.success(request, f"Invoice {invoice_id} has been successfully deleted")
+    return redirect('company:invoiceManagement')
+
+
+@login_required(login_url="company:staffLogin")
+@user_passes_test(superuser_check, login_url='permission_error')
 def invoiceDetail(request, pk):
     """
     Showing the products where the name will be link to the detail
@@ -655,6 +723,20 @@ def equipmentUpdatePage(request, pk):
 
     context = {'form': form, 'equipment': equipment}
     return render(request, 'equipment/equipment.html', context)
+
+
+@login_required(login_url="company:staffLogin")
+@user_passes_test(superuser_check, login_url='permission_error')
+def equipmentDeletePage(request, pk):
+    """
+    Delete an equipment
+    """
+    equipment = Equipment.objects.get(pk=pk)
+    equipment_name = equipment.equipment_name
+    equipment.delete()
+
+    messages.success(request, f"{equipment_name} has been successfully deleted")
+    return redirect('company:equipmentManagement')
 
 
 @login_required(login_url="company:staffLogin")
@@ -723,6 +805,20 @@ def equipmentMaintanenceUpdatePage(request, pk):
 
     context = {'form': form, 'equipment': equipment}
     return render(request, 'equipment/equipmentMaintanence.html', context)
+
+
+@login_required(login_url="company:staffLogin")
+@user_passes_test(superuser_check, login_url='permission_error')
+def equipmentMaintanenceDeletePage(request, pk):
+    """
+    Delete an equipmentMaintanence
+    """
+    equipmentMaintanence = EquipmentMaintanence.objects.get(pk=pk)
+    equipmentMaintanence_name = equipmentMaintanence.equipment
+    equipmentMaintanence.delete()
+
+    messages.success(request, f"{equipmentMaintanence_name} has been successfully deleted")
+    return redirect('company:equipmentMaintanence')
 
 
 @login_required(login_url="company:staffLogin")

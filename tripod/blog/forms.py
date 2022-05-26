@@ -11,6 +11,10 @@ from tripod.utils import random_char
 
 
 class CustomerCreationForm(forms.ModelForm):
+    """
+    Get user job request information and user's information mentioned below.
+    Saving this form will create a user instance and job request in db.
+    """
     job_request = forms.CharField(widget=forms.Textarea)
 
     class Meta:
@@ -40,9 +44,6 @@ class CustomerCreationForm(forms.ModelForm):
             country=self.instance.country,
             force_password_change=self.instance.force_password_change,
             password_change_code=self.instance.password_change_code)
-        print(self.random_code)
-        print(self.instance.password)
-        print(self.instance.password_change_code)
         send_code(account)
         Job.objects.create(job_name=account.first_name + " request",
                            job_request=self.cleaned_data['job_request'],

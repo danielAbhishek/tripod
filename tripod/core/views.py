@@ -156,7 +156,7 @@ def jobsDeclined(request):
 @user_passes_test(force_password_change_check, login_url='core:changePassword')
 def jobPage(request, pk):
     """
-    shows job that is selected
+    shows job and its content
     """
     job = Job.objects.get(pk=pk)
     works = Work.objects.filter(job=job).order_by('work_order')

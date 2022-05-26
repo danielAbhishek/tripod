@@ -25,15 +25,18 @@ def user_kpis(obj):
     total_users = len(obj)
     total_active_users = len(obj.filter(is_active=True))
     """Preparing joined bucket"""
+
     # getting dates that were before 10, 20, 30 days
     date_thirty_days_before = datetime.now().date() - timedelta(days=30)
     date_ten_days_before = datetime.now().date() - timedelta(days=10)
 
+    # creating lookups to filter various logics
     lookup_thirty_above = Q(date_joined__gte=date_thirty_days_before)
     lookup_ten_to_thirty = Q(date_joined__gte=date_ten_days_before) & Q(
         date_joined__lte=date_thirty_days_before)
     lookup_below_ten = Q(date_joined__lte=date_ten_days_before)
 
+    # querying to get objects
     joined_thirty_plus_users = len(obj.filter(lookup_thirty_above))
     joined_ten_to_thirty_users = len(obj.filter(lookup_ten_to_thirty))
     joined_below_ten_users = len(obj.filter(lookup_below_ten))
@@ -50,6 +53,8 @@ def user_kpis(obj):
 
 
 def company_kpis():
+    """company KPIs"""
+    # querying data from db
     events = len(Event.objects.all())
     products = len(Product.objects.all())
     active_products = len(Product.objects.filter(is_active=True))
@@ -59,7 +64,6 @@ def company_kpis():
     packages = len(Package.objects.all())
     count_of_products_by_packages = PackageLinkProduct.objects.values(
         'package').annotate(products=Count('product'), price=Sum('price'))
-
     job_by_package = Job.objects.values('package__package_name').annotate(
         jobs_count=Count('id')).order_by('-jobs_count')
 
@@ -78,8 +82,10 @@ def company_kpis():
 
 
 def job_kpis():
+    """Job KPIs"""
     jobs_task_data = {}
 
+    # querying db values
     job_by_sources = Job.objects.values('source').annotate(jobs=Count('id'))
     job_by_events = Job.objects.values('event__event_name').annotate(
         jobs=Count('id'))
@@ -149,6 +155,7 @@ def job_kpis():
 
 
 def invoice_kpis():
+    """Invoice based summary report with all important data points"""
     invoice_data = {
         'Job Name': [],
         'Job Status': [],
@@ -206,14 +213,15 @@ def invoice_kpis():
 
 
 def paid_data():
+    """Paid data by buckets"""
     seven_days_before = datetime.now().date() - timedelta(days=7)
     thirty_days_before = datetime.now().date() - timedelta(days=30)
 
     last_seven_days_deposits = PaymentHistory.objects.filter(
-        payment_date__gte=seven_days_before).annotate(
+        payment_date__lte=seven_days_before).annotate(
             deposits=Sum('payment_amount')).last()
     last_thirty_days_deposits = PaymentHistory.objects.filter(
-        payment_date__gte=thirty_days_before).annotate(
+        payment_date__lte=thirty_days_before).annotate(
             deposits=Sum('payment_amount')).last()
 
     data = {
@@ -225,6 +233,7 @@ def paid_data():
 
 
 def get_graph():
+    """function to get graph into buffer so that it can viewed in html"""
     buffer = BytesIO()
     plt.savefig(buffer, format='png')
     buffer.seek(0)
@@ -236,6 +245,7 @@ def get_graph():
 
 
 def get_plot(x, y, data, plt_type="line"):
+    """Creating either line or bar chart based on argument"""
     plt.switch_backend('AGG')
     plt.figure(figsize=(8, 4))
     # plt.title('Payment History')
@@ -252,6 +262,7 @@ def get_plot(x, y, data, plt_type="line"):
 
 
 def payment_graph():
+    """Creating payment graph based on paid days"""
     qs = PaymentHistory.objects.values('payment_date').annotate(
         payment_amount=Sum('payment_amount')).order_by('payment_date')
     x = [x['payment_date'].strftime("%Y-%m-%d") for x in qs]
@@ -262,6 +273,7 @@ def payment_graph():
 
 
 def jobs_by_source_graph():
+    """creating a bar chart that shows number of jobs for each source"""
     qs = Job.objects.values('source').annotate(
         jobs=Count('id')).order_by('source')
     x = []

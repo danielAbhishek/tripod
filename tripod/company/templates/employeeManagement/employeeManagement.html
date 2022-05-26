@@ -17,7 +17,7 @@
         <a class="btn btn-outline-primary" href="{% url 'company:employeeAdd' %}">Add new employee</a>
         <form action={% url 'company:employeeManagement'%} method='GET'>
           <input class="btn btn-outline-secondary" type="text" name="q" />
-          <input class="btn btn-secondary my-2" type="submit" value="search"/> 
+          <input class="btn btn-secondary my-2" type="submit" value="search"/>
         </form>
       </div>
 
@@ -33,6 +33,7 @@
           <th>Last Name</th>
           <th>Active</th>
           <th>Date Joined</th>
+          <th>Delete Employee</th>
         </tr>
       </thead>
       <tbody>
@@ -47,6 +48,12 @@
             <th>{{ employee.last_name }}</th>
             <th>{{ employee.is_active }}</th>
             <th>{{ employee.date_joined }}</th>
+            <th>
+              {% if employee.is_superuser %}
+                Cannot Delete Superuser
+              {% else %}
+                <a class="btn btn-outline-danger btn-sm" href="{% url 'company:employeeDeletePage' employee.id %}">Delete</a></th>
+              {% endif %}
           </tr>
         {% endfor %}
       </tbody>

@@ -21,6 +21,9 @@ urlpatterns = [
     path('employeeManagement/employee/<int:pk>',
          views.staffUpdatePage,
          name='employeeUpdatePage'),
+    path('clientManagement/employee/delete/<int:pk>',
+         views.userDeletePage,
+         name='employeeDeletePage'),
     path('employeeManagement/employee/add/',
          views.staffAddPage,
          name='employeeAdd'),
@@ -32,6 +35,9 @@ urlpatterns = [
     path('clientManagement/client/<int:pk>',
          views.clientUpdatePage,
          name='clientUpdatePage'),
+    path('clientManagement/client/delete/<int:pk>',
+         views.userDeletePage,
+         name='clientDeletePage'),
     path('clientManagement/client/add/', views.clientAddPage,
          name='clientAdd'),
 
@@ -43,6 +49,9 @@ urlpatterns = [
     path('packageManagement/event/<int:pk>',
          views.eventUpdatePage,
          name='eventUpdate'),
+    path('packageManagement/event/delete/<int:pk>',
+         views.eventDeletePage,
+         name='eventDelete'),
 
     # Product Management
     path('packageManagement/products',
@@ -54,6 +63,9 @@ urlpatterns = [
     path('packageManagement/product/<int:pk>',
          views.productUpdatePage,
          name='productUpdate'),
+    path('packageManagement/product/delete/<int:pk>',
+         views.productDeletePage,
+         name='productDelete'),
 
     # package Management
     path('packageManagement/packages',
@@ -71,6 +83,8 @@ urlpatterns = [
          name='invoiceManagement'),
     path('finance/invoice/<int:pk>', views.invoiceDetail,
          name='invoiceDetail'),
+    path('finance/invoice/delete/<int:pk>', views.invoiceDeletePage,
+         name='invoiceDeletePage'),
 
     # Equipment management
     path('equipmentManagement/equipments',
@@ -82,6 +96,10 @@ urlpatterns = [
     path('equipmentManagement/equipment/<int:pk>',
          views.equipmentUpdatePage,
          name='equipmentUpdate'),
+    path('equipmentManagement/equipment/delete/<int:pk>',
+         views.equipmentDeletePage,
+         name='equipmentDeletePage'),
+
 
     # Equipment maintanence
     path('equipmentMaintanence/equipments',
@@ -93,4 +111,7 @@ urlpatterns = [
     path('equipmentMaintanence/equipment/<int:pk>',
          views.equipmentMaintanenceUpdatePage,
          name='equipmentMaintanenceUpdate'),
+    path('equipmentMaintanence/equipment/delete/<int:pk>',
+         views.equipmentMaintanenceDeletePage,
+         name='equipmentMaintanenceDeletePage'),
 ]

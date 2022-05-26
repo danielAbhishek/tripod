@@ -1,13 +1,15 @@
-
 {% extends 'guest_user_base.html' %}
 {% load crispy_forms_tags %}
 
 {% block content %}
 
 <div class="row" style="padding:10px">
+  <!-- empty column -->
   <div class="col-2">
   </div>
+  <!-- second column -->
   <div class="col-3">
+    <!-- card -->
     <div clas="card">
       <div class="card-body">
         <br>
@@ -16,13 +18,17 @@
         <h3 class="display-3">
           Get in touch
         </h3>
-        <p class="lead">Email address - conway@tripod.com<p>
+        <p class="lead">Email address - conway@tripod.com
+        <p>
         <p class="lead">Peter Conway - Colombo</p>
       </div>
     </div>
+    <!-- end of card -->
   </div>
+  <!-- third column -->
   <div class="col-6">
     <div class="">
+      <!-- card body -->
       <div class="card-body">
         <br>
         <h5 class="lead px-3 text-center"><i>Got a project in your mind, connect with me using the below form.</i></h5>
@@ -45,9 +51,11 @@
         <br>
         <i><b>Do you have logins? </b><a class="link-primary" href="{% url 'core:login' %}">Login here</a></i>
       </div>
+      <!-- end of card -->
     </div>
-  </div> 
+  </div>
+  <!-- empty column -->
   <div class="col-1">
   </div>
-</div> 
+</div>
 {% endblock content %}
