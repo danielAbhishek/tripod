@@ -30,8 +30,8 @@ class TemplateDatabaseObjects:
 
     def set_db_template_fields(self):
         """
-        Get the template fields that defined in the database table
-        TemplateField and set it to the local variable
+        This will get the exact model name and column in the format of model.column
+        for the template name in template objects query
         """
         values = self.template_objects.values()
         # print(values)
@@ -42,8 +42,8 @@ class TemplateDatabaseObjects:
 
     def set_db_data_for_field(self, field):
         """
-        Get the object name for a particulat field/ row that passed, from
-        the TemplateField table
+        Once the exact model.column has been taken, using eval method the database value will
+        be taken and added to te replace_dict
         """
         temp_obj = self.template_objects.get(field=field)
         self.replace_dict[temp_obj.field] = eval("self." +
@@ -69,8 +69,8 @@ class TemplateContent:
 
     def get_template_fields(self):
         """
-        Taking tamplate fields from template body and setting
-        the tempate_fields list
+        From the template body (can be email body or contract body) using regex pattern
+        words with this patter -> "{example}" will be taken and added to template_fields
         """
         # adding template fields from body
         self.template_fields = re.findall(self._pattern, self.template.body)
@@ -83,9 +83,8 @@ class TemplateContent:
 
     def prepare_content(self, database_objects):
         """
-        Looping thru the template_fields which taken using above function
-        and with created replace_dict from TemplateDatabaseObjects, replacing
-        content of the body subject, thank you and signature
+        Replacing dictionary will be created by taking model.column combination field and word
+        from template body with "{}" the pattern
         """
         database_objects.set_db_template_fields()
         db_template_fields = database_objects.db_template_fields

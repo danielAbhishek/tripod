@@ -55,11 +55,11 @@ class Job(models.Model):
                                 null=True,
                                 blank=True)
     note = models.TextField(null=True, blank=True)
-    secondary_client = models.ForeignKey(get_user_model(),
-                                         on_delete=models.SET_NULL,
-                                         related_name='secondary_client',
-                                         null=True,
-                                         blank=True)
+    photographer = models.ForeignKey(get_user_model(),
+                                     on_delete=models.SET_NULL,
+                                     related_name='photographer',
+                                     null=True,
+                                     blank=True)
     source = models.ForeignKey(Source,
                                on_delete=models.SET_NULL,
                                null=True,
@@ -340,7 +340,7 @@ class Task(models.Model):
     # email = EmailManager()
 
     class Meta:
-        ordering = ('task_order',)
+        ordering = ('task_order', )
 
     def __str__(self):
         return self.get_job().job_name + " - " + self.task_name

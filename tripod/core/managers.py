@@ -44,6 +44,7 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_active', True)
         extra_fields.setdefault('is_client', True)
         extra_fields.setdefault('force_password_change', True)
+        extra_fields.setdefault('is_photographer', False)
 
         if extra_fields.get('is_staff'):
             raise ValueError(_('client cannot have is_staff=True'))
@@ -61,6 +62,7 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_client', False)
         extra_fields.setdefault('username', username)
         extra_fields.setdefault('force_password_change', True)
+        extra_fields.setdefault('is_photographer', False)
 
         if extra_fields.get('is_superuser'):
             raise ValueError(_('client cannot have is_superuser=True'))

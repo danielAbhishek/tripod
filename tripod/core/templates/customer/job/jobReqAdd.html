@@ -8,6 +8,7 @@
     <form method="POST" action="">
       {% csrf_token %}
       {{ form.job_name | as_crispy_field }}
+      {{ form.photographer | as_crispy_field }}
       {{ form.event | as_crispy_field }}
       {{ form.venue | as_crispy_field }}
       {{ form.start_date | as_crispy_field }}

@@ -1,6 +1,8 @@
 from django import forms
 
 from job.models import Job, Appointment
+from core.models import CustomUser
+from core.models import CustomUser
 from job.workflow_factory.workflow import WorkFlowBase
 
 from finance.utils import register_invoice_data_for_job
@@ -34,6 +36,8 @@ class JobCreateForm(forms.ModelForm):
         self.user = kwargs.pop('userObj')
         super().__init__(*args, **kwargs)
         add_basic_html_tags("Please add job - ", self.fields, True)
+        self.fields['photographer'].queryset = CustomUser.objects.filter(
+            is_staff=True).filter(is_photographer=True)
 
     def save(self, *args, **kwargs):
         self.instance.create_by = self.user
@@ -48,13 +52,16 @@ class JobReqCreateForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = [
-            'job_name', 'primary_client', 'workflow', 'description', 'source'
+            'job_name', 'primary_client', 'workflow', 'description', 'source',
+            'photographer'
         ]
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('userObj')
         super().__init__(*args, **kwargs)
         add_basic_html_tags("Please add job - ", self.fields, True)
+        self.fields['photographer'].queryset = CustomUser.objects.filter(
+            is_staff=True).filter(is_photographer=True)
 
     def save(self, *args, **kwargs):
         self.instance.created_by = self.user
@@ -85,6 +92,8 @@ class JobUpdateConfirmForm(forms.ModelForm):
         self.user = kwargs.pop('userObj')
         super().__init__(*args, **kwargs)
         self.obj = Job.objects.get(pk=self.instance.pk)
+        self.fields['photographer'].queryset = CustomUser.objects.filter(
+            is_staff=True).filter(is_photographer=True)
 
     def save(self, *args, **kwargs):
         self.instance.created_by = self.obj.created_by

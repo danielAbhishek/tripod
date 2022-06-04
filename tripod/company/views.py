@@ -194,6 +194,7 @@ def staffUpdatePage(request, pk):
                 staff.is_staff = True
                 staff.is_active = form.cleaned_data['is_active']
                 staff.is_superuser = form.cleaned_data['is_superuser']
+                staff.is_photographer = form.cleaned_data['is_photographer']
                 staff.save()
                 if staff.is_active:
                     messages.success(
@@ -314,9 +315,13 @@ def userDeletePage(request, pk):
     user_type = user.is_staff
     try:
         user.delete()
-        messages.success(request, f"{user_email} has been successfully deleted")
+        messages.success(request,
+                         f"{user_email} has been successfully deleted")
     except RestrictedError:
-        messages.error(request, f"Cannot delete {user_email} has links with Job and other parts! delete job first")
+        messages.error(
+            request,
+            f"Cannot delete {user_email} has links with Job and other parts! delete job first"
+        )
 
     if user_type:
         return redirect('company:employeeManagement')
@@ -656,7 +661,8 @@ def invoiceDeletePage(request, pk):
     invoice_id = invoice.get_issue_number()
     invoice.delete()
 
-    messages.success(request, f"Invoice {invoice_id} has been successfully deleted")
+    messages.success(request,
+                     f"Invoice {invoice_id} has been successfully deleted")
     return redirect('company:invoiceManagement')
 
 
@@ -735,7 +741,8 @@ def equipmentDeletePage(request, pk):
     equipment_name = equipment.equipment_name
     equipment.delete()
 
-    messages.success(request, f"{equipment_name} has been successfully deleted")
+    messages.success(request,
+                     f"{equipment_name} has been successfully deleted")
     return redirect('company:equipmentManagement')
 
 
@@ -817,7 +824,8 @@ def equipmentMaintanenceDeletePage(request, pk):
     equipmentMaintanence_name = equipmentMaintanence.equipment
     equipmentMaintanence.delete()
 
-    messages.success(request, f"{equipmentMaintanence_name} has been successfully deleted")
+    messages.success(
+        request, f"{equipmentMaintanence_name} has been successfully deleted")
     return redirect('company:equipmentMaintanence')
 
 

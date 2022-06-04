@@ -40,6 +40,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     force_password_change = models.BooleanField(default=False,
                                                 blank=True,
                                                 null=True)
+    is_photographer = models.BooleanField(default=False)
     password_change_code = models.CharField(max_length=20,
                                             null=True,
                                             blank=True)

@@ -41,7 +41,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-di*yqtfpn6rnn9orh!x@%3nw4!ljpfnsliu9dr#fmcuz+r(e(7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
@@ -110,7 +110,6 @@ DATABASES = {
     'default': {
         #  'ENGINE': 'django.db.backends.sqlite3',
         #  'NAME': BASE_DIR / 'db.sqlite3',
-
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'tripod',
         'USER': 'tripod',

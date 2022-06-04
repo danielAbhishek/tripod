@@ -46,7 +46,8 @@ class StaffProfileUpdateForm(UserChangeForm):
         exclude = [
             'password', 'groups', 'user_permissions', 'last_login',
             'date_joined', 'force_password_change', 'password_change_code',
-            'is_staff', 'is_client', 'is_active', 'is_superuser'
+            'is_staff', 'is_client', 'is_active', 'is_superuser',
+            'is_photographer'
         ]
 
 
@@ -97,9 +98,8 @@ class JobUserUpdateForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = [
-            'job_name', 'description',
-            'venue', 'venue_notes', 'start_date', 'end_date', 'start_time',
-            'end_time', 'package'
+            'job_name', 'description', 'venue', 'venue_notes', 'start_date',
+            'end_date', 'start_time', 'end_time', 'package'
         ]
         widgets = {
             'start_date': DateInput(),
@@ -148,12 +148,17 @@ class JobReqCreatedForm(forms.ModelForm):
 
     class Meta:
         model = Job
-        fields = ['job_name', 'event', 'venue', 'start_date', 'end_date']
+        fields = [
+            'job_name', 'photographer', 'event', 'venue', 'start_date',
+            'end_date'
+        ]
         widgets = {'start_date': DateInput(), 'end_date': DateInput()}
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('userObj')
         super().__init__(*args, **kwargs)
+        self.fields['photographer'].queryset = CustomUser.objects.filter(
+            is_staff=True).filter(is_photographer=True)
 
     def save(self, *args, **kwargs):
         self.instance.create_by = self.user
